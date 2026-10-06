@@ -72,7 +72,32 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .btn.line { border: 1px solid var(--line); background: var(--surface); }
 .btn.go { background: var(--free); color: #fff; }
 .iconbtn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; font-size: 18px; flex: none; }
-.tabs { display: flex; gap: 4px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+.tabs { display: flex; gap: 4px; padding: 0 18px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.tabs button { white-space: nowrap; }
+/* files + reminders */
+.photo { display: block; max-width: min(280px, 100%); border-radius: 16px; overflow: hidden; border: 1px solid var(--line); }
+.photo img { display: block; width: 100%; max-height: 320px; object-fit: cover; }
+.filecard { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: inherit; width: min(320px, 100%); text-align: left; }
+.filecard:hover { background: var(--panel); }
+.fileicon { width: 42px; height: 48px; border-radius: 8px; background: var(--maroon); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; flex: none; letter-spacing: .04em; }
+.fileicon.doc { background: #2B62F0; } .fileicon.sheet { background: #17905A; } .fileicon.other { background: #5A5A63; }
+.filecard .t { flex: 1; min-width: 0; }
+.filecard b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.gallery button { aspect-ratio: 1; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.drop { outline: 3px dashed var(--maroon); outline-offset: -10px; }
+.rems { display: flex; flex-direction: column; gap: 8px; }
+.rem { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.rem .e { width: 40px; height: 40px; border-radius: 12px; background: var(--bubble); display: grid; place-items: center; font-size: 20px; flex: none; }
+.rem .t { flex: 1; min-width: 0; }
+.rem .t b { display: block; }
+.rem.done { opacity: .55; } .rem.done b { text-decoration: line-through; }
+.check { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; flex: none; color: transparent; font-weight: 800; }
+.check[aria-pressed="true"] { background: var(--free); border-color: var(--free); color: #fff; }
+.viewer { background: #000; border-radius: 20px; overflow: hidden; max-width: min(900px, 100%); max-height: 90vh; display: flex; flex-direction: column; }
+.viewer img { max-width: 100%; max-height: calc(90vh - 52px); object-fit: contain; display: block; margin: auto; }
+.viewer .bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: #fff; }
 .tabs button { padding: 12px 12px 11px; font-weight: 700; color: var(--muted); border-bottom: 2px solid transparent; }
 .tabs button[aria-current="true"] { color: var(--ink); border-bottom-color: var(--maroon); }
 .scroll { flex: 1; min-height: 0; overflow-y: auto; }
@@ -339,6 +364,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 
   // ---------- fresh demo data (nothing is saved between visits) ----------
   try { localStorage.removeItem('roundtable-app-v1'); } catch (e) {}
+  function samplePhoto(emoji, caption, c1, c2) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="640" height="480" fill="url(#g)"/><text x="320" y="250" font-size="150" text-anchor="middle">${emoji}</text><text x="320" y="370" font-size="34" font-family="sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${caption}</text><text x="320" y="420" font-size="20" font-family="sans-serif" fill="#fff" opacity=".7" text-anchor="middle">Sample photo</text></svg>`;
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
   function seed() {
     const t = new Date();
     const ts = (daysAgo, h, m) => { const d = addDays(t, -daysAgo); d.setHours(h, m, 0, 0); return d.getTime(); };
@@ -355,6 +384,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         { id: uid(), event: 'e2', from: 'jordan', ts: ts(1, 19, 11) },
         { id: uid(), from: 'alex', text: 'anyone doing anything tonight?', ts: ts(0, 16, 40), likes: [] },
         { id: uid(), from: 'maya', text: 'on Mario Kart after 9 if anyone wants in', ts: ts(0, 16, 51), likes: ['jordan'] },
+        { id: uid(), from: 'jordan', ts: ts(0, 16, 58), likes: ['alex','maya'], file: { name: 'last-game-night.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('🏆', 'Last game night champs', '#2A2A30', '#7D021D') } },
         { id: uid(), bill: 'b1', from: 'alex', ts: ts(5, 23, 11) },
         { id: uid(), poll: { q: 'Brunch spot Saturday?', opts: [{ t: 'The corner cafe', v: ['sam','alex'] }, { t: 'Pancake place', v: ['jordan'] }, { t: 'Bagels at the park', v: [] }] }, from: 'sam', ts: ts(0, 17, 2) },
         { id: uid(), event: 'e3', from: 'sam', ts: ts(0, 17, 6) }
@@ -363,12 +393,14 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         { id: uid(), from: 'mom', text: 'Sunday dinner, same time as always?', ts: ts(1, 12, 2), likes: ['dad'] },
         { id: uid(), event: 'e1', from: 'mom', ts: ts(1, 12, 3) },
         { id: uid(), from: 'dad', text: 'I will grill if the weather holds', ts: ts(1, 13, 20), likes: ['mom','ben'] },
+        { id: uid(), from: 'mom', ts: ts(1, 13, 40), likes: ['dad','emma','ben'], file: { name: 'grill.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('🔥', 'Dad at the grill', '#7D021D', '#E0637C') } },
         { id: uid(), from: 'ben', text: "Don't forget Mom's birthday is coming up", ts: ts(0, 15, 41), likes: ['emma'] },
         { id: uid(), event: 'e5', from: 'ben', ts: ts(0, 15, 42) }
       ],
       book: [
         { id: uid(), from: 'priya', text: 'Finish chapters 10 to 15 for Thursday', ts: ts(2, 20, 0), likes: ['kate','lena'] },
         { id: uid(), event: 'e4', from: 'priya', ts: ts(2, 20, 1) },
+        { id: uid(), from: 'priya', ts: ts(2, 20, 3), likes: ['kate'], file: { name: 'Reading list.pdf', type: 'application/pdf', size: 1650, url: 'data:application/pdf;base64,JVBERi0xLjMKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMgOCAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDcgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjUgMCBvYmoKPDwKL1BhZ2VNb2RlIC9Vc2VOb25lIC9QYWdlcyA3IDAgUiAvVHlwZSAvQ2F0YWxvZwo+PgplbmRvYmoKNiAwIG9iago8PAovQXV0aG9yIChhbm9ueW1vdXMpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjEwMDYxODE3NDgtMDQnMDAnKSAvQ3JlYXRvciAoYW5vbnltb3VzKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjEwMDYxODE3NDgtMDQnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIFwob3BlbnNvdXJjZVwpKSAKICAvU3ViamVjdCAodW5zcGVjaWZpZWQpIC9UaXRsZSAodW50aXRsZWQpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKNyAwIG9iago8PAovQ291bnQgMSAvS2lkcyBbIDQgMCBSIF0gL1R5cGUgL1BhZ2VzCj4+CmVuZG9iago4IDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDI2Ngo+PgpzdHJlYW0KR2FycCVfLmokKydFdWpzP1pDOnRWLl5MXjstXi1nOG0zXD5KUDpHUDs5JyplWmctRmxOKUUsWSQiUyY3VCkwZCRvNDddNyJcXmZNbWgvTWFZOUM1WSMvLmdBbVxGKVJWLU4tTD5pKD0iX0ZPc3IkSmhdVTQzW0U9IWFmSj1tXWFPRTc9TCFKNkdORz1jLS48VCUiJWZCPmI5aV86V3BKRjBTKGZNYm5NQHQhO2lZZ01NZDRgYkA/PllGK0lhTks9ZE1LcGMtaG8jP2FBWHImN1ZJWGUiOiE5Plo4Kk44Zi5GcVtHRFNwZzRXblVzLXM7US4jLVdvbjpoVS1XQExja2trRl1CalFHfj5lbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDA2MSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDkgMDAwMDAgbiAKMDAwMDAwMDMyMSAwMDAwMCBuIAowMDAwMDAwNTE0IDAwMDAwIG4gCjAwMDAwMDA1ODIgMDAwMDAgbiAKMDAwMDAwMDg0MyAwMDAwMCBuIAowMDAwMDAwOTAyIDAwMDAwIG4gCnRyYWlsZXIKPDwKL0lEIApbPDg1MWRlZGZlNDQyYmFmNGI1NjMwYTM4NzM0OTkyMzczPjw4NTFkZWRmZTQ0MmJhZjRiNTYzMGEzODczNDk5MjM3Mz5dCiUgUmVwb3J0TGFiIGdlbmVyYXRlZCBQREYgZG9jdW1lbnQgLS0gZGlnZXN0IChvcGVuc291cmNlKQoKL0luZm8gNiAwIFIKL1Jvb3QgNSAwIFIKL1NpemUgOQo+PgpzdGFydHhyZWYKMTI1OAolJUVPRgo=' } },
         { id: uid(), from: 'kate', text: 'no spoilers but that ending...', ts: ts(0, 9, 30), likes: [] },
         { id: uid(), bill: 'b2', from: 'me', ts: ts(3, 18, 1) }
       ]
@@ -380,6 +412,12 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         { id: 'book', name: 'Book Club', emoji: '📚', members: ['me','priya','lena','kate'], hangout: [] }
       ],
       events, messages, unread: { friends: 3, family: 2, book: 1 },
+      reminders: [
+        { id: 'r1', emoji: '💪', title: 'Workout', date: ymd(addDays(t, -14)), time: '06:30', repeat: 'weekdays', group: '', doneOn: {} },
+        { id: 'r2', emoji: '💧', title: 'Drink water', date: ymd(addDays(t, -14)), time: '14:00', repeat: 'daily', group: '', doneOn: {} },
+        { id: 'r3', emoji: '🛒', title: 'Grab dessert for Sunday dinner', date: ymd(addDays(nextDow(0), -1)), time: '12:00', repeat: '', group: 'family', doneOn: {} },
+        { id: 'r4', emoji: '📚', title: 'Finish chapters 10 to 15', date: ymd(addDays(nextDow(4), -1)), time: '20:00', repeat: '', group: 'book', doneOn: {} }
+      ],
       bills: [
         { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, subtotal: 70, tip: 14, tipPct: 20, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
           shares: [{ p: 'alex', amt: 21, paid: true }, { p: 'me', amt: 21, paid: false }, { p: 'jordan', amt: 21, paid: true, method: 'Venmo' }, { p: 'maya', amt: 21, paid: false }] },
@@ -478,7 +516,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const friends = [...new Set(S.groups.flatMap(others))].map(p => ({ p, st: statusOf(p) })).filter(x => x.st).sort((a, b) => (a.st.s === 'free' ? 0 : 1) - (b.st.s === 'free' ? 0 : 1));
     const freeCount = friends.filter(x => x.st.s === 'free').length;
     const up = upcoming().slice(0, 6);
-    const welcome = UI.welcome ? `<div class="welcome"><div><h2>Welcome to the Roundtable demo</h2><ol><li>Tap your circle below to tell friends what you're up to.</li><li>Open a group to chat, like messages, and vote in polls.</li><li>RSVP to an event, or make your own. After it, split the bill.</li></ol></div><button class="x" data-act="hidewelcome" aria-label="Dismiss">×</button></div>` : '';
+    const welcome = UI.welcome ? `<div class="welcome"><div><h2>Welcome to the Roundtable demo</h2><ol><li>Tap your circle below to tell friends what you're up to.</li><li>Open a group to chat, share photos and files, and vote in polls.</li><li>RSVP to an event, or make your own. After it, split the bill.</li></ol></div><button class="x" data-act="hidewelcome" aria-label="Dismiss">×</button></div>` : '';
     const body = `<div class="pad">
       ${welcome}
       <div class="sec"><div class="sechead"><h2>Your friends today</h2><span class="note">${freeCount} friends free</span></div>
@@ -488,6 +526,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         </div></div>
       <div class="sec"><div class="sechead"><h2>Upcoming events</h2><button class="btn primary" data-act="newevent">+ New event</button></div>
         <div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div></div>
+      <div class="sec"><div class="sechead"><h2>Reminders</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>${(() => { const l = remList(4); return l.length ? `<div class="rems">${l.map(x => remRow(x.r, x.d)).join('')}</div>` : '<div class="empty">No reminders yet.</div>'; })()}</div>
       <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line" data-act="newsplit">+ Split a bill</button></div>${moneyTiles()}</div>
       <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line" data-act="newgroup">+ New group</button></div>${groupRows()}</div>
     </div>`;
@@ -495,8 +534,8 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
   }
   function groupRows() {
     return `<div class="grows">${S.groups.map(g => {
-      const last = [...S.messages[g.id]].reverse().find(m => m.text || m.event || m.poll);
-      const lt = !last ? 'No messages yet' : last.text ? `${nameOf(last.from) === 'You' ? 'You' : nameOf(last.from)}: ${last.text}` : last.event ? `${nameOf(last.from)} shared an event` : `${nameOf(last.from)} started a poll`;
+      const last = [...S.messages[g.id]].reverse().find(m => m.text || m.event || m.poll || m.file || m.bill);
+      const lt = !last ? 'No messages yet' : last.text ? `${nameOf(last.from)}: ${last.text}` : last.event ? `${nameOf(last.from)} shared an event` : last.file ? `${nameOf(last.from)} shared ${fileKind(last.file) === 'image' ? 'a photo' : 'a file'}` : last.bill ? `${nameOf(last.from)} split a bill` : `${nameOf(last.from)} started a poll`;
       const free = others(g).filter(p => statusOf(p)?.s === 'free').length;
       return `<button class="grow-row" data-act="opengroup" data-g="${g.id}"><span class="gicon" style="width:48px;height:48px;font-size:24px">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><div class="last">${esc(lt)}</div><div class="note" style="margin-top:2px">${g.members.length} members${free ? ` · <span style="color:var(--free);font-weight:700">${free} free</span>` : ''}</div></span>${S.unread[g.id] ? `<span class="pill">${S.unread[g.id]}</span>` : ''}</button>`;
     }).join('')}</div>`;
@@ -507,6 +546,11 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const me = m.from === 'me', isNew = m.ts > Date.now() - 4000 ? 'new' : '';
     if (m.sys) return `<div class="sys">${esc(m.sys)}</div>`;
     if (m.event) { const e = evt(m.event); if (!e) return ''; return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} shared an event</div><div class="minicard">${eventCard(e)}</div></div></div>`; }
+    if (m.file) {
+      const f = m.file, liked = m.likes.includes('me');
+      const inner = fileKind(f) === 'image' ? `<button class="photo" data-act="viewimg" data-m="${m.id}" aria-label="Open photo"><img src="${f.url}" alt="${esc(f.name)}"></button>` : fileCard(f);
+      return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))}</div>${inner}<div class="meta2"><span>${clock(m.ts)}</span><button class="like" data-act="like" data-m="${m.id}" aria-pressed="${liked}" aria-label="Like">${I.heart}${m.likes.length || ''}</button></div></div></div>`;
+    }
     if (m.bill) { const b = bill(m.bill); if (!b) return ''; const mine = b.shares.find(x => x.p === 'me');
       return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} split a bill</div><button class="billmsg" data-act="gtab" data-t="bills"><span class="label">🧾 Bill</span><b>${esc(b.title)} · ${money(b.total)}</b><span class="note">${b.shares.length} people · ${money(b.shares[0].amt)} each${mine && !mine.paid && b.paidBy !== 'me' ? ` · <b style="color:var(--ink)">you owe ${money(mine.amt)}</b>` : ''}</span></button></div></div>`; }
     if (m.poll) {
@@ -531,7 +575,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const g = grp(UI.group);
     const free = others(g).filter(p => statusOf(p)?.s === 'free');
     const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon">${g.emoji}</span><div class="grow"><h1 style="font-size:20px">${esc(g.name)}</h1><div class="note">${g.members.length} members · ${free.length} free today</div></div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Event</button>`;
-    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['members','Members']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
+    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Files'],['members','Members']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
     let body;
     if (UI.gtab === 'chat') {
       let lastDay = '';
@@ -539,7 +583,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       const nx = upcoming(g.id)[0];
       body = `<div class="gwrap"><div class="chat">${hangoutCard(g, true)}
         <div class="msgs" id="msgs">${msgs || '<div class="empty">No messages yet. Say hi.</div>'}</div>
-        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="newsplit" data-g="${g.id}">🧾 Split a bill</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}
+        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="pickfile" data-accept="image/*">📷 Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">📎 Share a file or PDF</button><button type="button" data-act="newsplit" data-g="${g.id}">🧾 Split a bill</button><button type="button" data-act="newreminder" data-g="${g.id}">⏰ Set a reminder</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
           <button type="button" class="plus" data-act="menu" aria-label="More">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(g.name)}" value="${esc(UI.draft[g.id] || '')}" aria-label="Message"><button class="send" aria-label="Send">${I.send}</button></form></div>
         <aside class="side">${hangoutCard(g)}
           <div class="card"><span class="label">Next up</span>${nx ? eventCard(nx.e, nx.d) : '<p class="note">No events yet.</p>'}</div>
@@ -548,6 +592,13 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     } else if (UI.gtab === 'events') {
       const up = upcoming(g.id);
       body = `<div class="scroll"><div class="pad"><div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div>${up.length ? '' : '<div class="empty">No events yet.</div>'}<div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Create an event</button></div></div></div>`;
+    } else if (UI.gtab === 'files') {
+      const fm = S.messages[g.id].filter(m => m.file), photos = fm.filter(m => fileKind(m.file) === 'image'), docs = fm.filter(m => fileKind(m.file) !== 'image');
+      body = `<div class="scroll"><div class="pad"><div class="sechead"><h2 style="font-size:20px">Photos · ${photos.length}</h2><span style="display:flex;gap:8px"><button class="btn line" data-act="pickfile" data-accept="image/*">+ Photo</button><button class="btn line" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,application/pdf">+ File</button></span></div>
+        ${photos.length ? `<div class="gallery">${photos.reverse().map(m => `<button data-act="viewimg" data-m="${m.id}" aria-label="Open ${esc(m.file.name)}"><img src="${m.file.url}" alt="${esc(m.file.name)}"></button>`).join('')}</div>` : '<div class="empty">No photos yet.</div>'}
+        <h2 style="font-size:20px">Files · ${docs.length}</h2>
+        ${docs.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">${docs.reverse().map(m => `<div>${fileCard(m.file)}<div class="note" style="margin:4px 4px 0">${esc(nameOf(m.from))} · ${esc(fmtDay(ymd(new Date(m.ts))))}</div></div>`).join('')}</div>` : '<div class="empty">No files yet. Share a PDF, doc, or spreadsheet with the group.</div>'}
+        <input type="file" id="upfile" multiple hidden></div></div>`;
     } else if (UI.gtab === 'bills') {
       const bs = S.bills.filter(b => b.group === g.id).sort((a, b2) => b2.ts - a.ts);
       body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
@@ -572,6 +623,8 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       <div class="calhead"><button class="iconbtn" data-act="mon" data-d="-1" aria-label="Previous month">‹</button><h2>${MONTHS[m - 1]} ${y}</h2><button class="btn line" data-act="mon" data-d="0">Today</button><button class="iconbtn" data-act="mon" data-d="1" aria-label="Next month">›</button></div>
       <div class="grid">${DOW.map(d => `<div class="dow">${d}</div>`).join('')}${cells}</div></div>
       <aside class="agenda"><h3>${esc(fmtDay(UI.day))}</h3>${dayEv.length ? dayEv.map(e => eventCard(e, UI.day)).join('') : '<div class="empty">Nothing planned yet.</div>'}
+        ${(() => { const rs = S.reminders.filter(r => remOn(r, UI.day)).sort((a, b) => (a.time || '').localeCompare(b.time || '')); return rs.length ? `<span class="label">Reminders</span><div class="rems">${rs.map(r => remRow(r, UI.day)).join('')}</div>` : ''; })()}
+        <button class="btn line" data-act="newreminder" data-date="${UI.day}">+ Reminder on ${esc(fmtDay(UI.day))}</button>
         <button class="btn primary" data-act="newevent" data-date="${UI.day}">+ Plan something on ${esc(fmtDay(UI.day))}</button></aside></div>`;
     return { head: `<div class="grow"><h1>Calendar</h1></div><button class="btn primary" data-act="newevent" data-date="${UI.day}">+ New event</button>`, body };
   }
@@ -582,6 +635,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const body = `<div class="scroll"><div class="pad" style="max-width:720px">
       <div class="card" style="flex-direction:row;align-items:center;gap:14px"><span class="ring ${me ? '' : 'add'}" style="${me ? `background:${STATUS[me.s].color}` : ''}">${av('me', { dot: false })}</span><div style="flex:1"><b style="font-size:19px">You</b><div class="note">${me ? STATUS[me.s].long + ' until ' + clock(me.until) : 'No status set'}</div></div><button class="btn line" data-act="status">${me ? 'Change' : 'Set status'}</button></div>
       <div class="sec"><h2 style="font-size:20px">You're going to</h2>${going.length ? `<div class="events">${going.map(x => eventCard(x.e, x.d)).join('')}</div>` : '<div class="empty">Nothing yet. Tap Going on an event.</div>'}</div>
+      <div class="sec"><div class="sechead"><h2 style="font-size:20px">Reminders</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>${(() => { const l = remList(); return l.length ? `<div class="rems">${l.map(x => remRow(x.r, x.d)).join('')}</div>` : '<div class="empty">No reminders yet.</div>'; })()}</div>
       <div class="card"><span class="label">Privacy</span><span>Your status clears on its own. No location sharing, no public profile, no ads in your chats.</span></div>
       <div class="card"><span class="label">About this demo</span><span class="note">Friends and their replies are samples. Every visit starts fresh, so nothing here is saved or shared.</span><div class="seg"><button data-act="restart">Start over</button><a class="btn line" href="../" style="text-decoration:none">Back to the homepage</a></div></div>
     </div></div>`;
@@ -650,6 +704,15 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <button class="btn line" data-act="copyzelle" data-v="${esc(ZELLE[to])}">Copy ${esc(nameOf(to))}'s Zelle info</button>
         <button class="btn primary" data-act="markmine" data-b="${b.id}" data-v="Zelle">I sent it</button><button class="btn" data-act="close">Cancel</button></div>`, 'Zelle');
     }
+    if (s.kind === 'reminder') {
+      return wrap(`<form class="in" id="remform"><h2>New reminder</h2>
+        <div class="seg emojis">${['💪','🏃','💊','💧','📚','🛒','🧾','🎂','⏰'].map(x => `<button type="button" data-act="remoji" data-v="${x}" aria-pressed="${s.emoji === x}">${x}</button>`).join('')}</div>
+        <div class="field"><label class="label" for="rtitle">Remind me to</label><input id="rtitle" required maxlength="50" placeholder="Work out, take vitamins, call Mom" value="${esc(s.title)}"></div>
+        <div class="row2"><div class="field"><label class="label" for="rdate">Starting</label><input id="rdate" type="date" required value="${s.date}"></div><div class="field"><label class="label" for="rtime">Time</label><input id="rtime" type="time" required value="${s.time}"></div></div>
+        <div class="field"><span class="label">Repeat</span><div class="seg">${Object.entries(REPEAT).map(([k, l]) => `<button type="button" data-act="rrep" data-v="${k}" aria-pressed="${s.repeat === k}">${l}</button>`).join('')}</div></div>
+        <div class="field"><label class="label" for="rgroup">Share with a group (optional)</label><select id="rgroup"><option value="">Just me</option>${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${g.emoji} ${esc(g.name)}</option>`).join('')}</select><span class="note">Shared reminders post to the group, so friends can hold you to it.</span></div>
+        <button class="btn primary" style="padding:13px;font-size:15px">Save reminder</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New reminder');
+    }
     if (s.kind === 'group') {
       return wrap(`<form class="in" id="grpform"><h2>New group</h2>
         <div class="field"><label class="label" for="gname">Name</label><input id="gname" required maxlength="30" placeholder="Roommates, Running club, Work friends"></div>
@@ -658,6 +721,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <button class="btn primary" style="padding:13px">Create group</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New group');
     }
     return '';
+  }
+  function viewerHtml() {
+    let m; Object.values(S.messages).forEach(l => l.forEach(x => { if (x.id === UI.viewer) m = x; })); if (!m) return '';
+    return `<div class="ov" data-act="close" data-ov="1" style="background:rgba(0,0,0,.85)"><div class="viewer" data-stop="1"><img src="${m.file.url}" alt="${esc(m.file.name)}"><div class="bar"><span style="flex:1;min-width:0">${esc(nameOf(m.from))} · ${clock(m.ts)}</span><a class="btn line" style="color:var(--ink);text-decoration:none" href="${m.file.url}" download="${esc(m.file.name)}" target="_blank" rel="noopener">Save</a><button class="btn line" style="color:var(--ink)" data-act="close">Close</button></div></div></div>`;
   }
   function modalHtml() {
     const e = evt(UI.modal); if (!e) return '';
@@ -700,8 +767,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0);
     const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Home'],['groups','Groups'],['calendar','Calendar'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge" style="position:absolute;top:4px;left:calc(50% + 6px);background:var(--maroon);color:#fff;border-radius:999px;font-size:10.5px;font-weight:700;padding:1px 6px">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
     document.getElementById('shell').innerHTML = `${rail}<main><header class="top">${v.head}</header>${v.tabs || ''}${v.body}</main>${tabbar}`;
-    document.getElementById('layer').innerHTML = (UI.sheet ? sheetHtml() : '') + (UI.modal ? modalHtml() : '') + (UI.toast ? `<div class="toast" role="status">${esc(UI.toast)}</div>` : '');
-    const nb = document.getElementById('msgs'); if (nb && (atBottom || UI.toBottom)) nb.scrollTop = nb.scrollHeight; UI.toBottom = false;
+    document.getElementById('layer').innerHTML = (UI.sheet ? sheetHtml() : '') + (UI.modal ? modalHtml() : '') + (UI.viewer ? viewerHtml() : '') + (UI.toast ? `<div class="toast" role="status">${esc(UI.toast)}</div>` : '');
+    const nb = document.getElementById('msgs'), stick = nb && (atBottom || UI.toBottom);
+    if (stick) { nb.scrollTop = nb.scrollHeight; nb.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { nb.scrollTop = nb.scrollHeight; }, { once: true }); }); }
+    UI.toBottom = false;
     const ns = document.querySelector('main .scroll'); if (ns) ns.scrollTop = keep;
     bind();
     if (fid === 'msg') { const m2 = document.getElementById('msg'); if (m2) { m2.focus(); if (caret != null) m2.setSelectionRange(caret, caret); } }
@@ -714,6 +783,22 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       S.messages[g].push({ id: uid(), from: 'me', text, ts: Date.now(), likes: [] }); UI.draft[g] = ''; i.value = ''; UI.menu = false; UI.toBottom = true; render(); document.getElementById('msg')?.focus(); simulateReply(g, text); };
     const ef = document.getElementById('evform');
     if (ef) { ef.onsubmit = e => { e.preventDefault(); createEvent(); }; ['etitle','edate','etime','ewhere','egroup','erepeat'].forEach(id => { const el = document.getElementById(id); el.oninput = el.onchange = syncEvent; }); }
+    const up = document.getElementById('upfile');
+    if (up) up.onchange = () => { if (up.files && up.files.length) addFiles(UI.group, up.files); };
+    const chat = document.querySelector('.chat');
+    if (chat && !chat.dataset.dnd) { chat.dataset.dnd = '1';
+      chat.addEventListener('dragover', e => { e.preventDefault(); chat.classList.add('drop'); });
+      chat.addEventListener('dragleave', e => { if (!chat.contains(e.relatedTarget)) chat.classList.remove('drop'); });
+      chat.addEventListener('drop', e => { e.preventDefault(); chat.classList.remove('drop'); if (e.dataTransfer?.files?.length) addFiles(UI.group, e.dataTransfer.files); }); }
+    const rf = document.getElementById('remform');
+    if (rf) {
+      rf.onsubmit = e => { e.preventDefault(); syncRem(); const s2 = UI.sheet; if (!s2.title.trim()) return;
+        const r = { id: 'r' + uid(), emoji: s2.emoji, title: s2.title.trim(), date: s2.date, time: s2.time, repeat: s2.repeat, group: s2.group, doneOn: {} };
+        S.reminders.push(r); UI.sheet = null;
+        if (r.group) S.messages[r.group].push({ id: uid(), sys: `You set a shared reminder: ${r.emoji} ${r.title}, ${remWhen(r, nextRem(r) || r.date)}`, ts: Date.now() });
+        toast(`Reminder saved: ${r.title}, ${remWhen(r, nextRem(r) || r.date)}`); };
+      ['rtitle','rdate','rtime','rgroup'].forEach(id => { document.getElementById(id).oninput = syncRem; });
+    }
     const sf = document.getElementById('splitform');
     if (sf) {
       sf.onsubmit = e => { e.preventDefault(); createSplit(); };
@@ -772,6 +857,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const note = document.getElementById('sumnote');
     if (note) { const off = s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009; note.hidden = !off; note.textContent = off ? `Amounts add up to ${money(sa.base)}, bill is ${money(sa.bill)}` : ''; }
   }
+  function syncRem() { const s = UI.sheet, g = id => document.getElementById(id); if (!s || s.kind !== 'reminder' || !g('rtitle')) return; s.title = g('rtitle').value; s.date = g('rdate').value || s.date; s.time = g('rtime').value; s.group = g('rgroup').value; }
   function createSplit() {
     syncSplit(false); const s = UI.sheet, sa = splitAmounts(s);
     if (!s.title.trim() || sa.bill <= 0 || !s.people.length) return toast('Add what it was for, the bill amount, and who to split with');
@@ -833,6 +919,54 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
   }
   function evenSplit(total, n) { const cents = Math.round(total * 100), base = Math.floor(cents / n), extra = cents - base * n; return Array.from({ length: n }, (_, i) => (base + (i < extra ? 1 : 0)) / 100); }
   const ZELLE = { alex: 'alex.r@email.com', jordan: '(305) 555 0142', sam: 'sam.k@email.com', maya: 'maya@email.com', chris: '(305) 555 0187', mom: '(305) 555 0110', dad: '(305) 555 0111', emma: 'emma@email.com', ben: 'ben@email.com', priya: 'priya.s@email.com', lena: 'lena@email.com', kate: 'kate@email.com', me: 'you@email.com' };
+  const REPEAT = { '': 'Once', daily: 'Every day', weekdays: 'Weekdays', weekly: 'Every week' };
+  const rem = id => S.reminders.find(r => r.id === id);
+  function remOn(r, day) {
+    if (day < r.date) return false;
+    if (!r.repeat) return day === r.date;
+    if (r.repeat === 'daily') return true;
+    const dow = parseYmd(day).getDay();
+    if (r.repeat === 'weekdays') return dow >= 1 && dow <= 5;
+    return dow === parseYmd(r.date).getDay();
+  }
+  function nextRem(r) {
+    for (let i = 0; i < 60; i++) { const day = ymd(addDays(new Date(), i)); if (!remOn(r, day) || r.doneOn[day]) continue; return day; }
+    return null;
+  }
+  const remWhen = (r, day) => `${fmtDay(day)}${r.time ? ', ' + fmtTime(r.time) : ''}${r.repeat ? ' · ' + REPEAT[r.repeat] : ''}`;
+  function remRow(r, day) {
+    const done = !!r.doneOn[day], g = r.group ? grp(r.group) : null;
+    return `<div class="rem ${done ? 'done' : ''}"><span class="e">${r.emoji}</span><div class="t"><b>${esc(r.title)}</b><span class="note">${esc(remWhen(r, day))}${g ? ` · shared with ${g.emoji} ${esc(g.name)}` : ''}</span></div>
+      <button class="check" data-act="remdone" data-r="${r.id}" data-day="${day}" aria-pressed="${done}" aria-label="Mark done">✓</button><button class="iconbtn" data-act="remdel" data-r="${r.id}" aria-label="Delete reminder" style="width:32px;height:32px;font-size:15px">×</button></div>`;
+  }
+  function remList(limit) {
+    const items = S.reminders.map(r => { const t = today(); const d = remOn(r, t) ? t : nextRem(r); return d ? { r, d } : null; }).filter(Boolean)
+      .sort((a, b) => (a.d + (a.r.time || '')).localeCompare(b.d + (b.r.time || '')));
+    return items.slice(0, limit || 99);
+  }
+  function setEventReminder(e, v) {
+    S.reminders = S.reminders.filter(r => r.event !== e.id);
+    if (!v) return;
+    const d = nextDate(e) || e.date; let day = d, time = e.time || '09:00';
+    if (v === '1d') day = ymd(addDays(parseYmd(d), -1));
+    else { const [h, m] = (e.time || '12:00').split(':').map(Number); const mins = h * 60 + m - (v === '2h' ? 120 : 30); time = `${pad2(Math.floor(Math.max(0, mins) / 60))}:${pad2(Math.max(0, mins) % 60)}`; }
+    S.reminders.push({ id: 'r' + uid(), emoji: e.emoji, title: e.title, date: day, time, repeat: '', group: '', event: e.id, doneOn: {} });
+  }
+  function fileKind(f) { if (f.type.startsWith('image/')) return 'image'; if (/pdf/.test(f.type) || /\.pdf$/i.test(f.name)) return 'pdf'; if (/word|document/.test(f.type) || /\.docx?$/i.test(f.name)) return 'doc'; if (/sheet|excel|csv/.test(f.type) || /\.(xlsx?|csv)$/i.test(f.name)) return 'sheet'; return 'other'; }
+  const fileSize = n => n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+  function fileCard(f) {
+    const k = fileKind(f), label = { pdf: 'PDF', doc: 'DOC', sheet: 'XLS', other: 'FILE' }[k];
+    return `<a class="filecard" href="${f.url}" target="_blank" rel="noopener" download="${esc(f.name)}"><span class="fileicon ${k === 'pdf' ? '' : k}">${label}</span><span class="t"><b>${esc(f.name)}</b><span class="note">${fileSize(f.size)} · Tap to open</span></span></a>`;
+  }
+  function addFiles(gid, files) {
+    [...files].slice(0, 10).forEach(file => {
+      if (file.size > 25 * 1048576) return toast(`${file.name} is over 25 MB`);
+      S.messages[gid].push({ id: uid(), from: 'me', ts: Date.now(), likes: [], file: { name: file.name, type: file.type || '', size: file.size, url: URL.createObjectURL(file) } });
+    });
+    UI.menu = false; UI.toBottom = true; render();
+    const g = grp(gid), cand = others(g).filter(p => statusOf(p)?.s !== 'busy'), last = S.messages[gid].at(-1);
+    if (cand.length) setTimeout(() => { last.likes.push(pick(cand)); if (UI.group === gid) render(); }, 1500);
+  }
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
 
   document.addEventListener('click', ev => {
@@ -880,13 +1014,20 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       }
       case 'markmine': markMine(bill(d.b), d.v); break;
       case 'copyzelle': { const v = d.v; try { navigator.clipboard.writeText(v).then(() => toast('Copied ' + v), () => toast(v)); } catch (e) { toast(v); } return; }
-      case 'remindme': UI.sheet = null; return toast('We will remind you tomorrow to pay this back');
+      case 'remindme': { const b = bill(d.b), sh = b.shares.find(x => x.p === 'me'); S.reminders.push({ id: 'r' + uid(), emoji: '🧾', title: `Pay ${nameOf(b.paidBy)} back ${money(sh.amt)}`, date: ymd(addDays(new Date(), 1)), time: '09:00', repeat: '', group: '', doneOn: {} }); UI.sheet = null; return toast('Reminder set for tomorrow at 9 AM'); }
+      case 'newreminder': UI.menu = false; UI.sheet = { kind: 'reminder', emoji: '💪', title: '', date: d.date || today(), time: '18:00', repeat: '', group: d.g || '' }; break;
+      case 'remoji': syncRem(); UI.sheet.emoji = d.v; break;
+      case 'rrep': syncRem(); UI.sheet.repeat = d.v; break;
+      case 'remdone': { const r = rem(d.r); if (r.doneOn[d.day]) delete r.doneOn[d.day]; else { r.doneOn[d.day] = true; toast(r.repeat ? `Nice. ${r.title} done for ${fmtDay(d.day).toLowerCase()}` : `Done: ${r.title}`); return; } break; }
+      case 'remdel': { const r = rem(d.r); S.reminders = S.reminders.filter(x => x !== r); if (r.event) { const e = evt(r.event); if (e) e.remind = ''; } return toast('Reminder deleted'); }
+      case 'pickfile': { UI.menu = false; const inp = document.getElementById('upfile'); if (inp) { inp.accept = d.accept || ''; inp.value = ''; inp.click(); } return; }
+      case 'viewimg': UI.viewer = d.m; break;
       case 'remindpay': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); S.messages[b.group].push({ id: uid(), sys: `Reminder sent to ${nameOf(d.p)}: ${money(sh.amt)} for ${b.title}`, ts: Date.now() }); return toast(`Reminder sent to ${nameOf(d.p)}`); }
       case 'markpaid': { const sh = bill(d.b).shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; return toast(`${nameOf(d.p)} marked as paid`); }
-      case 'remind': { const e = evt(d.ev); e.remind = d.v; return toast(d.v ? `We'll remind you ${({ '1d': '1 day', '2h': '2 hours', '30m': '30 minutes' })[d.v]} before ${e.title}` : 'Reminder off'); }
+      case 'remind': { const e = evt(d.ev); e.remind = d.v; setEventReminder(e, d.v); return toast(d.v ? `We'll remind you ${({ '1d': '1 day', '2h': '2 hours', '30m': '30 minutes' })[d.v]} before ${e.title}` : 'Reminder off'); }
       case 'addcal': return toast('Added to your calendar');
       case 'copylink': { const t = `Join me on Roundtable: ${evt(d.ev).title}, ${whenText(evt(d.ev))}`; try { navigator.clipboard.writeText(t).then(() => toast('Invite copied. Paste it in any chat.'), () => toast('Invite links work once Roundtable launches')); } catch (e) { toast('Invite links work once Roundtable launches'); } return; }
-      case 'close': UI.sheet = null; UI.modal = null; break;
+      case 'close': if (UI.viewer) { UI.viewer = null; break; } UI.sheet = null; UI.modal = null; break;
       case 'pickday': UI.day = d.day; UI.cal = d.day.slice(0, 7); break;
       case 'mon': if (d.d === '0') { UI.cal = today().slice(0, 7); UI.day = today(); } else { const [y, m] = UI.cal.split('-').map(Number); UI.cal = ymd(new Date(y, m - 1 + +d.d, 1)).slice(0, 7); } break;
       case 'restart': S = seed(); UI.view = 'home'; UI.group = null; UI.welcome = true; return toast('Fresh demo started');
@@ -894,7 +1035,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     }
     render();
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && (UI.sheet || UI.modal || UI.menu)) { UI.sheet = null; UI.modal = null; UI.menu = false; render(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && (UI.sheet || UI.modal || UI.menu || UI.viewer)) { if (UI.viewer) UI.viewer = null; else { UI.sheet = null; UI.modal = null; UI.menu = false; } render(); } });
   let lastWide = wide(); addEventListener('resize', () => { if (wide() !== lastWide) { lastWide = wide(); render(); } });
   setInterval(() => { if (!UI.sheet && !UI.modal && document.activeElement?.tagName !== 'INPUT') render(); }, 60000);
   render();
