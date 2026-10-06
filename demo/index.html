@@ -37,7 +37,7 @@
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
-body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 input, select, textarea { font: inherit; color: var(--ink); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -101,7 +101,23 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .tabs button { padding: 12px 12px 11px; font-weight: 700; color: var(--muted); border-bottom: 2px solid transparent; }
 .tabs button[aria-current="true"] { color: var(--ink); border-bottom-color: var(--maroon); }
 .scroll { flex: 1; min-height: 0; overflow-y: auto; }
-.pad { padding: 22px; display: flex; flex-direction: column; gap: 22px; max-width: 1100px; }
+.pad { padding: 22px; display: flex; flex-direction: column; gap: 28px; max-width: 860px; }
+/* simple rows */
+.list { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.lrow { display: flex; align-items: center; gap: 14px; padding: 14px 16px; text-align: left; width: 100%; min-width: 0; }
+.lrow + .lrow { border-top: 1px solid var(--line); }
+button.lrow:hover { background: var(--panel); }
+.lrow .tile { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 24px; flex: none; }
+.lrow .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lrow .t b { font-size: 16.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lrow .t .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { font-size: 13px; font-weight: 700; padding: 5px 11px; border-radius: 999px; background: var(--panel); color: var(--muted); flex: none; white-space: nowrap; }
+.chip.g { background: var(--free-soft); color: var(--free); }
+.chip.m { background: color-mix(in srgb, #C98A12 18%, transparent); color: #A86F00; }
+.hello { font-family: var(--display); font-size: 26px; font-weight: 700; line-height: 1.2; }
+.hello + .note { margin-top: -20px; font-size: 15px; }
+.hpill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 14px; white-space: nowrap; }
+.hpill[aria-pressed="true"] { background: var(--free); color: #fff; border-color: transparent; }
 
 /* avatars */
 .av { width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; position: relative; flex: none; }
@@ -128,8 +144,8 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .events { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
 .ev { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; text-align: left; transition: transform .2s, box-shadow .2s; min-width: 0; }
 .ev:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-.cover { height: 118px; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; color: #fff; position: relative; }
-.cover .emo { font-size: 44px; line-height: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,.25)); }
+.cover { height: 88px; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; color: #fff; position: relative; }
+.cover .emo { font-size: 38px; line-height: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,.25)); }
 .cover .when { background: rgba(255,255,255,.18); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 12.5px; }
 .ev .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .ev .title { font-family: var(--display); font-weight: 700; font-size: 19px; line-height: 1.15; }
@@ -283,7 +299,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 @media (max-width: 860px) {
   #shell { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
   .rail { display: none; }
-  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--app); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--app); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
   .tabbar button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 0 10px; font-size: 11.5px; font-weight: 600; color: var(--muted); position: relative; }
   .tabbar button[aria-current="page"] { color: var(--ink); }
   .tabbar button[aria-current="page"] svg { color: var(--maroon); }
@@ -458,6 +474,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     groups: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/></svg>',
     calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
     you: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>',
+    money: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="12" cy="12" r="2.6"/></svg>',
     send: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12 2-12 2z"/></svg>',
     heart: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.9c0 5.6-7.5 10-7.5 10z"/></svg>'
   };
@@ -496,7 +513,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const unpaid = b.shares.filter(sh => !sh.paid && sh.p !== b.paidBy).length;
     return `<div class="bill">
       <div class="bill-top">${b.receipt ? `<img class="receipt" src="${b.receipt}" alt="Receipt photo">` : `<span class="receipt">🧾</span>`}
-        <div class="t"><b>${esc(b.title)}</b><span class="note">${e ? `${e.emoji} ${esc(e.title)} · ` : ''}${g.emoji} ${esc(g.name)} · ${esc(nameOf(b.paidBy))} paid${b.tip ? ` · includes ${money(b.tip)} tip (${b.tipPct}%)` : ''}</span></div>
+        <div class="t"><b>${esc(b.title)}</b><span class="note">${b.paidBy === 'me' ? 'You' : esc(nameOf(b.paidBy))} paid · ${g.emoji} ${esc(g.name)}${b.tip ? ` · ${money(b.tip)} tip` : ''}</span></div>
         <span class="total">${money(b.total)}</span></div>
       <div>${rows}</div>
       <span class="note">${unpaid ? `${unpaid} still to pay back` : 'Everyone is paid up'}</span>
@@ -511,26 +528,41 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
   }
 
   // ---------- views ----------
+  function evRow(e, d) {
+    const g = grp(e.group), r = myRsvp(e);
+    const chip = r === 'g' ? '<span class="chip g">Going</span>' : r === 'm' ? '<span class="chip m">Maybe</span>' : r === 'c' ? '<span class="chip">Can\'t go</span>' : '<span class="chip" style="background:var(--maroon);color:#fff">RSVP</span>';
+    return `<button class="lrow" data-act="openev" data-ev="${e.id}"><span class="tile" style="${coverBg(e)}">${e.emoji}</span><span class="t"><b>${esc(e.title)}</b><span class="note">${esc(whenText(e, d))} · ${g.emoji} ${esc(g.name)} · ${e.going.length} going</span></span>${chip}</button>`;
+  }
+  function todoRows() {
+    const t = today(), rows = [];
+    S.bills.forEach(b => { const sh = b.shares.find(x => x.p === 'me'); if (sh && !sh.paid && b.paidBy !== 'me') rows.push(`<div class="lrow"><span class="tile" style="background:var(--panel)">🧾</span><span class="t"><b>Pay ${esc(nameOf(b.paidBy))} ${money(sh.amt)}</b><span class="note">For ${esc(b.title)}</span></span><button class="btn primary sm" data-act="payback" data-b="${b.id}">Pay</button></div>`); });
+    S.reminders.filter(r => remOn(r, t)).sort((a, b) => (a.time || '').localeCompare(b.time || '')).forEach(r => { const done = !!r.doneOn[t]; rows.push(`<div class="lrow" style="${done ? 'opacity:.55' : ''}"><span class="tile" style="background:var(--panel)">${r.emoji}</span><span class="t"><b style="${done ? 'text-decoration:line-through' : ''}">${esc(r.title)}</b><span class="note">${r.time ? fmtTime(r.time) : 'Today'}${r.repeat ? ' · ' + REPEAT[r.repeat] : ''}</span></span><button class="check" data-act="remdone" data-r="${r.id}" data-day="${t}" aria-pressed="${done}" aria-label="Mark done">✓</button></div>`); });
+    return rows;
+  }
   function viewHome() {
     const me = statusOf('me');
     const friends = [...new Set(S.groups.flatMap(others))].map(p => ({ p, st: statusOf(p) })).filter(x => x.st).sort((a, b) => (a.st.s === 'free' ? 0 : 1) - (b.st.s === 'free' ? 0 : 1));
     const freeCount = friends.filter(x => x.st.s === 'free').length;
-    const up = upcoming().slice(0, 6);
-    const welcome = UI.welcome ? `<div class="welcome"><div><h2>Welcome to the Roundtable demo</h2><ol><li>Tap your circle below to tell friends what you're up to.</li><li>Open a group to chat, share photos and files, and vote in polls.</li><li>RSVP to an event, or make your own. After it, split the bill.</li></ol></div><button class="x" data-act="hidewelcome" aria-label="Dismiss">×</button></div>` : '';
+    const up = upcoming().slice(0, 4), todo = todoRows();
     const body = `<div class="pad">
-      ${welcome}
-      <div class="sec"><div class="sechead"><h2>Your friends today</h2><span class="note">${freeCount} friends free</span></div>
-        <div class="strip">
+      <div class="hello">Hey there 👋</div><div class="note">${freeCount} friends are free today${UI.welcome ? '. Tap your circle to share what you\'re up to.' : '.'}</div>
+      <div class="strip">
           <button class="person" data-act="status"><span class="ring ${me ? '' : 'add'}" style="${me ? `background:${STATUS[me.s].color}` : ''}">${me ? av('me', { dot: false }) : '<span style="font-size:26px;color:var(--muted)">+</span>'}</span><b>You</b><small>${me ? STATUS[me.s].long : 'Set status'}</small></button>
           ${friends.map(({ p, st }) => `<div class="person"><span class="ring" style="background:${STATUS[st.s].color}">${av(p, { dot: false })}</span><b>${esc(nameOf(p))}</b><small>${STATUS[st.s].long}</small></div>`).join('')}
-        </div></div>
-      <div class="sec"><div class="sechead"><h2>Upcoming events</h2><button class="btn primary" data-act="newevent">+ New event</button></div>
-        <div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div></div>
-      <div class="sec"><div class="sechead"><h2>Reminders</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>${(() => { const l = remList(4); return l.length ? `<div class="rems">${l.map(x => remRow(x.r, x.d)).join('')}</div>` : '<div class="empty">No reminders yet.</div>'; })()}</div>
-      <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line" data-act="newsplit">+ Split a bill</button></div>${moneyTiles()}${bankCard()}</div>
-      <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line" data-act="newgroup">+ New group</button></div>${groupRows()}</div>
+      </div>
+      <div class="sec"><div class="sechead"><h2>Coming up</h2><button class="btn primary" data-act="newevent">+ Event</button></div>
+        ${up.length ? `<div class="list">${up.map(x => evRow(x.e, x.d)).join('')}</div>` : '<div class="empty">Nothing planned yet.</div>'}</div>
+      <div class="sec"><div class="sechead"><h2>To do today</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>
+        ${todo.length ? `<div class="list">${todo.join('')}</div>` : '<div class="empty">All clear for today.</div>'}</div>
     </div>`;
     return { head: `<div class="grow"><h1>Home</h1></div>`, body: `<div class="scroll">${body}</div>` };
+  }
+  function viewMoney() {
+    const bs = [...S.bills].sort((a, b) => b.ts - a.ts);
+    const body = `<div class="pad">${moneyTiles()}
+      <div class="sec"><div class="sechead"><h2>Bills</h2></div>${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div>
+      <div class="sec"><div class="sechead"><h2>Bank</h2></div>${bankCard()}</div></div>`;
+    return { head: `<div class="grow"><h1>Money</h1></div><button class="btn primary" data-act="newsplit">+ Split a bill</button>`, body: `<div class="scroll">${body}</div>` };
   }
   function groupRows() {
     return `<div class="grows">${S.groups.map(g => {
@@ -574,24 +606,23 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
   function viewGroup() {
     const g = grp(UI.group);
     const free = others(g).filter(p => statusOf(p)?.s === 'free');
-    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon">${g.emoji}</span><div class="grow"><h1 style="font-size:20px">${esc(g.name)}</h1><div class="note">${g.members.length} members · ${free.length} free today</div></div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Event</button>`;
-    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Files'],['members','Members']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
+    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon">${g.emoji}</span><div class="grow"><h1 style="font-size:21px">${esc(g.name)}</h1><button class="note" data-act="members" style="text-decoration:underline;text-underline-offset:3px">${g.members.length} members${free.length ? ` · ${free.length} free` : ''}</button></div><button class="hpill" data-act="hang" data-g="${g.id}" aria-pressed="${g.hangout.includes('me')}" title="Open voice room"><span class="live"></span>${g.hangout.includes('me') ? 'Leave' : 'Hangout'}${g.hangout.length ? ' · ' + g.hangout.length : ''}</button>`;
+    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Photos & files']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
     let body;
     if (UI.gtab === 'chat') {
       let lastDay = '';
       const msgs = S.messages[g.id].map(m => { const d = ymd(new Date(m.ts)); let sep = ''; if (d !== lastDay) { lastDay = d; sep = `<div class="day">${esc(fmtDay(d))}</div>`; } return sep + msgHtml(m, g); }).join('');
       const nx = upcoming(g.id)[0];
-      body = `<div class="gwrap"><div class="chat">${hangoutCard(g, true)}
+      body = `<div class="gwrap"><div class="chat">
         <div class="msgs" id="msgs">${msgs || '<div class="empty">No messages yet. Say hi.</div>'}</div>
         <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="pickfile" data-accept="image/*">📷 Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">📎 Share a file or PDF</button><button type="button" data-act="newsplit" data-g="${g.id}">🧾 Split a bill</button><button type="button" data-act="newreminder" data-g="${g.id}">⏰ Set a reminder</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
           <button type="button" class="plus" data-act="menu" aria-label="More">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(g.name)}" value="${esc(UI.draft[g.id] || '')}" aria-label="Message"><button class="send" aria-label="Send">${I.send}</button></form></div>
-        <aside class="side">${hangoutCard(g)}
-          <div class="card"><span class="label">Next up</span>${nx ? eventCard(nx.e, nx.d) : '<p class="note">No events yet.</p>'}</div>
-          <div class="card"><span class="label">Free today · ${free.length}</span>${free.length ? free.map(p => `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span></div>`).join('') : '<p class="note">Nobody yet.</p>'}</div>
+        <aside class="side">
+                    <div class="card"><span class="label">Free today · ${free.length}</span>${free.length ? free.map(p => `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span></div>`).join('') : '<p class="note">Nobody yet.</p>'}</div>
         </aside></div>`;
     } else if (UI.gtab === 'events') {
       const up = upcoming(g.id);
-      body = `<div class="scroll"><div class="pad"><div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div>${up.length ? '' : '<div class="empty">No events yet.</div>'}<div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Create an event</button></div></div></div>`;
+      body = `<div class="scroll"><div class="pad"><div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Create an event</button></div>${up.length ? `<div class="list">${up.map(x => evRow(x.e, x.d)).join('')}</div>` : '<div class="empty">No events yet.</div>'}</div></div>`;
     } else if (UI.gtab === 'files') {
       const fm = S.messages[g.id].filter(m => m.file), photos = fm.filter(m => fileKind(m.file) === 'image'), docs = fm.filter(m => fileKind(m.file) !== 'image');
       body = `<div class="scroll"><div class="pad"><div class="sechead"><h2 style="font-size:20px">Photos · ${photos.length}</h2><span style="display:flex;gap:8px"><button class="btn line" data-act="pickfile" data-accept="image/*">+ Photo</button><button class="btn line" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,application/pdf">+ File</button></span></div>
@@ -601,9 +632,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <input type="file" id="upfile" multiple hidden></div></div>`;
     } else if (UI.gtab === 'bills') {
       const bs = S.bills.filter(b => b.group === g.id).sort((a, b2) => b2.ts - a.ts);
-      body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}${bankCard()}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
+      body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
         ${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div></div>`;
     } else {
+      UI.gtab = 'chat'; return viewGroup();
       body = `<div class="scroll"><div class="members">${g.members.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><span class="s">${st ? STATUS[st.s].long : 'No status'}</span></div>`; }).join('')}</div></div>`;
     }
     return { head, tabs, body };
@@ -722,6 +754,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <div class="field"><label class="label" for="rgroup">Share with a group (optional)</label><select id="rgroup"><option value="">Just me</option>${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${g.emoji} ${esc(g.name)}</option>`).join('')}</select><span class="note">Shared reminders post to the group, so friends can hold you to it.</span></div>
         <button class="btn primary" style="padding:13px;font-size:15px">Save reminder</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New reminder');
     }
+    if (s.kind === 'members') {
+      const g = grp(UI.group);
+      return wrap(`<div class="in"><h2>${g.emoji} ${esc(g.name)} · ${g.members.length} members</h2><div class="list">${g.members.map(p => { const st = statusOf(p); return `<div class="lrow">${av(p)}<span class="t"><b>${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span></div>`; }).join('')}</div><button class="btn" data-act="close">Done</button></div>`, 'Members');
+    }
     if (s.kind === 'group') {
       return wrap(`<form class="in" id="grpform"><h2>New group</h2>
         <div class="field"><label class="label" for="gname">Name</label><input id="gname" required maxlength="30" placeholder="Roommates, Running club, Work friends"></div>
@@ -762,19 +798,20 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const box = document.getElementById('msgs'); const atBottom = box ? box.scrollHeight - box.scrollTop - box.clientHeight < 80 : true;
     const sc = document.querySelector('main .scroll'); const keep = sc && !UI.resetScroll ? sc.scrollTop : 0; UI.resetScroll = false;
     if (UI.view === 'group' && !UI.group) UI.view = wide() ? 'home' : 'groups';
-    const v = { home: viewHome, groups: viewGroups, group: viewGroup, calendar: viewCalendar, you: viewYou }[UI.view]();
+    const v = { home: viewHome, groups: viewGroups, group: viewGroup, calendar: viewCalendar, money: viewMoney, you: viewYou }[UI.view]();
     const me = statusOf('me');
     const rail = `<nav class="rail" aria-label="Groups">
       <button class="rbtn home" data-act="view" data-v="home" aria-label="Home" ${UI.view === 'home' ? 'aria-current="page"' : ''}><svg aria-hidden="true"><use href="#r"/></svg></button>
       <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${I.calendar.replace('<svg', '<svg class="ico"')}</button>
+      <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${I.money.replace('<svg', '<svg class="ico"')}</button>
       <hr>
       ${S.groups.map(g => `<button class="rbtn" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${g.emoji}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
       <button class="rbtn" data-act="newgroup" aria-label="New group" title="New group" style="color:var(--muted);font-size:24px">+</button>
       <button class="rbtn you" data-act="view" data-v="you" aria-label="You" ${UI.view === 'you' ? 'aria-current="page"' : ''} style="border-radius:50%;overflow:visible">${av('me')}</button>
     </nav>`;
-    const tabOf = { home: 'home', groups: 'groups', group: 'groups', calendar: 'calendar', you: 'you' }[UI.view];
+    const tabOf = { home: 'home', groups: 'groups', group: 'groups', calendar: 'calendar', money: 'money', you: 'you' }[UI.view];
     const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0);
-    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Home'],['groups','Groups'],['calendar','Calendar'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge" style="position:absolute;top:4px;left:calc(50% + 6px);background:var(--maroon);color:#fff;border-radius:999px;font-size:10.5px;font-weight:700;padding:1px 6px">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
+    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Home'],['groups','Groups'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge" style="position:absolute;top:4px;left:calc(50% + 6px);background:var(--maroon);color:#fff;border-radius:999px;font-size:10.5px;font-weight:700;padding:1px 6px">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
     document.getElementById('shell').innerHTML = `${rail}<main><header class="top">${v.head}</header>${v.tabs || ''}${v.body}</main>${tabbar}`;
     document.getElementById('layer').innerHTML = (UI.sheet ? sheetHtml() : '') + (UI.modal ? modalHtml() : '') + (UI.viewer ? viewerHtml() : '') + (UI.toast ? `<div class="toast" role="status">${esc(UI.toast)}</div>` : '');
     const nb = document.getElementById('msgs'), stick = nb && (atBottom || UI.toBottom);
@@ -999,6 +1036,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       case 'back': UI.view = 'groups'; UI.group = null; break;
       case 'gtab': UI.gtab = d.t; UI.toBottom = true; UI.resetScroll = true; break;
       case 'hidewelcome': UI.welcome = false; break;
+      case 'members': UI.sheet = { kind: 'members' }; break;
       case 'menu': UI.menu = !UI.menu; break;
       case 'rsvp': { const e = evt(d.ev); setRsvp(e, d.v); return toast(d.v === 'g' ? `You're going to ${e.title}` : d.v === 'm' ? `Maybe for ${e.title}` : `You can't make ${e.title}`); }
       case 'like': { const m = S.messages[UI.group].find(x => x.id === d.m); const i = m.likes.indexOf('me'); i > -1 ? m.likes.splice(i, 1) : m.likes.push('me'); break; }
