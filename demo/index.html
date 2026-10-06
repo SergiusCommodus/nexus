@@ -233,10 +233,10 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
   const nextDow = (dow, from = new Date()) => { const d = new Date(from); const diff = (dow - d.getDay() + 7) % 7 || 7; return addDays(d, diff); };
 
   const PEOPLE = {
-    me: { name: 'George', c: '#7D021D' }, mike: { name: 'Mike', c: '#A9822F' }, dom: { name: 'Dom', c: '#17905A' },
-    alex: { name: 'Alex', c: '#B34A6A' }, chris: { name: 'Chris', c: '#0E7F8E' }, tony: { name: 'Tony', c: '#6B5BD6' },
-    nick: { name: 'Nick', c: '#C4651F' }, ryan: { name: 'Ryan', c: '#4A5568' }, sam: { name: 'Sam', c: '#2B62F0' },
-    jake: { name: 'Jake', c: '#2E8B57' }, luis: { name: 'Luis', c: '#D2691E' }
+    me: { name: 'You', c: '#7D021D' },
+    mom: { name: 'Mom', c: '#A9822F' }, dad: { name: 'Dad', c: '#4A5568' }, emma: { name: 'Emma', c: '#B34A6A' }, ben: { name: 'Ben', c: '#2B62F0' },
+    alex: { name: 'Alex', c: '#17905A' }, jordan: { name: 'Jordan', c: '#0E7F8E' }, sam: { name: 'Sam', c: '#C4651F' }, maya: { name: 'Maya', c: '#6B5BD6' }, chris: { name: 'Chris', c: '#2E8B57' },
+    priya: { name: 'Priya', c: '#D2691E' }, lena: { name: 'Lena', c: '#8E3B6E' }, kate: { name: 'Kate', c: '#3C7A89' }
   };
   const STATUS = {
     free:   { label: 'Free tonight', color: 'var(--free)' },
@@ -246,59 +246,68 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
     gym:    { label: 'At the gym', color: 'var(--gym)' },
     busy:   { label: 'Busy', color: 'var(--busy)' }
   };
-  const QUICK = ['Poker', 'Gaming', 'Dinner', 'Drinks', 'Golf', 'Watch the game', 'Gym'];
+  const QUICK = ['Dinner', 'Drinks', 'Game night', 'Movie', 'Coffee', 'Golf', 'Book club'];
 
   // Friends' statuses are sample data, refreshed each visit.
   const now = Date.now(), endOfDay = (() => { const d = new Date(); d.setHours(23, 59, 0, 0); return d.getTime(); })();
   const FRIEND_STATUS = {
-    mike: { s: 'free', until: endOfDay, note: '' }, dom: { s: 'free', until: endOfDay, note: '' }, chris: { s: 'free', until: now + 2 * 3600e3, note: 'down for anything' },
-    alex: { s: 'gaming', until: endOfDay, note: 'Helldivers after 9' }, ryan: { s: 'gaming', until: endOfDay, note: '' }, nick: { s: 'out', until: endOfDay, note: 'Brickell' },
-    tony: { s: 'busy', until: endOfDay, note: 'work trip' }, sam: { s: 'watch', until: endOfDay, note: 'MNF' }, jake: { s: 'free', until: endOfDay, note: '' },
-    luis: { s: 'gym', until: now + 3600e3, note: '' }
+    alex: { s: 'free', until: endOfDay, note: '' }, jordan: { s: 'free', until: endOfDay, note: 'down for anything' }, sam: { s: 'free', until: now + 2 * 3600e3, note: '' },
+    maya: { s: 'gaming', until: endOfDay, note: 'Mario Kart after 9' }, chris: { s: 'out', until: endOfDay, note: 'downtown' },
+    mom: { s: 'free', until: endOfDay, note: 'cooking, come by' }, dad: { s: 'watch', until: endOfDay, note: 'the game' }, emma: { s: 'busy', until: endOfDay, note: 'studying' }, ben: { s: 'gym', until: now + 3600e3, note: '' },
+    priya: { s: 'free', until: endOfDay, note: 'halfway through the book' }, lena: { s: 'busy', until: endOfDay, note: '' }, kate: { s: 'free', until: endOfDay, note: '' }
   };
 
   // ---------- state ----------
   const KEY = 'roundtable-app-v1';
   function seed() {
     const t = new Date();
-    const fri = ymd(nextDow(5)), sat = ymd(nextDow(6)), sun = ymd(nextDow(0));
+    const fri = ymd(nextDow(5)), sat = ymd(nextDow(6)), sun = ymd(nextDow(0)), thu = ymd(nextDow(4));
     const ts = (daysAgo, h, m) => { const d = addDays(t, -daysAgo); d.setHours(h, m, 0, 0); return d.getTime(); };
     const plans = [
-      { id: 'p1', table: 'boys', title: 'Poker', date: fri, time: '20:00', where: "Mike's place", repeat: 'biweekly', going: ['mike','dom','alex','chris','nick'], maybe: ['ryan'], cant: [] },
-      { id: 'p2', table: 'boys', title: 'Golf', date: sat, time: '', vote: { '9:00 AM': ['chris','dom'], '11:00 AM': ['mike'], '2:00 PM': [] }, where: 'Crandon Park', going: ['chris','dom','mike'], maybe: [], cant: ['tony'] },
-      { id: 'p3', table: 'fantasy', title: 'Draft recap', date: sun, time: '13:00', where: 'Sports bar', going: ['sam','jake','luis','mike'], maybe: ['nick','dom'], cant: ['tony'] },
-      { id: 'p4', table: 'uf', title: 'UF game watch', date: sat, time: '19:30', where: "Luis's place", going: ['luis','sam'], maybe: ['jake'], cant: [] },
-      { id: 'p5', table: 'boys', title: "Mike's birthday dinner", date: ymd(addDays(t, 12)), time: '19:00', where: 'Komodo', going: ['mike','dom','chris','tony','nick','ryan','alex'], maybe: [], cant: [] },
-      { id: 'p6', table: 'poker', title: 'Tournament night', date: ymd(addDays(t, 18)), time: '19:00', where: "Jake's", going: ['jake','luis'], maybe: ['sam'], cant: [] }
+      { id: 'p1', table: 'family', title: 'Sunday dinner', date: sun, time: '18:00', where: "Mom and Dad's", repeat: 'weekly', going: ['mom','dad','ben'], maybe: ['emma'], cant: [] },
+      { id: 'p2', table: 'friends', title: 'Game night', date: fri, time: '20:00', where: "Jordan's place", repeat: 'biweekly', going: ['jordan','alex','maya'], maybe: ['sam'], cant: [] },
+      { id: 'p3', table: 'friends', title: 'Brunch', date: sat, time: '', vote: { '10:00 AM': ['alex','sam'], '11:00 AM': ['jordan'], '12:00 PM': [] }, where: 'The corner cafe', going: ['alex','sam','jordan'], maybe: [], cant: ['chris'] },
+      { id: 'p4', table: 'book', title: 'Book club', date: thu, time: '19:00', where: "Priya's", going: ['priya','kate'], maybe: ['lena'], cant: [] },
+      { id: 'p5', table: 'family', title: "Mom's birthday dinner", date: ymd(addDays(t, 12)), time: '19:00', where: 'Her favorite Italian place', going: ['dad','emma','ben'], maybe: [], cant: [] },
+      { id: 'p6', table: 'book', title: 'Pick the next book', date: ymd(addDays(t, 18)), time: '19:30', where: 'Video call', going: ['priya'], maybe: ['kate','lena'], cant: [] }
     ];
     const messages = {
-      boys: [
-        { id: uid(), from: 'mike', text: 'poker friday, same time?', ts: ts(1, 18, 2) },
-        { id: uid(), plan: 'p1', ts: ts(1, 18, 3) },
-        { id: uid(), from: 'dom', text: 'anyone doing anything tonight', ts: ts(0, 16, 40) },
-        { id: uid(), from: 'mike', text: 'down for something, not going out though', ts: ts(0, 16, 44) },
-        { id: uid(), from: 'alex', text: 'on Helldivers after 9 if anyone wants in', ts: ts(0, 16, 51) },
-        { id: uid(), from: 'chris', text: 'golf saturday?', ts: ts(0, 17, 5) },
-        { id: uid(), plan: 'p2', ts: ts(0, 17, 6) }
+      family: [
+        { id: uid(), from: 'mom', text: 'Sunday dinner, same time as always?', ts: ts(1, 12, 2) },
+        { id: uid(), plan: 'p1', ts: ts(1, 12, 3) },
+        { id: uid(), from: 'dad', text: 'I will grill if the weather holds', ts: ts(1, 13, 20) },
+        { id: uid(), from: 'emma', text: 'I have a test Monday, might be late', ts: ts(0, 10, 5) },
+        { id: uid(), from: 'ben', text: "Don't forget Mom's birthday is coming up", ts: ts(0, 15, 41) },
+        { id: uid(), plan: 'p5', ts: ts(0, 15, 42) }
       ],
-      fantasy: [ { id: uid(), from: 'sam', text: 'that trade was robbery', ts: ts(0, 12, 10) }, { id: uid(), plan: 'p3', ts: ts(0, 12, 12) } ],
-      poker: [ { id: uid(), from: 'jake', text: 'bringing the good chips', ts: ts(2, 20, 0) }, { id: uid(), plan: 'p6', ts: ts(2, 20, 1) } ],
-      uf: [ { id: uid(), from: 'luis', text: 'who is going to the game', ts: ts(0, 9, 30) }, { id: uid(), plan: 'p4', ts: ts(0, 9, 31) } ]
+      friends: [
+        { id: uid(), from: 'jordan', text: 'game night friday, who is in', ts: ts(1, 19, 10) },
+        { id: uid(), plan: 'p2', ts: ts(1, 19, 11) },
+        { id: uid(), from: 'alex', text: 'anyone doing anything tonight?', ts: ts(0, 16, 40) },
+        { id: uid(), from: 'maya', text: 'on Mario Kart after 9 if anyone wants in', ts: ts(0, 16, 51) },
+        { id: uid(), from: 'sam', text: 'brunch saturday?', ts: ts(0, 17, 5) },
+        { id: uid(), plan: 'p3', ts: ts(0, 17, 6) }
+      ],
+      book: [
+        { id: uid(), from: 'priya', text: 'Finish chapters 10 to 15 for thursday', ts: ts(2, 20, 0) },
+        { id: uid(), plan: 'p4', ts: ts(2, 20, 1) },
+        { id: uid(), from: 'kate', text: 'no spoilers but that ending...', ts: ts(0, 9, 30) }
+      ]
     };
     return {
       tables: [
-        { id: 'boys', name: 'The Boys', glyph: 'B', color: '#7D021D', members: ['me','mike','dom','alex','chris','tony','nick','ryan'] },
-        { id: 'fantasy', name: 'Fantasy League', glyph: 'F', color: '#0E7F8E', members: ['me','mike','sam','jake','luis','ryan','alex','dom','nick','tony','chris'] },
-        { id: 'poker', name: 'Poker Night', glyph: 'P', color: '#B34A6A', members: ['me','mike','jake','luis','dom','sam'] },
-        { id: 'uf', name: 'UF Friends', glyph: 'U', color: '#C4651F', members: ['me','sam','jake','luis','nick'] }
+        { id: 'friends', name: 'Friends', glyph: 'Fr', color: '#7D021D', members: ['me','alex','jordan','sam','maya','chris'] },
+        { id: 'family', name: 'Family', glyph: 'Fa', color: '#4A5568', members: ['me','mom','dad','emma','ben'] },
+        { id: 'book', name: 'Book Club', glyph: 'Bk', color: '#0E7F8E', members: ['me','priya','lena','kate'] }
       ],
       plans, messages,
-      unread: { boys: 3, fantasy: 1, poker: 0, uf: 1 },
-      my: { s: null, until: 0, note: '', tables: ['boys','fantasy','poker','uf'] }
+      unread: { friends: 3, family: 2, book: 1 },
+      my: { s: null, until: 0, note: '', tables: ['friends','family','book'] }
     };
   }
-  function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); return v && v.tables ? v : null; } catch (e) { return null; } }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  // Every visit starts a fresh demo: nothing is saved between visits, and anything an older version saved is cleared.
+  function load() { try { localStorage.removeItem(KEY); } catch (e) {} return null; }
+  function save() {}
   let S = load() || seed();
 
   const wide = () => window.matchMedia('(min-width: 861px)').matches;
@@ -426,11 +435,11 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
     }).join('');
     const sugg = S.tables.map(t => ({ t, f: withStatus(t, 'free') })).filter(x => x.f.length >= 2).map(x => `<div class="card" style="flex-direction:row;align-items:center;gap:12px">${ticon(x.t, 40)}<div style="flex:1;min-width:0"><b>${x.f.length} free in ${esc(x.t.name)}</b><div class="note">${esc(names(x.f))}</div></div><button class="btn go" data-act="newplan" data-table="${x.t.id}" data-date="${today()}">Start</button></div>`).join('');
     const body = `<div class="pad">
-      ${my ? `<div class="mystatus"><span class="av" style="background:var(--free);width:44px;height:44px;font-size:16px">G</span><div><b>${esc(STATUS[my.s].label)}</b><span style="opacity:.85">${my.note ? esc(my.note) + ' · ' : ''}until ${clock(my.until)} · visible to ${my.tables.length} Table${my.tables.length === 1 ? '' : 's'}</span></div><button class="btn" data-act="clearstatus">Clear</button></div>` : `<div class="card"><b style="font-size:17px">What are you up to today?</b><span class="note">Pick a status. It clears on its own, and only the Tables you choose can see it.</span></div>`}
+      ${my ? `<div class="mystatus"><span class="av" style="background:var(--free);width:44px;height:44px;font-size:16px">Y</span><div><b>${esc(STATUS[my.s].label)}</b><span style="opacity:.85">${my.note ? esc(my.note) + ' · ' : ''}until ${clock(my.until)} · visible to ${my.tables.length} Table${my.tables.length === 1 ? '' : 's'}</span></div><button class="btn" data-act="clearstatus">Clear</button></div>` : `<div class="card"><b style="font-size:17px">What are you up to today?</b><span class="note">Pick a status. It clears on its own, and only the Tables you choose can see it.</span></div>`}
       <div class="statusgrid">${Object.keys(STATUS).map(k => `<button class="sbtn" data-act="status" data-s="${k}" aria-pressed="${my?.s === k}"><span class="sd" style="background:${STATUS[k].color}"></span>${STATUS[k].label}</button>`).join('')}</div>
       <div class="twocol">
         <div class="field"><span class="label">Show it for</span><div class="seg">${[['1h','1 hour'],['2h','2 hours'],['tonight','Until midnight']].map(([k, l]) => `<button data-act="dur" data-v="${k}" aria-pressed="${UI.dur === k}">${l}</button>`).join('')}</div></div>
-        <div class="field"><label class="label" for="note">Add a note (optional)</label><input id="note" placeholder="e.g. Helldivers after 9, anywhere in Brickell" value="${esc(S.my.note || '')}"></div>
+        <div class="field"><label class="label" for="note">Add a note (optional)</label><input id="note" placeholder="e.g. free after 7, up for anything" value="${esc(S.my.note || '')}"></div>
       </div>
       <div class="field"><span class="label">Who can see it</span><div class="seg">${S.tables.map(t => `<button data-act="vis" data-table="${t.id}" aria-pressed="${S.my.tables.includes(t.id)}">${esc(t.name)}</button>`).join('')}</div></div>
       ${sugg ? `<div class="label" style="margin-top:6px">Make it happen</div>${sugg}` : ''}
@@ -471,12 +480,12 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
   function viewMe() {
     const going = upcoming().filter(x => myRsvp(x.p) === 'g');
     const body = `<div class="pad">
-      <div class="card" style="flex-direction:row;align-items:center;gap:14px">${av('me', true, 52)}<div><b style="font-size:18px">George</b><div class="note">${statusOf('me') ? esc(STATUS[S.my.s].label) + ' until ' + clock(S.my.until) : 'No status set'} · ${S.tables.length} Tables</div></div></div>
+      <div class="card" style="flex-direction:row;align-items:center;gap:14px">${av('me', true, 52)}<div><b style="font-size:18px">You</b><div class="note">${statusOf('me') ? esc(STATUS[S.my.s].label) + ' until ' + clock(S.my.until) : 'No status set'} · ${S.tables.length} Tables</div></div></div>
       <div class="label">You're going to</div>
       ${going.length ? going.map(({ p, d }) => `<div class="card" style="flex-direction:row;align-items:center;gap:12px">${ticon(tbl(p.table), 40)}<div style="flex:1;min-width:0"><b>${esc(p.title)}</b><div class="note">${esc(whenText(p, d))} · ${esc(tbl(p.table).name)}</div></div><span class="chip">${p.going.length} going</span></div>`).join('') : '<div class="empty">You haven\'t said yes to anything yet. Check Calendar.</div>'}
       <div class="card"><div class="label">Privacy</div><div>Your status clears on its own. Friends never see your location. No public profile, no follower counts, no ads in your chats.</div></div>
-      <div class="card"><div class="label">About this preview</div><div class="note">This is an early web version of Roundtable. Friends and their replies are samples, and everything you do is saved in this browser only.</div>
-        <div class="seg"><button data-act="reset">Reset sample data</button><a class="btn line" href="../" style="text-decoration:none">Back to the homepage</a></div></div>
+      <div class="card"><div class="label">About this preview</div><div class="note">This is an early web version of Roundtable. Friends and their replies are samples. Each visit starts a fresh demo, so nothing you do here is saved or shared.</div>
+        <div class="seg"><button data-act="reset">Start over</button><a class="btn line" href="../" style="text-decoration:none">Back to the homepage</a></div></div>
     </div>`;
     return { title: 'Me', body };
   }
@@ -485,7 +494,7 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
     const s = UI.sheet;
     if (s.kind === 'table') return `<div class="sheet-wrap" data-act="close"><form class="sheet" id="tableform" role="dialog" aria-modal="true" aria-label="New Table" data-stop="1">
       <h2>New Table</h2><p class="note" style="margin-top:-6px">A private home for one friend group.</p>
-      <div class="field"><label class="label" for="tname">Name</label><input id="tname" required maxlength="30" placeholder="Golf crew, Roommates, Sunday League"></div>
+      <div class="field"><label class="label" for="tname">Name</label><input id="tname" required maxlength="30" placeholder="Roommates, Running club, Work friends"></div>
       <div class="field"><span class="label">Who's in</span><div class="seg">${Object.keys(PEOPLE).filter(p => p !== 'me').map(p => `<button type="button" data-act="pickmember" data-p="${p}" aria-pressed="${s.members.includes(p)}">${esc(PEOPLE[p].name)}</button>`).join('')}</div></div>
       <button class="btn primary" style="padding:13px">Create Table</button><button type="button" class="btn" data-act="close">Cancel</button></form></div>`;
     const t = tbl(s.table);
@@ -493,12 +502,12 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
     return `<div class="sheet-wrap" data-act="close"><form class="sheet" id="planform" role="dialog" aria-modal="true" aria-label="New plan" data-stop="1">
       <h2>New plan</h2>
       <div class="field"><label class="label" for="ptable">Table</label><select id="ptable">${S.tables.map(x => `<option value="${x.id}" ${x.id === t.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
-      <div class="field"><label class="label" for="ptitle">What</label><input id="ptitle" required maxlength="40" value="${esc(s.title)}" placeholder="Poker, dinner, gaming"><div class="seg">${QUICK.map(q => `<button type="button" data-act="quick" data-v="${q}" aria-pressed="${s.title === q}">${q}</button>`).join('')}</div></div>
+      <div class="field"><label class="label" for="ptitle">What</label><input id="ptitle" required maxlength="40" value="${esc(s.title)}" placeholder="Dinner, game night, coffee"><div class="seg">${QUICK.map(q => `<button type="button" data-act="quick" data-v="${q}" aria-pressed="${s.title === q}">${q}</button>`).join('')}</div></div>
       <div class="row2"><div class="field"><label class="label" for="pdate">Day</label><input id="pdate" type="date" required value="${s.date}" min="${today()}"></div>
         <div class="field"><label class="label" for="ptime">Time</label><input id="ptime" type="time" value="${s.vote ? '' : s.time}" ${s.vote ? 'disabled' : ''}></div></div>
       <div class="seg"><button type="button" data-act="votetoggle" aria-pressed="${s.vote}">Let the group vote on a time</button></div>
       ${s.vote ? `<p class="note">Options: ${times.map(fmtTime).join(', ')}</p>` : ''}
-      <div class="row2"><div class="field"><label class="label" for="pwhere">Where (optional)</label><input id="pwhere" maxlength="40" value="${esc(s.where)}" placeholder="Mike's place, online, Topgolf"></div>
+      <div class="row2"><div class="field"><label class="label" for="pwhere">Where (optional)</label><input id="pwhere" maxlength="40" value="${esc(s.where)}" placeholder="Jordan's place, the park, online"></div>
         <div class="field"><label class="label" for="prepeat">Repeat</label><select id="prepeat"><option value="">Does not repeat</option><option value="weekly" ${s.repeat === 'weekly' ? 'selected' : ''}>Every week</option><option value="biweekly" ${s.repeat === 'biweekly' ? 'selected' : ''}>Every other week</option></select></div></div>
       <button class="btn primary" style="padding:13px;font-size:15px">Send plan to the Table</button>
       <button type="button" class="btn" data-act="close">Cancel</button>
@@ -521,7 +530,7 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
     document.getElementById('shell').innerHTML = `
       <nav class="rail" aria-label="Main"><a class="brand" href="../" title="Back to homepage"><svg aria-hidden="true"><use href="#r"/></svg>roundtable</a>
         ${['tables','tonight','calendar','me'].map(nav).join('')}
-        <button class="me-card" data-act="tab" data-tab="tonight">${av('me', true)}<span><b>George</b><small>${my ? esc(STATUS[my.s].label) : 'Set your status'}</small></span></button></nav>
+        <button class="me-card" data-act="tab" data-tab="tonight">${av('me', true)}<span><b>You</b><small>${my ? esc(STATUS[my.s].label) : 'Set your status'}</small></span></button></nav>
       <main>
         ${hideTop ? '' : `<header class="topbar"><span class="mobile-brand"><svg aria-hidden="true"><use href="#r"/></svg>${esc(TAB_NAMES[UI.tab])}</span><h1 class="desk-title">${esc(v.title)}</h1>${v.action || ''}</header>`}
         ${v.raw ? v.body : `<div class="view">${v.body}</div>`}
@@ -634,7 +643,7 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
       case 'mon': { if (d.d === '0') { UI.cal = today().slice(0, 7); UI.day = today(); } else { const [y, m] = UI.cal.split('-').map(Number); const nd = new Date(y, m - 1 + Number(d.d), 1); UI.cal = ymd(nd).slice(0, 7); } break; }
       case 'newtable': UI.sheet = { kind: 'table', members: [] }; break;
       case 'pickmember': { const l = UI.sheet.members, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); const nm = document.getElementById('tname')?.value; render(); const n2 = document.getElementById('tname'); if (n2 && nm) n2.value = nm; return; }
-      case 'reset': try { localStorage.removeItem(KEY); } catch (err) {} S = seed(); UI.table = null; toast('Sample data reset'); break;
+      case 'reset': try { localStorage.removeItem(KEY); } catch (err) {} S = seed(); UI.table = null; toast('Fresh demo started'); break;
       default: return;
     }
     render();
