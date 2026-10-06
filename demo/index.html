@@ -381,7 +381,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       ],
       events, messages, unread: { friends: 3, family: 2, book: 1 },
       bills: [
-        { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
+        { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, subtotal: 70, tip: 14, tipPct: 20, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
           shares: [{ p: 'alex', amt: 21, paid: true }, { p: 'me', amt: 21, paid: false }, { p: 'jordan', amt: 21, paid: true, method: 'Venmo' }, { p: 'maya', amt: 21, paid: false }] },
         { id: 'b2', group: 'book', event: 'e4', title: 'Wine and snacks', total: 45, paidBy: 'me', receipt: null, ts: ts(3, 18, 0),
           shares: [{ p: 'me', amt: 11.25, paid: true }, { p: 'priya', amt: 11.25, paid: true, method: 'Zelle' }, { p: 'kate', amt: 11.25, paid: false }, { p: 'lena', amt: 11.25, paid: false }] }
@@ -458,7 +458,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const unpaid = b.shares.filter(sh => !sh.paid && sh.p !== b.paidBy).length;
     return `<div class="bill">
       <div class="bill-top">${b.receipt ? `<img class="receipt" src="${b.receipt}" alt="Receipt photo">` : `<span class="receipt">🧾</span>`}
-        <div class="t"><b>${esc(b.title)}</b><span class="note">${e ? `${e.emoji} ${esc(e.title)} · ` : ''}${g.emoji} ${esc(g.name)} · ${esc(nameOf(b.paidBy))} paid</span></div>
+        <div class="t"><b>${esc(b.title)}</b><span class="note">${e ? `${e.emoji} ${esc(e.title)} · ` : ''}${g.emoji} ${esc(g.name)} · ${esc(nameOf(b.paidBy))} paid${b.tip ? ` · includes ${money(b.tip)} tip (${b.tipPct}%)` : ''}</span></div>
         <span class="total">${money(b.total)}</span></div>
       <div>${rows}</div>
       <span class="note">${unpaid ? `${unpaid} still to pay back` : 'Everyone is paid up'}</span>
@@ -617,21 +617,22 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     }
     if (s.kind === 'split') {
       const g = grp(s.group), evs = S.events.filter(x => x.group === g.id);
-      const n = s.people.length, eq = n ? evenSplit(+s.total || 0, n) : [];
-      const sum = s.mode === 'custom' ? s.people.reduce((a, p) => a + (+s.custom[p] || 0), 0) : +s.total || 0;
-      const off = s.mode === 'custom' && Math.abs(sum - (+s.total || 0)) > .009;
+      const sa = splitAmounts(s), eq = sa.amts;
+      const off = s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009;
       return wrap(`<form class="in" id="splitform"><h2>Split a bill</h2>
         <label class="upload" for="rfile">${s.receipt ? `<img src="${s.receipt}" alt="Receipt preview">` : '<span style="font-size:30px">📸</span>'}<span><b>${s.receipt ? 'Receipt added' : 'Add a photo of the receipt'}</b><span class="note" style="display:block">In the full app, Roundtable reads the total for you. You'll also be able to forward receipt emails.</span></span></label>
         <input id="rfile" type="file" accept="image/*" hidden>
         <div class="row2"><div class="field"><label class="label" for="sgroup">Group</label><select id="sgroup">${S.groups.map(x => `<option value="${x.id}" ${x.id === s.group ? 'selected' : ''}>${x.emoji} ${esc(x.name)}</option>`).join('')}</select></div>
           <div class="field"><label class="label" for="sevent">For an event</label><select id="sevent"><option value="">No event</option>${evs.map(x => `<option value="${x.id}" ${x.id === s.event ? 'selected' : ''}>${x.emoji} ${esc(x.title)}</option>`).join('')}</select></div></div>
         <div class="row2"><div class="field"><label class="label" for="stitle">What for</label><input id="stitle" required maxlength="40" placeholder="Dinner, groceries, tickets" value="${esc(s.title)}"></div>
-          <div class="field"><label class="label" for="stotal">Total</label><input id="stotal" required inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="0.00" value="${s.total}"></div></div>
+          <div class="field"><label class="label" for="stotal">Bill amount</label><input id="stotal" required inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="0.00" value="${s.total}"></div></div>
+        <div class="field"><span class="label">Tip</span><div class="seg">${[['0','No tip'],['15','15%'],['18','18%'],['20','20%'],['22','22%'],['custom','Custom']].map(([k, l]) => `<button type="button" data-act="tip" data-v="${k}" aria-pressed="${s.tip === k}">${l}</button>`).join('')}${s.tip === 'custom' ? `<input id="tipc" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="${s.tipCustom}" placeholder="%" aria-label="Custom tip percent" style="width:84px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px">` : ''}</div>
+          <div class="card" style="flex-direction:row;flex-wrap:wrap;gap:6px 14px;padding:12px 14px" id="tipline">${tipLine(sa)}</div></div>
         <div class="field"><label class="label" for="spaid">Who paid</label><select id="spaid">${g.members.map(p => `<option value="${p}" ${p === s.paidBy ? 'selected' : ''}>${esc(nameOf(p))}</option>`).join('')}</select></div>
         <div class="field"><span class="label">Split between</span><div class="seg">${g.members.map(p => `<button type="button" data-act="sp" data-p="${p}" aria-pressed="${s.people.includes(p)}">${esc(nameOf(p))}</button>`).join('')}</div></div>
-        <div class="field"><span class="label">How</span><div class="seg"><button type="button" data-act="smode" data-v="equal" aria-pressed="${s.mode === 'equal'}">Split equally</button><button type="button" data-act="smode" data-v="custom" aria-pressed="${s.mode === 'custom'}">Custom amounts</button></div></div>
-        <div class="card" style="gap:8px">${s.people.map((p, i) => `<div class="splitrow">${av(p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(p))}</span>${s.mode === 'custom' ? `<input id="c_${p}" data-cp="${p}" type="number" min="0" step="0.01" inputmode="decimal" value="${s.custom[p] ?? ''}" placeholder="0.00" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px">` : `<b data-eq="${i}">${money(eq[i] || 0)}</b>`}</div>`).join('') || '<span class="note">Pick at least one person.</span>'}
-          <span class="note" id="sumnote" style="color:var(--maroon)" ${off ? '' : 'hidden'}>${off ? `Amounts add up to ${money(sum)}, total is ${money(+s.total || 0)}` : ''}</span></div>
+        <div class="field"><span class="label">How</span><div class="seg"><button type="button" data-act="smode" data-v="equal" aria-pressed="${s.mode === 'equal'}">Split equally</button><button type="button" data-act="smode" data-v="custom" aria-pressed="${s.mode === 'custom'}">Custom amounts</button></div>${s.mode === 'custom' ? '<span class="note">Enter what each person ordered, before tip. Tip is added to each share.</span>' : ''}</div>
+        <div class="card" style="gap:8px">${s.people.map((p, i) => `<div class="splitrow">${av(p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(p))}</span>${s.mode === 'custom' ? `<input id="c_${p}" data-cp="${p}" type="number" min="0" step="0.01" inputmode="decimal" value="${s.custom[p] ?? ''}" placeholder="0.00" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px"><b data-eq="${i}" style="min-width:64px;text-align:right">${money(eq[i] || 0)}</b>` : `<b data-eq="${i}">${money(eq[i] || 0)}</b>`}</div>`).join('') || '<span class="note">Pick at least one person.</span>'}
+          <span class="note" id="sumnote" style="color:var(--maroon)" ${off ? '' : 'hidden'}>${off ? `Amounts add up to ${money(sa.base)}, bill is ${money(sa.bill)}` : ''}</span></div>
         <button class="btn primary" style="padding:13px;font-size:15px">Split it</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'Split a bill');
     }
     if (s.kind === 'pay') {
@@ -717,6 +718,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     if (sf) {
       sf.onsubmit = e => { e.preventDefault(); createSplit(); };
       ['sgroup','sevent','spaid'].forEach(id => { document.getElementById(id).onchange = () => syncSplit(true); });
+      const tc = document.getElementById('tipc'); if (tc) tc.oninput = () => { UI.sheet.tipCustom = tc.value; updateEq(); };
       ['stitle','stotal'].forEach(id => { document.getElementById(id).oninput = () => { syncSplit(false); updateEq(); }; });
       sf.querySelectorAll('[data-cp]').forEach(el => { el.oninput = () => { UI.sheet.custom[el.dataset.cp] = el.value; updateEq(); }; });
       const f = document.getElementById('rfile');
@@ -750,7 +752,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     UI.menu = false; UI.modal = null;
     const gid = o.group || UI.group || S.groups[0].id, g = grp(gid), e = o.event ? evt(o.event) : null;
     const people = e ? [...new Set(['me', ...e.going])].filter(p => g.members.includes(p)) : [...g.members];
-    UI.sheet = { kind: 'split', group: gid, event: o.event || '', title: e ? e.title : '', total: '', paidBy: 'me', people, mode: 'equal', custom: {}, receipt: null };
+    UI.sheet = { kind: 'split', group: gid, event: o.event || '', title: e ? e.title : '', total: '', paidBy: 'me', people, mode: 'equal', custom: {}, receipt: null, tip: '20', tipCustom: '' };
   }
   function syncSplit(rerender) {
     const s = UI.sheet, g = id => document.getElementById(id); if (!s || s.kind !== 'split' || !g('stitle')) return;
@@ -760,20 +762,22 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     else if (s.event && rerender && document.activeElement?.id === 'sevent') { const e = evt(s.event); s.people = [...new Set(['me', ...e.going])]; if (!s.title) s.title = e.title; }
     if (rerender) { const fid = document.activeElement?.id; render(); if (fid) document.getElementById(fid)?.focus(); }
   }
+  function tipLine(sa) { return `<span class="note">Bill <b style="color:var(--ink)">${money(sa.bill)}</b></span><span class="note">Tip ${sa.pct ? `(${sa.pct}%)` : ''} <b style="color:var(--ink)">${money(sa.tip)}</b></span><span class="note">Total <b style="color:var(--ink);font-size:16px">${money(sa.grand)}</b></span>${sa.amts.length ? `<span class="note">${s_each(sa)}</span>` : ''}`; }
+  function s_each(sa) { const a = sa.amts; return a.length && a.every(x => Math.abs(x - a[0]) < .015) ? `About <b style="color:var(--ink)">${money(a[0])}</b> each` : `${a.length} people`; }
   function updateEq() {
     const s = UI.sheet; if (!s || s.kind !== 'split') return;
-    const eq = s.people.length ? evenSplit(+s.total || 0, s.people.length) : [];
-    document.querySelectorAll('[data-eq]').forEach(el => { el.textContent = money(eq[+el.dataset.eq] || 0); });
+    const sa = splitAmounts(s);
+    document.querySelectorAll('[data-eq]').forEach(el => { el.textContent = money(sa.amts[+el.dataset.eq] || 0); });
+    const tl = document.getElementById('tipline'); if (tl) tl.innerHTML = tipLine(sa);
     const note = document.getElementById('sumnote');
-    if (note) { const sum = s.people.reduce((a, p) => a + (+s.custom[p] || 0), 0), off = s.mode === 'custom' && Math.abs(sum - (+s.total || 0)) > .009; note.hidden = !off; note.textContent = off ? `Amounts add up to ${money(sum)}, total is ${money(+s.total || 0)}` : ''; }
+    if (note) { const off = s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009; note.hidden = !off; note.textContent = off ? `Amounts add up to ${money(sa.base)}, bill is ${money(sa.bill)}` : ''; }
   }
   function createSplit() {
-    syncSplit(false); const s = UI.sheet, total = Math.round((+s.total || 0) * 100) / 100;
-    if (!s.title.trim() || total <= 0 || !s.people.length) return toast('Add what it was for, the total, and who to split with');
-    let amts;
-    if (s.mode === 'custom') { amts = s.people.map(p => Math.round((+s.custom[p] || 0) * 100) / 100); const sum = amts.reduce((a, b) => a + b, 0); if (Math.abs(sum - total) > .009) return toast(`Custom amounts add up to ${money(sum)}, not ${money(total)}`); }
-    else amts = evenSplit(total, s.people.length);
-    const b = { id: 'b' + uid(), group: s.group, event: s.event || null, title: s.title.trim(), total, paidBy: s.paidBy, receipt: s.receipt, ts: Date.now(), shares: s.people.map((p, i) => ({ p, amt: amts[i], paid: p === s.paidBy })) };
+    syncSplit(false); const s = UI.sheet, sa = splitAmounts(s);
+    if (!s.title.trim() || sa.bill <= 0 || !s.people.length) return toast('Add what it was for, the bill amount, and who to split with');
+    if (s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009) return toast(`Custom amounts add up to ${money(sa.base)}, not ${money(sa.bill)}`);
+    const amts = sa.amts, total = sa.grand;
+    const b = { id: 'b' + uid(), group: s.group, event: s.event || null, title: s.title.trim(), total, subtotal: sa.bill, tip: sa.tip, tipPct: sa.pct, paidBy: s.paidBy, receipt: s.receipt, ts: Date.now(), shares: s.people.map((p, i) => ({ p, amt: amts[i], paid: p === s.paidBy })) };
     S.bills.push(b); S.messages[s.group].push({ id: uid(), bill: b.id, from: 'me', ts: Date.now() });
     UI.sheet = null; openGroup(s.group); UI.gtab = 'bills';
     toast(`Bill split. ${s.people.length} people, ${money(amts[0])} each`);
@@ -816,6 +820,17 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     }));
     return { owe, owed, oweTo, owedBy };
   }
+  const r2 = n => Math.round(n * 100) / 100;
+  function tipPct(s) { return s.tip === 'custom' ? Math.max(0, +s.tipCustom || 0) : +s.tip || 0; }
+  function splitAmounts(s) {
+    const bill = r2(+s.total || 0), pct = tipPct(s), tip = r2(bill * pct / 100), grand = r2(bill + tip), n = s.people.length;
+    if (!n) return { bill, pct, tip, grand, amts: [], base: 0 };
+    if (s.mode !== 'custom') return { bill, pct, tip, grand, amts: evenSplit(grand, n), base: bill };
+    const base = s.people.map(p => r2(+s.custom[p] || 0)), baseSum = r2(base.reduce((a, b) => a + b, 0));
+    const amts = base.map(b => r2(b * (1 + pct / 100)));
+    const diff = r2(grand - amts.reduce((a, b) => a + b, 0)); if (amts.length && Math.abs(baseSum - bill) < .01) amts[amts.length - 1] = r2(amts[amts.length - 1] + diff);
+    return { bill, pct, tip, grand, amts, base: baseSum };
+  }
   function evenSplit(total, n) { const cents = Math.round(total * 100), base = Math.floor(cents / n), extra = cents - base * n; return Array.from({ length: n }, (_, i) => (base + (i < extra ? 1 : 0)) / 100); }
   const ZELLE = { alex: 'alex.r@email.com', jordan: '(305) 555 0142', sam: 'sam.k@email.com', maya: 'maya@email.com', chris: '(305) 555 0187', mom: '(305) 555 0110', dad: '(305) 555 0111', emma: 'emma@email.com', ben: 'ben@email.com', priya: 'priya.s@email.com', lena: 'lena@email.com', kate: 'kate@email.com', me: 'you@email.com' };
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
@@ -855,6 +870,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       case 'newsplit': newSplitSheet({ group: d.g, event: d.ev }); break;
       case 'sp': { syncSplit(false); const l = UI.sheet.people, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); break; }
       case 'smode': syncSplit(false); UI.sheet.mode = d.v; break;
+      case 'tip': syncSplit(false); UI.sheet.tip = d.v; if (d.v === 'custom') setTimeout(() => document.getElementById('tipc')?.focus(), 0); break;
       case 'payback': UI.sheet = { kind: 'pay', bill: d.b }; break;
       case 'paywith': {
         const b = bill(UI.sheet.bill);
