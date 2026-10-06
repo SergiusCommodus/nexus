@@ -215,6 +215,44 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .cmt .bub { padding: 7px 11px; }
 .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--app); padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; z-index: 30; box-shadow: var(--shadow); max-width: 92vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tabbar { display: none; }
+/* bills */
+.money { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.mtile { border-radius: 18px; padding: 16px; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 4px; }
+.mtile .amt { font-family: var(--display); font-weight: 800; font-size: 30px; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.mtile.owe .amt { color: var(--maroon); }
+:root[data-theme="dark"] .mtile.owe .amt { color: var(--accent); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mtile.owe .amt { color: var(--accent); } }
+.mtile.owed .amt { color: var(--free); }
+.bill { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.bill-top { display: flex; gap: 12px; align-items: flex-start; }
+.bill-top .t { flex: 1; min-width: 0; }
+.bill-top .t b { font-size: 17px; display: block; }
+.bill .total { font-family: var(--display); font-weight: 800; font-size: 24px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.receipt { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 1px solid var(--line); flex: none; background: var(--panel); display: grid; place-items: center; font-size: 24px; }
+.share { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.share .n { flex: 1; min-width: 0; font-weight: 600; }
+.share .a { font-variant-numeric: tabular-nums; font-weight: 700; }
+.tag { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.tag.paid { background: var(--free-soft); color: var(--free); }
+.tag.due { background: var(--maroon-soft); color: var(--maroon); }
+:root[data-theme="dark"] .tag.due { color: var(--accent); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tag.due { color: var(--accent); } }
+.btn.sm { padding: 6px 12px; font-size: 13px; }
+.bills { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.upload { border: 2px dashed var(--line); border-radius: 16px; padding: 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; }
+.upload:hover { border-color: var(--muted); }
+.upload img { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; }
+.splitrow { display: flex; align-items: center; gap: 10px; }
+.splitrow .n { flex: 1; font-weight: 600; }
+.splitrow input { width: 110px; text-align: right; }
+.payopt { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: left; width: 100%; }
+.payopt:hover { background: var(--panel); }
+.payopt .logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; font-family: var(--display); flex: none; }
+.payopt .t { flex: 1; min-width: 0; }
+.payopt small { color: var(--muted); display: block; }
+.soon { font-size: 11px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; }
+.billmsg { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; width: min(340px, 100%); display: flex; flex-direction: column; gap: 6px; text-align: left; }
+
 
 @media (max-width: 1100px) { .gwrap { grid-template-columns: minmax(0, 1fr); } .side { display: none; } .hang-strip { display: flex; } }
 @media (max-width: 860px) {
@@ -317,6 +355,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         { id: uid(), event: 'e2', from: 'jordan', ts: ts(1, 19, 11) },
         { id: uid(), from: 'alex', text: 'anyone doing anything tonight?', ts: ts(0, 16, 40), likes: [] },
         { id: uid(), from: 'maya', text: 'on Mario Kart after 9 if anyone wants in', ts: ts(0, 16, 51), likes: ['jordan'] },
+        { id: uid(), bill: 'b1', from: 'alex', ts: ts(5, 23, 11) },
         { id: uid(), poll: { q: 'Brunch spot Saturday?', opts: [{ t: 'The corner cafe', v: ['sam','alex'] }, { t: 'Pancake place', v: ['jordan'] }, { t: 'Bagels at the park', v: [] }] }, from: 'sam', ts: ts(0, 17, 2) },
         { id: uid(), event: 'e3', from: 'sam', ts: ts(0, 17, 6) }
       ],
@@ -330,7 +369,8 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       book: [
         { id: uid(), from: 'priya', text: 'Finish chapters 10 to 15 for Thursday', ts: ts(2, 20, 0), likes: ['kate','lena'] },
         { id: uid(), event: 'e4', from: 'priya', ts: ts(2, 20, 1) },
-        { id: uid(), from: 'kate', text: 'no spoilers but that ending...', ts: ts(0, 9, 30), likes: [] }
+        { id: uid(), from: 'kate', text: 'no spoilers but that ending...', ts: ts(0, 9, 30), likes: [] },
+        { id: uid(), bill: 'b2', from: 'me', ts: ts(3, 18, 1) }
       ]
     };
     return {
@@ -340,6 +380,12 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         { id: 'book', name: 'Book Club', emoji: '📚', members: ['me','priya','lena','kate'], hangout: [] }
       ],
       events, messages, unread: { friends: 3, family: 2, book: 1 },
+      bills: [
+        { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
+          shares: [{ p: 'alex', amt: 21, paid: true }, { p: 'me', amt: 21, paid: false }, { p: 'jordan', amt: 21, paid: true, method: 'Venmo' }, { p: 'maya', amt: 21, paid: false }] },
+        { id: 'b2', group: 'book', event: 'e4', title: 'Wine and snacks', total: 45, paidBy: 'me', receipt: null, ts: ts(3, 18, 0),
+          shares: [{ p: 'me', amt: 11.25, paid: true }, { p: 'priya', amt: 11.25, paid: true, method: 'Zelle' }, { p: 'kate', amt: 11.25, paid: false }, { p: 'lena', amt: 11.25, paid: false }] }
+      ],
       my: { s: null, until: 0 }
     };
   }
@@ -397,13 +443,42 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       </div></div>`;
   }
 
+  function billCard(b) {
+    const e = b.event ? evt(b.event) : null, g = grp(b.group);
+    const rows = b.shares.map(sh => {
+      const isPayer = sh.p === b.paidBy;
+      let right;
+      if (isPayer) right = '<span class="tag paid">Paid the bill</span>';
+      else if (sh.paid) right = `<span class="tag paid">Paid${sh.method ? ' · ' + esc(sh.method) : ''}</span>`;
+      else if (sh.p === 'me') right = `<button class="btn primary sm" data-act="payback" data-b="${b.id}">Pay ${esc(nameOf(b.paidBy))}</button>`;
+      else if (b.paidBy === 'me') right = `<span style="display:flex;gap:6px"><button class="btn line sm" data-act="remindpay" data-b="${b.id}" data-p="${sh.p}">Remind</button><button class="btn line sm" data-act="markpaid" data-b="${b.id}" data-p="${sh.p}">Mark paid</button></span>`;
+      else right = '<span class="tag due">Owes</span>';
+      return `<div class="share">${av(sh.p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(sh.p))}</span><span class="a">${money(sh.amt)}</span>${right}</div>`;
+    }).join('');
+    const unpaid = b.shares.filter(sh => !sh.paid && sh.p !== b.paidBy).length;
+    return `<div class="bill">
+      <div class="bill-top">${b.receipt ? `<img class="receipt" src="${b.receipt}" alt="Receipt photo">` : `<span class="receipt">🧾</span>`}
+        <div class="t"><b>${esc(b.title)}</b><span class="note">${e ? `${e.emoji} ${esc(e.title)} · ` : ''}${g.emoji} ${esc(g.name)} · ${esc(nameOf(b.paidBy))} paid</span></div>
+        <span class="total">${money(b.total)}</span></div>
+      <div>${rows}</div>
+      <span class="note">${unpaid ? `${unpaid} still to pay back` : 'Everyone is paid up'}</span>
+    </div>`;
+  }
+  function moneyTiles(gid) {
+    const bl = balances(gid);
+    const oweList = Object.entries(bl.oweTo).map(([p, a]) => `${esc(nameOf(p))} ${money(a)}`).join(', ');
+    const owedList = Object.entries(bl.owedBy).map(([p, a]) => `${esc(nameOf(p))} ${money(a)}`).join(', ');
+    return `<div class="money"><div class="mtile owe"><span class="label">You owe</span><span class="amt">${money(bl.owe)}</span><span class="note">${oweList || 'All paid up'}</span></div>
+      <div class="mtile owed"><span class="label">You're owed</span><span class="amt">${money(bl.owed)}</span><span class="note">${owedList || 'Nobody owes you'}</span></div></div>`;
+  }
+
   // ---------- views ----------
   function viewHome() {
     const me = statusOf('me');
     const friends = [...new Set(S.groups.flatMap(others))].map(p => ({ p, st: statusOf(p) })).filter(x => x.st).sort((a, b) => (a.st.s === 'free' ? 0 : 1) - (b.st.s === 'free' ? 0 : 1));
     const freeCount = friends.filter(x => x.st.s === 'free').length;
     const up = upcoming().slice(0, 6);
-    const welcome = UI.welcome ? `<div class="welcome"><div><h2>Welcome to the Roundtable demo</h2><ol><li>Tap your circle below to tell friends what you're up to.</li><li>Open a group to chat, like messages, and vote in polls.</li><li>RSVP to an event, or make your own.</li></ol></div><button class="x" data-act="hidewelcome" aria-label="Dismiss">×</button></div>` : '';
+    const welcome = UI.welcome ? `<div class="welcome"><div><h2>Welcome to the Roundtable demo</h2><ol><li>Tap your circle below to tell friends what you're up to.</li><li>Open a group to chat, like messages, and vote in polls.</li><li>RSVP to an event, or make your own. After it, split the bill.</li></ol></div><button class="x" data-act="hidewelcome" aria-label="Dismiss">×</button></div>` : '';
     const body = `<div class="pad">
       ${welcome}
       <div class="sec"><div class="sechead"><h2>Your friends today</h2><span class="note">${freeCount} friends free</span></div>
@@ -413,6 +488,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         </div></div>
       <div class="sec"><div class="sechead"><h2>Upcoming events</h2><button class="btn primary" data-act="newevent">+ New event</button></div>
         <div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div></div>
+      <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line" data-act="newsplit">+ Split a bill</button></div>${moneyTiles()}</div>
       <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line" data-act="newgroup">+ New group</button></div>${groupRows()}</div>
     </div>`;
     return { head: `<div class="grow"><h1>Home</h1></div>`, body: `<div class="scroll">${body}</div>` };
@@ -431,6 +507,8 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const me = m.from === 'me', isNew = m.ts > Date.now() - 4000 ? 'new' : '';
     if (m.sys) return `<div class="sys">${esc(m.sys)}</div>`;
     if (m.event) { const e = evt(m.event); if (!e) return ''; return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} shared an event</div><div class="minicard">${eventCard(e)}</div></div></div>`; }
+    if (m.bill) { const b = bill(m.bill); if (!b) return ''; const mine = b.shares.find(x => x.p === 'me');
+      return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} split a bill</div><button class="billmsg" data-act="gtab" data-t="bills"><span class="label">🧾 Bill</span><b>${esc(b.title)} · ${money(b.total)}</b><span class="note">${b.shares.length} people · ${money(b.shares[0].amt)} each${mine && !mine.paid && b.paidBy !== 'me' ? ` · <b style="color:var(--ink)">you owe ${money(mine.amt)}</b>` : ''}</span></button></div></div>`; }
     if (m.poll) {
       const total = m.poll.opts.reduce((a, o) => a + o.v.length, 0) || 1;
       return `<div class="m ${me ? 'me' : ''} ${isNew}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))}</div><div class="poll"><span class="label">Poll</span><b>${esc(m.poll.q)}</b>${m.poll.opts.map((o, i) => `<button class="opt" data-act="vote" data-m="${m.id}" data-i="${i}" aria-pressed="${o.v.includes('me')}"><span class="bar" style="width:${Math.round(o.v.length / total * 100)}%"></span><span>${esc(o.t)}</span><span>${o.v.length}</span></button>`).join('')}<span class="note">Tap to vote · ${m.poll.opts.reduce((a, o) => a + o.v.length, 0)} votes</span></div></div></div>`;
@@ -453,7 +531,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const g = grp(UI.group);
     const free = others(g).filter(p => statusOf(p)?.s === 'free');
     const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon">${g.emoji}</span><div class="grow"><h1 style="font-size:20px">${esc(g.name)}</h1><div class="note">${g.members.length} members · ${free.length} free today</div></div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Event</button>`;
-    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['members','Members']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
+    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['members','Members']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
     let body;
     if (UI.gtab === 'chat') {
       let lastDay = '';
@@ -461,7 +539,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       const nx = upcoming(g.id)[0];
       body = `<div class="gwrap"><div class="chat">${hangoutCard(g, true)}
         <div class="msgs" id="msgs">${msgs || '<div class="empty">No messages yet. Say hi.</div>'}</div>
-        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}
+        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="newsplit" data-g="${g.id}">🧾 Split a bill</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}
           <button type="button" class="plus" data-act="menu" aria-label="More">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(g.name)}" value="${esc(UI.draft[g.id] || '')}" aria-label="Message"><button class="send" aria-label="Send">${I.send}</button></form></div>
         <aside class="side">${hangoutCard(g)}
           <div class="card"><span class="label">Next up</span>${nx ? eventCard(nx.e, nx.d) : '<p class="note">No events yet.</p>'}</div>
@@ -470,6 +548,10 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     } else if (UI.gtab === 'events') {
       const up = upcoming(g.id);
       body = `<div class="scroll"><div class="pad"><div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div>${up.length ? '' : '<div class="empty">No events yet.</div>'}<div><button class="btn primary" data-act="newevent" data-g="${g.id}">+ Create an event</button></div></div></div>`;
+    } else if (UI.gtab === 'bills') {
+      const bs = S.bills.filter(b => b.group === g.id).sort((a, b2) => b2.ts - a.ts);
+      body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
+        ${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div></div>`;
     } else {
       body = `<div class="scroll"><div class="members">${g.members.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><span class="s">${st ? STATUS[st.s].long : 'No status'}</span></div>`; }).join('')}</div></div>`;
     }
@@ -533,6 +615,40 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         ${[0,1,2].map(i => `<div class="field"><label class="label" for="po${i}">Option ${i + 1}${i === 2 ? ' (optional)' : ''}</label><input id="po${i}" maxlength="40" ${i < 2 ? 'required' : ''}></div>`).join('')}
         <button class="btn primary" style="padding:13px">Post poll</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New poll');
     }
+    if (s.kind === 'split') {
+      const g = grp(s.group), evs = S.events.filter(x => x.group === g.id);
+      const n = s.people.length, eq = n ? evenSplit(+s.total || 0, n) : [];
+      const sum = s.mode === 'custom' ? s.people.reduce((a, p) => a + (+s.custom[p] || 0), 0) : +s.total || 0;
+      const off = s.mode === 'custom' && Math.abs(sum - (+s.total || 0)) > .009;
+      return wrap(`<form class="in" id="splitform"><h2>Split a bill</h2>
+        <label class="upload" for="rfile">${s.receipt ? `<img src="${s.receipt}" alt="Receipt preview">` : '<span style="font-size:30px">📸</span>'}<span><b>${s.receipt ? 'Receipt added' : 'Add a photo of the receipt'}</b><span class="note" style="display:block">In the full app, Roundtable reads the total for you. You'll also be able to forward receipt emails.</span></span></label>
+        <input id="rfile" type="file" accept="image/*" hidden>
+        <div class="row2"><div class="field"><label class="label" for="sgroup">Group</label><select id="sgroup">${S.groups.map(x => `<option value="${x.id}" ${x.id === s.group ? 'selected' : ''}>${x.emoji} ${esc(x.name)}</option>`).join('')}</select></div>
+          <div class="field"><label class="label" for="sevent">For an event</label><select id="sevent"><option value="">No event</option>${evs.map(x => `<option value="${x.id}" ${x.id === s.event ? 'selected' : ''}>${x.emoji} ${esc(x.title)}</option>`).join('')}</select></div></div>
+        <div class="row2"><div class="field"><label class="label" for="stitle">What for</label><input id="stitle" required maxlength="40" placeholder="Dinner, groceries, tickets" value="${esc(s.title)}"></div>
+          <div class="field"><label class="label" for="stotal">Total</label><input id="stotal" required inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="0.00" value="${s.total}"></div></div>
+        <div class="field"><label class="label" for="spaid">Who paid</label><select id="spaid">${g.members.map(p => `<option value="${p}" ${p === s.paidBy ? 'selected' : ''}>${esc(nameOf(p))}</option>`).join('')}</select></div>
+        <div class="field"><span class="label">Split between</span><div class="seg">${g.members.map(p => `<button type="button" data-act="sp" data-p="${p}" aria-pressed="${s.people.includes(p)}">${esc(nameOf(p))}</button>`).join('')}</div></div>
+        <div class="field"><span class="label">How</span><div class="seg"><button type="button" data-act="smode" data-v="equal" aria-pressed="${s.mode === 'equal'}">Split equally</button><button type="button" data-act="smode" data-v="custom" aria-pressed="${s.mode === 'custom'}">Custom amounts</button></div></div>
+        <div class="card" style="gap:8px">${s.people.map((p, i) => `<div class="splitrow">${av(p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(p))}</span>${s.mode === 'custom' ? `<input id="c_${p}" data-cp="${p}" type="number" min="0" step="0.01" inputmode="decimal" value="${s.custom[p] ?? ''}" placeholder="0.00" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px">` : `<b data-eq="${i}">${money(eq[i] || 0)}</b>`}</div>`).join('') || '<span class="note">Pick at least one person.</span>'}
+          <span class="note" id="sumnote" style="color:var(--maroon)" ${off ? '' : 'hidden'}>${off ? `Amounts add up to ${money(sum)}, total is ${money(+s.total || 0)}` : ''}</span></div>
+        <button class="btn primary" style="padding:13px;font-size:15px">Split it</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'Split a bill');
+    }
+    if (s.kind === 'pay') {
+      const b = bill(s.bill), sh = b.shares.find(x => x.p === 'me'), to = b.paidBy;
+      return wrap(`<div class="in"><h2>Pay ${esc(nameOf(to))} ${money(sh.amt)}</h2><p class="note" style="margin-top:-6px">For ${esc(b.title)}. Pick how you're paying them back.</p>
+        <button class="payopt" data-act="paywith" data-v="Venmo"><span class="logo" style="background:#3D95CE">V</span><span class="t"><b>Venmo</b><small>Opens Venmo with ${money(sh.amt)} filled in for ${esc(nameOf(to))}</small></span><span class="soon">Coming soon</span></button>
+        <button class="payopt" data-act="paywith" data-v="Zelle"><span class="logo" style="background:#6D1ED4">Z</span><span class="t"><b>Zelle</b><small>Send from your bank app to ${esc(ZELLE[to])}</small></span></button>
+        <button class="payopt" data-act="paywith" data-v="Cash"><span class="logo" style="background:#17905A">$</span><span class="t"><b>Cash</b><small>Already paid in person? Mark it here</small></span></button>
+        <button class="btn line" data-act="remindme" data-b="${b.id}">Remind me tomorrow</button><button class="btn" data-act="close">Cancel</button></div>`, 'Pay back');
+    }
+    if (s.kind === 'zelle') {
+      const b = bill(s.bill), sh = b.shares.find(x => x.p === 'me'), to = b.paidBy;
+      return wrap(`<div class="in"><h2>Send with Zelle</h2><p class="note" style="margin-top:-6px">Open your bank app, choose Zelle, and send:</p>
+        <div class="card"><div class="splitrow"><span class="n">Amount</span><b>${money(sh.amt)}</b></div><div class="splitrow"><span class="n">To</span><b>${esc(nameOf(to))}</b></div><div class="splitrow"><span class="n">Zelle</span><b style="user-select:all">${esc(ZELLE[to])}</b></div></div>
+        <button class="btn line" data-act="copyzelle" data-v="${esc(ZELLE[to])}">Copy ${esc(nameOf(to))}'s Zelle info</button>
+        <button class="btn primary" data-act="markmine" data-b="${b.id}" data-v="Zelle">I sent it</button><button class="btn" data-act="close">Cancel</button></div>`, 'Zelle');
+    }
     if (s.kind === 'group') {
       return wrap(`<form class="in" id="grpform"><h2>New group</h2>
         <div class="field"><label class="label" for="gname">Name</label><input id="gname" required maxlength="30" placeholder="Roommates, Running club, Work friends"></div>
@@ -552,7 +668,9 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <div><h2>${esc(e.title)}</h2><div class="note" style="margin-top:4px">Hosted by ${esc(nameOf(e.host))} · ${g.emoji} ${esc(g.name)}</div></div>
         <div class="card" style="gap:6px"><div>🗓️ <b>${esc(whenText(e, d))}</b>${e.repeat ? ` · ${repeatText(e.repeat)}` : ''}</div>${e.where ? `<div>📍 ${esc(e.where)}</div>` : ''}${e.desc ? `<div class="note">${esc(e.desc)}</div>` : ''}</div>
         ${rsvpBtns(e)}
-        <div class="seg"><button data-act="addcal">Add to my calendar</button><button data-act="copylink" data-ev="${e.id}">Copy invite link</button></div>
+        <div class="seg"><button data-act="addcal">Add to my calendar</button><button data-act="copylink" data-ev="${e.id}">Copy invite link</button><button data-act="newsplit" data-g="${e.group}" data-ev="${e.id}">🧾 Split the bill</button></div>
+        <div class="field"><span class="label">Remind me</span><div class="seg">${[['','Off'],['1d','1 day before'],['2h','2 hours before'],['30m','30 minutes before']].map(([k, l]) => `<button data-act="remind" data-ev="${e.id}" data-v="${k}" aria-pressed="${(e.remind || '') === k}">${l}</button>`).join('')}</div></div>
+        ${S.bills.filter(b => b.event === e.id).map(billCard).join('')}
         ${list(e.going, 'Going')}${list(e.maybe, 'Maybe')}${list(e.cant, "Can't go")}
         <div><span class="label">Comments</span><div class="guests" style="margin-top:8px">${e.comments.map(c => `<div class="cmt">${av(c.from, { dot: false })}<div><div class="note"><b style="color:var(--ink)">${esc(nameOf(c.from))}</b> · ${clock(c.ts)}</div><div class="bub" style="margin-top:3px">${esc(c.text)}</div></div></div>`).join('') || '<p class="note">No comments yet.</p>'}</div></div>
         <form id="cform" style="display:flex;gap:8px"><input id="ctext" placeholder="Add a comment" autocomplete="off" style="flex:1;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:10px 14px"><button class="btn primary">Post</button></form>
@@ -595,6 +713,15 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       S.messages[g].push({ id: uid(), from: 'me', text, ts: Date.now(), likes: [] }); UI.draft[g] = ''; i.value = ''; UI.menu = false; UI.toBottom = true; render(); document.getElementById('msg')?.focus(); simulateReply(g, text); };
     const ef = document.getElementById('evform');
     if (ef) { ef.onsubmit = e => { e.preventDefault(); createEvent(); }; ['etitle','edate','etime','ewhere','egroup','erepeat'].forEach(id => { const el = document.getElementById(id); el.oninput = el.onchange = syncEvent; }); }
+    const sf = document.getElementById('splitform');
+    if (sf) {
+      sf.onsubmit = e => { e.preventDefault(); createSplit(); };
+      ['sgroup','sevent','spaid'].forEach(id => { document.getElementById(id).onchange = () => syncSplit(true); });
+      ['stitle','stotal'].forEach(id => { document.getElementById(id).oninput = () => { syncSplit(false); updateEq(); }; });
+      sf.querySelectorAll('[data-cp]').forEach(el => { el.oninput = () => { UI.sheet.custom[el.dataset.cp] = el.value; updateEq(); }; });
+      const f = document.getElementById('rfile');
+      f.onchange = () => { const file = f.files && f.files[0]; if (!file) return; const r = new FileReader(); r.onload = () => { syncSplit(false); UI.sheet.receipt = r.result; render(); }; r.readAsDataURL(file); };
+    }
     const pf = document.getElementById('pollform'); if (pf) pf.onsubmit = e => { e.preventDefault(); createPoll(); };
     const gf = document.getElementById('grpform'); if (gf) gf.onsubmit = e => { e.preventDefault(); createGroup(); };
     const cf = document.getElementById('cform'); if (cf) cf.onsubmit = e => { e.preventDefault(); const t = document.getElementById('ctext').value.trim(); if (!t) return; evt(UI.modal).comments.push({ from: 'me', text: t, ts: Date.now() }); render(); };
@@ -619,6 +746,44 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       toast(`${nameOf(p)} ${i === 2 ? 'might come to' : 'is going to'} ${e.title}`);
     }, 1600 + i * 1600));
   }
+  function newSplitSheet(o = {}) {
+    UI.menu = false; UI.modal = null;
+    const gid = o.group || UI.group || S.groups[0].id, g = grp(gid), e = o.event ? evt(o.event) : null;
+    const people = e ? [...new Set(['me', ...e.going])].filter(p => g.members.includes(p)) : [...g.members];
+    UI.sheet = { kind: 'split', group: gid, event: o.event || '', title: e ? e.title : '', total: '', paidBy: 'me', people, mode: 'equal', custom: {}, receipt: null };
+  }
+  function syncSplit(rerender) {
+    const s = UI.sheet, g = id => document.getElementById(id); if (!s || s.kind !== 'split' || !g('stitle')) return;
+    const newGroup = g('sgroup').value;
+    s.title = g('stitle').value; s.total = g('stotal').value; s.paidBy = g('spaid').value; s.event = g('sevent').value;
+    if (newGroup !== s.group) { s.group = newGroup; s.event = ''; s.people = [...grp(newGroup).members]; s.paidBy = 'me'; }
+    else if (s.event && rerender && document.activeElement?.id === 'sevent') { const e = evt(s.event); s.people = [...new Set(['me', ...e.going])]; if (!s.title) s.title = e.title; }
+    if (rerender) { const fid = document.activeElement?.id; render(); if (fid) document.getElementById(fid)?.focus(); }
+  }
+  function updateEq() {
+    const s = UI.sheet; if (!s || s.kind !== 'split') return;
+    const eq = s.people.length ? evenSplit(+s.total || 0, s.people.length) : [];
+    document.querySelectorAll('[data-eq]').forEach(el => { el.textContent = money(eq[+el.dataset.eq] || 0); });
+    const note = document.getElementById('sumnote');
+    if (note) { const sum = s.people.reduce((a, p) => a + (+s.custom[p] || 0), 0), off = s.mode === 'custom' && Math.abs(sum - (+s.total || 0)) > .009; note.hidden = !off; note.textContent = off ? `Amounts add up to ${money(sum)}, total is ${money(+s.total || 0)}` : ''; }
+  }
+  function createSplit() {
+    syncSplit(false); const s = UI.sheet, total = Math.round((+s.total || 0) * 100) / 100;
+    if (!s.title.trim() || total <= 0 || !s.people.length) return toast('Add what it was for, the total, and who to split with');
+    let amts;
+    if (s.mode === 'custom') { amts = s.people.map(p => Math.round((+s.custom[p] || 0) * 100) / 100); const sum = amts.reduce((a, b) => a + b, 0); if (Math.abs(sum - total) > .009) return toast(`Custom amounts add up to ${money(sum)}, not ${money(total)}`); }
+    else amts = evenSplit(total, s.people.length);
+    const b = { id: 'b' + uid(), group: s.group, event: s.event || null, title: s.title.trim(), total, paidBy: s.paidBy, receipt: s.receipt, ts: Date.now(), shares: s.people.map((p, i) => ({ p, amt: amts[i], paid: p === s.paidBy })) };
+    S.bills.push(b); S.messages[s.group].push({ id: uid(), bill: b.id, from: 'me', ts: Date.now() });
+    UI.sheet = null; openGroup(s.group); UI.gtab = 'bills';
+    toast(`Bill split. ${s.people.length} people, ${money(amts[0])} each`);
+    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Venmo'; toast(`${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
+  }
+  function markMine(b, method) {
+    const sh = b.shares.find(x => x.p === 'me'); sh.paid = true; sh.method = method; UI.sheet = null;
+    S.messages[b.group].push({ id: uid(), sys: `You paid ${nameOf(b.paidBy)} back ${money(sh.amt)} for ${b.title} (${method})`, ts: Date.now() });
+    toast(`Paid ${nameOf(b.paidBy)} ${money(sh.amt)}. They'll get a notification.`);
+  }
   function createPoll() {
     const q = document.getElementById('pq').value.trim(); const opts = [0,1,2].map(i => document.getElementById('po' + i).value.trim()).filter(Boolean);
     if (!q || opts.length < 2) return;
@@ -640,6 +805,19 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     if (!cand.length || !/\?|anyone|who|tonight|today|down|free/i.test(text)) return;
     setTimeout(() => { S.messages[gid].push({ id: uid(), from: pick(cand), text: pick(REPLIES), ts: Date.now(), likes: [] }); if (UI.group === gid && UI.view === 'group') render(); else S.unread[gid] = (S.unread[gid] || 0) + 1; }, 2200 + Math.random() * 1200);
   }
+  const money = n => '$' + (Math.round(n * 100) / 100).toFixed(2);
+  const bill = id => S.bills.find(b => b.id === id);
+  function balances(gid) {
+    let owe = 0, owed = 0; const oweTo = {}, owedBy = {};
+    S.bills.filter(b => !gid || b.group === gid).forEach(b => b.shares.forEach(sh => {
+      if (sh.paid || sh.p === b.paidBy) return;
+      if (sh.p === 'me') { owe += sh.amt; oweTo[b.paidBy] = (oweTo[b.paidBy] || 0) + sh.amt; }
+      else if (b.paidBy === 'me') { owed += sh.amt; owedBy[sh.p] = (owedBy[sh.p] || 0) + sh.amt; }
+    }));
+    return { owe, owed, oweTo, owedBy };
+  }
+  function evenSplit(total, n) { const cents = Math.round(total * 100), base = Math.floor(cents / n), extra = cents - base * n; return Array.from({ length: n }, (_, i) => (base + (i < extra ? 1 : 0)) / 100); }
+  const ZELLE = { alex: 'alex.r@email.com', jordan: '(305) 555 0142', sam: 'sam.k@email.com', maya: 'maya@email.com', chris: '(305) 555 0187', mom: '(305) 555 0110', dad: '(305) 555 0111', emma: 'emma@email.com', ben: 'ben@email.com', priya: 'priya.s@email.com', lena: 'lena@email.com', kate: 'kate@email.com', me: 'you@email.com' };
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
 
   document.addEventListener('click', ev => {
@@ -674,6 +852,22 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       case 'gemoji': { const n = document.getElementById('gname')?.value; UI.sheet.emoji = d.v; render(); if (n) document.getElementById('gname').value = n; return; }
       case 'addp': { const n = document.getElementById('gname')?.value, l = UI.sheet.members, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); render(); if (n) document.getElementById('gname').value = n; return; }
       case 'openev': UI.modal = d.ev; break;
+      case 'newsplit': newSplitSheet({ group: d.g, event: d.ev }); break;
+      case 'sp': { syncSplit(false); const l = UI.sheet.people, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); break; }
+      case 'smode': syncSplit(false); UI.sheet.mode = d.v; break;
+      case 'payback': UI.sheet = { kind: 'pay', bill: d.b }; break;
+      case 'paywith': {
+        const b = bill(UI.sheet.bill);
+        if (d.v === 'Venmo') return toast('Venmo hand off is coming soon. Use Zelle or cash for now.');
+        if (d.v === 'Zelle') { UI.sheet = { kind: 'zelle', bill: b.id }; break; }
+        markMine(b, 'Cash'); break;
+      }
+      case 'markmine': markMine(bill(d.b), d.v); break;
+      case 'copyzelle': { const v = d.v; try { navigator.clipboard.writeText(v).then(() => toast('Copied ' + v), () => toast(v)); } catch (e) { toast(v); } return; }
+      case 'remindme': UI.sheet = null; return toast('We will remind you tomorrow to pay this back');
+      case 'remindpay': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); S.messages[b.group].push({ id: uid(), sys: `Reminder sent to ${nameOf(d.p)}: ${money(sh.amt)} for ${b.title}`, ts: Date.now() }); return toast(`Reminder sent to ${nameOf(d.p)}`); }
+      case 'markpaid': { const sh = bill(d.b).shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; return toast(`${nameOf(d.p)} marked as paid`); }
+      case 'remind': { const e = evt(d.ev); e.remind = d.v; return toast(d.v ? `We'll remind you ${({ '1d': '1 day', '2h': '2 hours', '30m': '30 minutes' })[d.v]} before ${e.title}` : 'Reminder off'); }
       case 'addcal': return toast('Added to your calendar');
       case 'copylink': { const t = `Join me on Roundtable: ${evt(d.ev).title}, ${whenText(evt(d.ev))}`; try { navigator.clipboard.writeText(t).then(() => toast('Invite copied. Paste it in any chat.'), () => toast('Invite links work once Roundtable launches')); } catch (e) { toast('Invite links work once Roundtable launches'); } return; }
       case 'close': UI.sheet = null; UI.modal = null; break;
