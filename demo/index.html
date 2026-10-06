@@ -420,11 +420,11 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       ],
       bills: [
         { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, subtotal: 70, tip: 14, tipPct: 20, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
-          shares: [{ p: 'alex', amt: 21, paid: true }, { p: 'me', amt: 21, paid: false }, { p: 'jordan', amt: 21, paid: true, method: 'Venmo' }, { p: 'maya', amt: 21, paid: false }] },
+          shares: [{ p: 'alex', amt: 21, paid: true }, { p: 'me', amt: 21, paid: false }, { p: 'jordan', amt: 21, paid: true, method: 'Zelle' }, { p: 'maya', amt: 21, paid: false }] },
         { id: 'b2', group: 'book', event: 'e4', title: 'Wine and snacks', total: 45, paidBy: 'me', receipt: null, ts: ts(3, 18, 0),
           shares: [{ p: 'me', amt: 11.25, paid: true }, { p: 'priya', amt: 11.25, paid: true, method: 'Zelle' }, { p: 'kate', amt: 11.25, paid: false }, { p: 'lena', amt: 11.25, paid: false }] }
       ],
-      my: { s: null, until: 0 }
+      my: { s: null, until: 0 }, bank: null, splitTx: {}
     };
   }
   let S = seed();
@@ -527,7 +527,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       <div class="sec"><div class="sechead"><h2>Upcoming events</h2><button class="btn primary" data-act="newevent">+ New event</button></div>
         <div class="events">${up.map(x => eventCard(x.e, x.d)).join('')}</div></div>
       <div class="sec"><div class="sechead"><h2>Reminders</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>${(() => { const l = remList(4); return l.length ? `<div class="rems">${l.map(x => remRow(x.r, x.d)).join('')}</div>` : '<div class="empty">No reminders yet.</div>'; })()}</div>
-      <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line" data-act="newsplit">+ Split a bill</button></div>${moneyTiles()}</div>
+      <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line" data-act="newsplit">+ Split a bill</button></div>${moneyTiles()}${bankCard()}</div>
       <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line" data-act="newgroup">+ New group</button></div>${groupRows()}</div>
     </div>`;
     return { head: `<div class="grow"><h1>Home</h1></div>`, body: `<div class="scroll">${body}</div>` };
@@ -601,7 +601,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
         <input type="file" id="upfile" multiple hidden></div></div>`;
     } else if (UI.gtab === 'bills') {
       const bs = S.bills.filter(b => b.group === g.id).sort((a, b2) => b2.ts - a.ts);
-      body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
+      body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}${bankCard()}<div><button class="btn primary" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
         ${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div></div>`;
     } else {
       body = `<div class="scroll"><div class="members">${g.members.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><span class="s">${st ? STATUS[st.s].long : 'No status'}</span></div>`; }).join('')}</div></div>`;
@@ -636,6 +636,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       <div class="card" style="flex-direction:row;align-items:center;gap:14px"><span class="ring ${me ? '' : 'add'}" style="${me ? `background:${STATUS[me.s].color}` : ''}">${av('me', { dot: false })}</span><div style="flex:1"><b style="font-size:19px">You</b><div class="note">${me ? STATUS[me.s].long + ' until ' + clock(me.until) : 'No status set'}</div></div><button class="btn line" data-act="status">${me ? 'Change' : 'Set status'}</button></div>
       <div class="sec"><h2 style="font-size:20px">You're going to</h2>${going.length ? `<div class="events">${going.map(x => eventCard(x.e, x.d)).join('')}</div>` : '<div class="empty">Nothing yet. Tap Going on an event.</div>'}</div>
       <div class="sec"><div class="sechead"><h2 style="font-size:20px">Reminders</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>${(() => { const l = remList(); return l.length ? `<div class="rems">${l.map(x => remRow(x.r, x.d)).join('')}</div>` : '<div class="empty">No reminders yet.</div>'; })()}</div>
+      <div class="card"><span class="label">Payments</span><span>Zelle: <b>you@email.com</b> <span class="note">· friends see this when they pay you back</span></span>${S.bank ? `<span>Bank: <b>${esc(S.bank.name)} ••${S.bank.mask}</b> <span class="note">· linked with Plaid</span></span><div><button class="btn line sm" data-act="unlink">Unlink bank</button></div>` : `<div><button class="btn primary sm" data-act="bank">Link your bank with Plaid</button></div>`}</div>
       <div class="card"><span class="label">Privacy</span><span>Your status clears on its own. No location sharing, no public profile, no ads in your chats.</span></div>
       <div class="card"><span class="label">About this demo</span><span class="note">Friends and their replies are samples. Every visit starts fresh, so nothing here is saved or shared.</span><div class="seg"><button data-act="restart">Start over</button><a class="btn line" href="../" style="text-decoration:none">Back to the homepage</a></div></div>
     </div></div>`;
@@ -692,8 +693,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     if (s.kind === 'pay') {
       const b = bill(s.bill), sh = b.shares.find(x => x.p === 'me'), to = b.paidBy;
       return wrap(`<div class="in"><h2>Pay ${esc(nameOf(to))} ${money(sh.amt)}</h2><p class="note" style="margin-top:-6px">For ${esc(b.title)}. Pick how you're paying them back.</p>
-        <button class="payopt" data-act="paywith" data-v="Venmo"><span class="logo" style="background:#3D95CE">V</span><span class="t"><b>Venmo</b><small>Opens Venmo with ${money(sh.amt)} filled in for ${esc(nameOf(to))}</small></span><span class="soon">Coming soon</span></button>
-        <button class="payopt" data-act="paywith" data-v="Zelle"><span class="logo" style="background:#6D1ED4">Z</span><span class="t"><b>Zelle</b><small>Send from your bank app to ${esc(ZELLE[to])}</small></span></button>
+        <button class="payopt" data-act="paywith" data-v="Zelle"><span class="logo" style="background:#6D1ED4">Z</span><span class="t"><b>Zelle</b><small>Send from your bank app to ${esc(ZELLE[to])}${S.bank ? '. Roundtable confirms it when it clears.' : ''}</small></span></button>
         <button class="payopt" data-act="paywith" data-v="Cash"><span class="logo" style="background:#17905A">$</span><span class="t"><b>Cash</b><small>Already paid in person? Mark it here</small></span></button>
         <button class="btn line" data-act="remindme" data-b="${b.id}">Remind me tomorrow</button><button class="btn" data-act="close">Cancel</button></div>`, 'Pay back');
     }
@@ -702,7 +702,16 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       return wrap(`<div class="in"><h2>Send with Zelle</h2><p class="note" style="margin-top:-6px">Open your bank app, choose Zelle, and send:</p>
         <div class="card"><div class="splitrow"><span class="n">Amount</span><b>${money(sh.amt)}</b></div><div class="splitrow"><span class="n">To</span><b>${esc(nameOf(to))}</b></div><div class="splitrow"><span class="n">Zelle</span><b style="user-select:all">${esc(ZELLE[to])}</b></div></div>
         <button class="btn line" data-act="copyzelle" data-v="${esc(ZELLE[to])}">Copy ${esc(nameOf(to))}'s Zelle info</button>
+        ${S.bank ? `<div class="card" style="flex-direction:row;gap:10px;align-items:center"><span>🏦</span><span class="note">Your bank is linked, so Roundtable marks this paid automatically once the Zelle payment shows up.</span></div>` : `<button class="btn line" data-act="bank">Link your bank so payments confirm automatically</button>`}
         <button class="btn primary" data-act="markmine" data-b="${b.id}" data-v="Zelle">I sent it</button><button class="btn" data-act="close">Cancel</button></div>`, 'Zelle');
+    }
+    if (s.kind === 'bank') {
+      return wrap(`<div class="in"><h2>Link your bank</h2><p class="note" style="margin-top:-6px">Roundtable uses Plaid to connect securely. You sign in with your bank inside Plaid's window, and Roundtable never sees your password.</p>
+        <div class="card" style="gap:8px"><b>What linking does</b><span>✅ Split a card charge in one tap</span><span>✅ Confirms Zelle paybacks automatically</span><span>🚫 Roundtable never moves your money or stores your login</span></div>
+        <span class="label">Pick a bank (demo)</span>
+        ${['Demo Bank', 'Sample Credit Union', 'Test Savings & Loan'].map((b, i) => `<button class="payopt" data-act="linkbank" data-v="${b}" data-mask="${['4821', '0937', '5520'][i]}"><span class="logo" style="background:${['#3A3A42', '#7D021D', '#5A5A63'][i]}">🏦</span><span class="t"><b>${b}</b><small>Checking account</small></span></button>`).join('')}
+        <p class="note">This demo uses pretend banks and data. In the real app, this button opens Plaid.</p>
+        <button class="btn" data-act="close">Cancel</button></div>`, 'Link your bank');
     }
     if (s.kind === 'reminder') {
       return wrap(`<form class="in" id="remform"><h2>New reminder</h2>
@@ -864,15 +873,15 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     if (s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009) return toast(`Custom amounts add up to ${money(sa.base)}, not ${money(sa.bill)}`);
     const amts = sa.amts, total = sa.grand;
     const b = { id: 'b' + uid(), group: s.group, event: s.event || null, title: s.title.trim(), total, subtotal: sa.bill, tip: sa.tip, tipPct: sa.pct, paidBy: s.paidBy, receipt: s.receipt, ts: Date.now(), shares: s.people.map((p, i) => ({ p, amt: amts[i], paid: p === s.paidBy })) };
-    S.bills.push(b); S.messages[s.group].push({ id: uid(), bill: b.id, from: 'me', ts: Date.now() });
+    S.bills.push(b); S.messages[s.group].push({ id: uid(), bill: b.id, from: 'me', ts: Date.now() }); if (s.tx) S.splitTx[s.tx] = true;
     UI.sheet = null; openGroup(s.group); UI.gtab = 'bills';
     toast(`Bill split. ${s.people.length} people, ${money(amts[0])} each`);
-    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Venmo'; toast(`${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
+    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Zelle'; toast(S.bank ? `${nameOf(debtor.p)}'s Zelle payment of ${money(debtor.amt)} showed up in your bank. Marked paid.` : `${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
   }
   function markMine(b, method) {
     const sh = b.shares.find(x => x.p === 'me'); sh.paid = true; sh.method = method; UI.sheet = null;
     S.messages[b.group].push({ id: uid(), sys: `You paid ${nameOf(b.paidBy)} back ${money(sh.amt)} for ${b.title} (${method})`, ts: Date.now() });
-    toast(`Paid ${nameOf(b.paidBy)} ${money(sh.amt)}. They'll get a notification.`);
+    toast(method === 'Zelle' && S.bank ? `Zelle payment to ${nameOf(b.paidBy)} confirmed in your bank` : `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}. They'll get a notification.`);
   }
   function createPoll() {
     const q = document.getElementById('pq').value.trim(); const opts = [0,1,2].map(i => document.getElementById('po' + i).value.trim()).filter(Boolean);
@@ -967,6 +976,16 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
     const g = grp(gid), cand = others(g).filter(p => statusOf(p)?.s !== 'busy'), last = S.messages[gid].at(-1);
     if (cand.length) setTimeout(() => { last.likes.push(pick(cand)); if (UI.group === gid) render(); }, 1500);
   }
+  const TXNS = () => { const t = new Date(); const d = n => ymd(addDays(t, -n)); return [
+    { id: 't1', name: 'Komodo', amt: 186.40, date: d(1), cat: '🍽️' }, { id: 't2', name: 'Uber', amt: 23.18, date: d(1), cat: '🚗' },
+    { id: 't3', name: 'Whole Foods', amt: 64.92, date: d(2), cat: '🛒' }, { id: 't4', name: 'AMC Theatres', amt: 54.00, date: d(4), cat: '🎬' },
+    { id: 't5', name: 'Zelle from Jordan', amt: -21.00, date: d(5), cat: '↩️' }]; };
+  function bankCard() {
+    if (!S.bank) return `<div class="card" style="flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:26px">🏦</span><div style="flex:1;min-width:200px"><b>Link your bank</b><div class="note">Split a card charge in one tap, and let Zelle paybacks confirm on their own.</div></div><button class="btn primary" data-act="bank">Link with Plaid</button></div>`;
+    const tx = TXNS().filter(x => x.amt > 0 && !S.splitTx[x.id]);
+    return `<div class="card"><div class="sechead"><span class="label">Recent charges · ${esc(S.bank.name)} ••${S.bank.mask}</span><button class="note" data-act="unlink" style="text-decoration:underline">Unlink</button></div>
+      ${tx.length ? tx.slice(0, 4).map(x => `<div class="prow"><span class="gicon" style="width:36px;height:36px;font-size:17px">${x.cat}</span><span class="n">${esc(x.name)}<div class="note">${esc(fmtDay(x.date))}</div></span><b style="font-variant-numeric:tabular-nums">${money(x.amt)}</b><button class="btn line sm" data-act="splittx" data-t="${x.id}">Split</button></div>`).join('') : '<p class="note">No new charges to split.</p>'}</div>`;
+  }
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
 
   document.addEventListener('click', ev => {
@@ -1008,11 +1027,14 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
       case 'payback': UI.sheet = { kind: 'pay', bill: d.b }; break;
       case 'paywith': {
         const b = bill(UI.sheet.bill);
-        if (d.v === 'Venmo') return toast('Venmo hand off is coming soon. Use Zelle or cash for now.');
         if (d.v === 'Zelle') { UI.sheet = { kind: 'zelle', bill: b.id }; break; }
         markMine(b, 'Cash'); break;
       }
       case 'markmine': markMine(bill(d.b), d.v); break;
+      case 'bank': UI.modal = null; UI.sheet = { kind: 'bank', back: UI.sheet }; break;
+      case 'linkbank': { const back = UI.sheet.back; S.bank = { name: d.v, mask: d.mask }; UI.sheet = back && back.kind !== 'bank' ? back : null; return toast(`${d.v} ••${d.mask} linked`); }
+      case 'unlink': S.bank = null; return toast('Bank unlinked');
+      case 'splittx': { const x = TXNS().find(t => t.id === d.t); newSplitSheet({ group: UI.view === 'group' ? UI.group : undefined }); Object.assign(UI.sheet, { title: x.name, total: String(x.amt), tip: '0', tx: x.id }); break; }
       case 'copyzelle': { const v = d.v; try { navigator.clipboard.writeText(v).then(() => toast('Copied ' + v), () => toast(v)); } catch (e) { toast(v); } return; }
       case 'remindme': { const b = bill(d.b), sh = b.shares.find(x => x.p === 'me'); S.reminders.push({ id: 'r' + uid(), emoji: '🧾', title: `Pay ${nameOf(b.paidBy)} back ${money(sh.amt)}`, date: ymd(addDays(new Date(), 1)), time: '09:00', repeat: '', group: '', doneOn: {} }); UI.sheet = null; return toast('Reminder set for tomorrow at 9 AM'); }
       case 'newreminder': UI.menu = false; UI.sheet = { kind: 'reminder', emoji: '💪', title: '', date: d.date || today(), time: '18:00', repeat: '', group: d.g || '' }; break;
