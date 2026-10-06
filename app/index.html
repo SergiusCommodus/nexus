@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roundtable</title>
+<meta name="description" content="Roundtable web app: your Tables, group chat, Tonight status, and a shared calendar of plans.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app shell. Desktop: left nav rail + content (Tables = list + chat + pulse). Phone: one column with a bottom tab bar. */
+:root {
+  --bg: #F6F3F1; --app: #FBF9F8; --surface: #FFFFFF; --ink: #1E1416; --muted: #6A5D60; --line: #EADFE0;
+  --maroon: #7D021D; --maroon-ink: #F7F3EA; --accent: #7D021D; --accent-soft: #F6E6E9;
+  --free: #17905A; --free-soft: #E1F3EA; --gaming: #0E7F8E; --out: #C4651F; --watch: #A9822F; --gym: #6B5BD6; --busy: #8E94A2;
+  --bubble: #EFEAE7; --mine: #7D021D; --mine-ink: #FFFFFF; --shadow: 0 10px 30px rgba(30, 20, 22, .14);
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F0A0B; --app: #150E10; --surface: #1F1518; --ink: #F3ECEC; --muted: #B3A4A7; --line: #33252A;
+    --maroon: #8E1730; --maroon-ink: #F7F3EA; --accent: #FF9AAE; --accent-soft: #3A1A22;
+    --free: #3FC88B; --free-soft: #173528; --gaming: #34B7C6; --out: #F09350; --watch: #D6B25F; --gym: #8B7CF0; --busy: #7C8396;
+    --bubble: #2A1F23; --mine: #8E1730; --mine-ink: #FFFFFF; --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F0A0B; --app: #150E10; --surface: #1F1518; --ink: #F3ECEC; --muted: #B3A4A7; --line: #33252A;
+  --maroon: #8E1730; --maroon-ink: #F7F3EA; --accent: #FF9AAE; --accent-soft: #3A1A22;
+  --free: #3FC88B; --free-soft: #173528; --gaming: #34B7C6; --out: #F09350; --watch: #D6B25F; --gym: #8B7CF0; --busy: #7C8396;
+  --bubble: #2A1F23; --mine: #8E1730; --mine-ink: #FFFFFF; --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.4; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+input, select, textarea { font: inherit; color: var(--ink); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; letter-spacing: -0.015em; text-wrap: balance; }
+.label { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); }
+
+#shell { height: 100%; display: grid; grid-template-columns: 220px 1fr; }
+.rail { background: var(--maroon); color: var(--maroon-ink); display: flex; flex-direction: column; padding: 20px 14px; gap: 6px; padding-top: calc(20px + env(safe-area-inset-top, 0px)); }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.03em; padding: 0 8px 18px; text-decoration: none; color: inherit; }
+.brand svg { width: 28px; height: 28px; }
+.navbtn { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; font-weight: 600; text-align: left; opacity: .82; }
+.navbtn svg { width: 22px; height: 22px; flex: none; }
+.navbtn:hover { opacity: 1; background: rgba(255,255,255,.08); }
+.navbtn[aria-current="page"] { opacity: 1; background: rgba(255,255,255,.16); }
+.rail .me-card { margin-top: auto; display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; background: rgba(0,0,0,.18); text-align: left; }
+.rail .me-card small { display: block; opacity: .8; font-size: 12px; }
+
+main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--app); }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-bottom: 1px solid var(--line); min-height: 64px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
+.topbar h1 { font-size: 22px; flex: 1; min-width: 0; }
+.mobile-brand { display: none; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; border-radius: 999px; padding: 9px 15px; font-size: 14px; white-space: nowrap; }
+.btn.primary { background: var(--maroon); color: var(--maroon-ink); }
+.btn.soft { background: var(--accent-soft); color: var(--accent); }
+.btn.go { background: var(--free); color: #fff; }
+.btn.line { border: 1px solid var(--line); background: var(--surface); }
+.iconbtn { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); background: var(--surface); font-size: 18px; flex: none; }
+
+.view { flex: 1; min-height: 0; overflow-y: auto; }
+.pad { padding: 20px 22px 40px; display: flex; flex-direction: column; gap: 14px; max-width: 980px; }
+
+/* Tables split */
+.split { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minmax(0, 1fr) 290px; }
+.tlist { border-right: 1px solid var(--line); overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.trow { display: flex; gap: 12px; align-items: center; padding: 11px; border-radius: 14px; text-align: left; width: 100%; }
+.trow:hover { background: var(--bubble); }
+.trow[aria-current="true"] { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.ticon { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-weight: 800; font-size: 18px; flex: none; }
+.tmeta { flex: 1; min-width: 0; }
+.tname { font-weight: 700; }
+.tline { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--free-soft); color: var(--free); white-space: nowrap; }
+.chip.n { background: var(--accent-soft); color: var(--accent); }
+.unread { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--maroon); color: #fff; font-size: 11.5px; font-weight: 700; display: grid; place-items: center; }
+
+.chatcol { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.chathead { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.chathead h2 { font-size: 18px; }
+.messages { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.daysep { text-align: center; font-size: 11.5px; color: var(--muted); font-weight: 700; letter-spacing: .04em; margin: 6px 0; }
+.msg { display: flex; gap: 8px; align-items: flex-end; }
+.msg.me { flex-direction: row-reverse; }
+.bubble { max-width: min(72%, 520px); background: var(--bubble); padding: 8px 12px; border-radius: 16px 16px 16px 5px; overflow-wrap: anywhere; min-width: 0; }
+.msg.me .bubble { background: var(--mine); color: var(--mine-ink); border-radius: 16px 16px 5px 16px; }
+.who { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+.time { font-size: 10.5px; opacity: .65; margin-top: 2px; }
+.mkplan { display: block; font-size: 12.5px; font-weight: 700; color: var(--accent); margin-top: 3px; }
+.msg.me .mkplan { color: #FFD9C7; }
+.composer { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--line); align-items: center; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+.composer input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 11px 16px; }
+.send { width: 42px; height: 42px; border-radius: 50%; background: var(--maroon); color: #fff; display: grid; place-items: center; flex: none; }
+
+.side { border-left: 1px solid var(--line); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.av { width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; position: relative; flex: none; border: 2px solid var(--surface); }
+.av .dot { position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--surface); }
+.stack { display: flex; }
+.stack .av + .av { margin-left: -8px; }
+.prow { display: flex; align-items: center; gap: 10px; }
+.prow .nm { font-weight: 600; flex: 1; min-width: 0; }
+.prow .st { font-size: 12.5px; color: var(--muted); text-align: right; }
+
+/* plan card */
+.plan { border: 1px solid var(--line); background: var(--surface); border-radius: 16px; overflow: hidden; max-width: 420px; }
+.plan .ph { background: var(--maroon); color: var(--maroon-ink); padding: 11px 14px; }
+.plan .k { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: #FFD9C7; }
+.plan .t { font-family: var(--display); font-weight: 700; font-size: 19px; }
+.plan .w { font-size: 13.5px; opacity: .88; }
+.plan .pb { padding: 11px 14px; display: flex; flex-direction: column; gap: 10px; }
+.counts { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.counts b { color: var(--ink); }
+.rsvp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.rsvp button { border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; font-weight: 700; font-size: 13.5px; background: var(--app); }
+.rsvp button[aria-pressed="true"].g { background: var(--free); border-color: var(--free); color: #fff; }
+.rsvp button[aria-pressed="true"].m { background: var(--watch); border-color: var(--watch); color: #fff; }
+.rsvp button[aria-pressed="true"].c { background: var(--busy); border-color: var(--busy); color: #fff; }
+.votes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.votes button { border: 1px dashed var(--accent); color: var(--accent); border-radius: 10px; padding: 7px 4px; font-weight: 700; font-size: 13px; }
+.votes button[aria-pressed="true"] { background: var(--maroon); border-color: var(--maroon); color: #fff; border-style: solid; }
+
+/* Tonight */
+.statusgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.sbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 13px; text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.sbtn .sd { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.sbtn[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--ink); border-color: var(--ink); }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button { border: 1px solid var(--line); background: var(--surface); padding: 7px 13px; border-radius: 999px; font-size: 13.5px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--app); border-color: var(--ink); }
+.mystatus { background: var(--maroon); color: var(--maroon-ink); border-radius: 18px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.mystatus b { font-family: var(--display); font-size: 20px; display: block; }
+.mystatus .btn { margin-left: auto; background: rgba(255,255,255,.16); color: inherit; }
+.twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field input, .field select { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; width: 100%; }
+
+/* Calendar */
+.calwrap { display: grid; grid-template-columns: minmax(0, 1fr) 330px; flex: 1; min-height: 0; }
+.calmain { padding: 18px 22px 30px; overflow-y: auto; min-width: 0; }
+.calhead { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.calhead h2 { font-size: 24px; flex: 1; }
+.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--line); gap: 1px; }
+.dow { background: var(--app); font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 8px; text-align: left; }
+.day { background: var(--surface); min-height: 96px; padding: 7px; text-align: left; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.day.out { background: var(--app); }
+.day.out .dn { opacity: .4; }
+.day .dn { font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; }
+.day.today .dn { background: var(--maroon); color: #fff; }
+.day[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); }
+.ev { font-size: 11.5px; font-weight: 600; padding: 2px 6px; border-radius: 6px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.more { font-size: 11px; color: var(--muted); font-weight: 700; }
+.agenda { border-left: 1px solid var(--line); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.agenda h3 { font-size: 20px; }
+
+/* Sheet */
+.sheet-wrap { position: fixed; inset: 0; background: rgba(15, 8, 10, .5); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 16px; }
+.sheet { background: var(--app); width: min(520px, 100%); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 14px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow); }
+.sheet h2 { font-size: 24px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: var(--ink); color: var(--app); padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; z-index: 30; box-shadow: var(--shadow); max-width: 92vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { padding: 18px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); font-size: 14px; }
+.tabbar { display: none; }
+
+@media (max-width: 1180px) { .split { grid-template-columns: 280px minmax(0, 1fr); } .side { display: none; } .pulse-inline { display: flex !important; } }
+@media (max-width: 860px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .rail { display: none; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: var(--app); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .tabbar button { padding: 9px 0 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+  .tabbar button[aria-current="page"] { color: var(--accent); }
+  .tabbar svg { width: 22px; height: 22px; }
+  .mobile-brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: -.03em; flex: 1; }
+  .mobile-brand svg { width: 24px; height: 24px; color: var(--accent); }
+  .topbar { padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); min-height: 56px; }
+  .split { grid-template-columns: 1fr; }
+  .split.chatting .tlist { display: none; }
+  .split:not(.chatting) .chatcol { display: none; }
+  .pad { padding: 16px 16px 30px; }
+  .calwrap { grid-template-columns: 1fr; overflow-y: auto; }
+  .calmain { overflow: visible; padding: 14px 12px; }
+  .agenda { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
+  .day { min-height: 64px; padding: 4px; }
+  .ev { font-size: 0; height: 6px; padding: 0; border-radius: 3px; }
+  .twocol, .row2 { grid-template-columns: 1fr; }
+  .toast { bottom: 84px; }
+  .composer { padding-bottom: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheet { animation: pop .18s ease-out; }
+  .toast { animation: pop .18s ease-out; }
+  @keyframes pop { from { transform: translateY(10px); opacity: .5; } }
+  .toast { animation-name: fade; }
+  @keyframes fade { from { opacity: 0; } }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="r" viewBox="260 266 737 729"><path fill="currentColor" d="M355.5,992.9 C315.2,987.1 282.0,959.3 267.7,919.3 C261.6,902.4 261.9,920.7 262.2,629.5 L262.5,363.5L264.7,355.7 C273.7,324.1 293.5,299.1 322.3,282.6 C331.0,277.7 348.1,271.7 358.0,270.1 C362.4,269.3 430.6,269.0 569.9,269.0 C750.6,269.0 776.6,269.2 785.9,270.6 C854.6,280.7 922.7,328.3 961.1,393.1 C976.8,419.7 988.2,451.5 993.6,484.0 C996.1,499.0 996.6,542.0 994.5,559.5 C985.1,638.5 939.9,711.2 871.8,757.0 C868.1,759.5 865.0,761.8 865.0,762.2 C865.0,762.5 880.1,780.3 898.6,801.7 C956.7,868.8 984.5,901.4 986.4,904.3 C1000.3,926.5 992.4,958.5 968.5,976.7 C961.4,982.1 950.6,987.3 943.2,988.9 C939.5,989.7 906.6,990.0 834.6,990.0 C734.5,990.0 731.1,989.9 723.5,988.0 C715.1,985.8 707.6,982.1 699.3,975.9 C695.8,973.2 682.3,957.5 657.3,926.7 C610.9,869.7 579.8,831.7 574.9,826.3 C570.5,821.4 566.2,813.5 564.4,806.5 C558.3,783.8 573.5,759.5 598.0,752.7 C602.4,751.4 612.5,751.0 650.0,750.6 C700.7,750.1 704.3,749.8 722.5,743.9 C750.0,735.1 774.2,718.5 793.0,695.5 C812.5,671.7 825.0,641.5 829.1,608.6 C830.8,594.9 829.8,569.5 827.0,555.6 C810.5,472.0 739.7,406.4 650.0,391.5 C628.1,387.9 592.9,388.6 569.0,393.1 C535.7,399.5 501.9,414.3 475.7,434.2 C465.2,442.2 448.8,458.0 439.2,469.5 C404.2,511.3 389.2,564.9 397.5,618.5 C405.1,668.0 432.8,715.5 472.8,747.7 C487.4,759.5 486.1,750.7 485.8,834.3 L485.4,905.5L482.8,914.2 C470.5,955.5 436.0,985.5 393.0,992.5 C382.8,994.1 365.3,994.3 355.5,992.9 Z M599.8,698.0 C567.6,692.9 541.2,672.8 528.9,644.0 C523.2,630.5 521.7,623.0 521.7,607.0 C521.7,591.1 522.8,584.6 528.0,571.3 C538.0,545.3 562.8,524.7 593.3,516.8 C604.0,514.0 626.0,513.8 636.3,516.3 C665.3,523.5 689.4,544.6 699.9,572.0 C710.9,600.4 707.2,631.6 689.9,656.5 C672.7,681.4 645.1,696.9 615.3,698.4 C609.9,698.7 602.9,698.5 599.8,698.0 Z"/></symbol>
+</svg>
+<div id="shell"></div>
+<div id="layer"></div>
+
+<script>
+(function () {
+  // ---------- helpers ----------
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const today = () => ymd(new Date());
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const fmtTime = t => { if (!t) return ''; let [h, m] = t.split(':').map(Number); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${pad(m)} ${ap}`; };
+  const fmtDay = s => { const d = parseYmd(s); const t = today(); if (s === t) return 'Today'; if (s === ymd(addDays(new Date(), 1))) return 'Tomorrow'; return `${DOW[d.getDay()]}, ${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`; };
+  const clock = ts => { const d = new Date(ts); let h = d.getHours(); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${pad(d.getMinutes())} ${ap}`; };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const nextDow = (dow, from = new Date()) => { const d = new Date(from); const diff = (dow - d.getDay() + 7) % 7 || 7; return addDays(d, diff); };
+
+  const PEOPLE = {
+    me: { name: 'George', c: '#7D021D' }, mike: { name: 'Mike', c: '#A9822F' }, dom: { name: 'Dom', c: '#17905A' },
+    alex: { name: 'Alex', c: '#B34A6A' }, chris: { name: 'Chris', c: '#0E7F8E' }, tony: { name: 'Tony', c: '#6B5BD6' },
+    nick: { name: 'Nick', c: '#C4651F' }, ryan: { name: 'Ryan', c: '#4A5568' }, sam: { name: 'Sam', c: '#2B62F0' },
+    jake: { name: 'Jake', c: '#2E8B57' }, luis: { name: 'Luis', c: '#D2691E' }
+  };
+  const STATUS = {
+    free:   { label: 'Free tonight', color: 'var(--free)' },
+    gaming: { label: 'Gaming', color: 'var(--gaming)' },
+    out:    { label: 'Going out', color: 'var(--out)' },
+    watch:  { label: 'Watching the game', color: 'var(--watch)' },
+    gym:    { label: 'At the gym', color: 'var(--gym)' },
+    busy:   { label: 'Busy', color: 'var(--busy)' }
+  };
+  const QUICK = ['Poker', 'Gaming', 'Dinner', 'Drinks', 'Golf', 'Watch the game', 'Gym'];
+
+  // Friends' statuses are sample data, refreshed each visit.
+  const now = Date.now(), endOfDay = (() => { const d = new Date(); d.setHours(23, 59, 0, 0); return d.getTime(); })();
+  const FRIEND_STATUS = {
+    mike: { s: 'free', until: endOfDay, note: '' }, dom: { s: 'free', until: endOfDay, note: '' }, chris: { s: 'free', until: now + 2 * 3600e3, note: 'down for anything' },
+    alex: { s: 'gaming', until: endOfDay, note: 'Helldivers after 9' }, ryan: { s: 'gaming', until: endOfDay, note: '' }, nick: { s: 'out', until: endOfDay, note: 'Brickell' },
+    tony: { s: 'busy', until: endOfDay, note: 'work trip' }, sam: { s: 'watch', until: endOfDay, note: 'MNF' }, jake: { s: 'free', until: endOfDay, note: '' },
+    luis: { s: 'gym', until: now + 3600e3, note: '' }
+  };
+
+  // ---------- state ----------
+  const KEY = 'roundtable-app-v1';
+  function seed() {
+    const t = new Date();
+    const fri = ymd(nextDow(5)), sat = ymd(nextDow(6)), sun = ymd(nextDow(0));
+    const ts = (daysAgo, h, m) => { const d = addDays(t, -daysAgo); d.setHours(h, m, 0, 0); return d.getTime(); };
+    const plans = [
+      { id: 'p1', table: 'boys', title: 'Poker', date: fri, time: '20:00', where: "Mike's place", repeat: 'biweekly', going: ['mike','dom','alex','chris','nick'], maybe: ['ryan'], cant: [] },
+      { id: 'p2', table: 'boys', title: 'Golf', date: sat, time: '', vote: { '9:00 AM': ['chris','dom'], '11:00 AM': ['mike'], '2:00 PM': [] }, where: 'Crandon Park', going: ['chris','dom','mike'], maybe: [], cant: ['tony'] },
+      { id: 'p3', table: 'fantasy', title: 'Draft recap', date: sun, time: '13:00', where: 'Sports bar', going: ['sam','jake','luis','mike'], maybe: ['nick','dom'], cant: ['tony'] },
+      { id: 'p4', table: 'uf', title: 'UF game watch', date: sat, time: '19:30', where: "Luis's place", going: ['luis','sam'], maybe: ['jake'], cant: [] },
+      { id: 'p5', table: 'boys', title: "Mike's birthday dinner", date: ymd(addDays(t, 12)), time: '19:00', where: 'Komodo', going: ['mike','dom','chris','tony','nick','ryan','alex'], maybe: [], cant: [] },
+      { id: 'p6', table: 'poker', title: 'Tournament night', date: ymd(addDays(t, 18)), time: '19:00', where: "Jake's", going: ['jake','luis'], maybe: ['sam'], cant: [] }
+    ];
+    const messages = {
+      boys: [
+        { id: uid(), from: 'mike', text: 'poker friday, same time?', ts: ts(1, 18, 2) },
+        { id: uid(), plan: 'p1', ts: ts(1, 18, 3) },
+        { id: uid(), from: 'dom', text: 'anyone doing anything tonight', ts: ts(0, 16, 40) },
+        { id: uid(), from: 'mike', text: 'down for something, not going out though', ts: ts(0, 16, 44) },
+        { id: uid(), from: 'alex', text: 'on Helldivers after 9 if anyone wants in', ts: ts(0, 16, 51) },
+        { id: uid(), from: 'chris', text: 'golf saturday?', ts: ts(0, 17, 5) },
+        { id: uid(), plan: 'p2', ts: ts(0, 17, 6) }
+      ],
+      fantasy: [ { id: uid(), from: 'sam', text: 'that trade was robbery', ts: ts(0, 12, 10) }, { id: uid(), plan: 'p3', ts: ts(0, 12, 12) } ],
+      poker: [ { id: uid(), from: 'jake', text: 'bringing the good chips', ts: ts(2, 20, 0) }, { id: uid(), plan: 'p6', ts: ts(2, 20, 1) } ],
+      uf: [ { id: uid(), from: 'luis', text: 'who is going to the game', ts: ts(0, 9, 30) }, { id: uid(), plan: 'p4', ts: ts(0, 9, 31) } ]
+    };
+    return {
+      tables: [
+        { id: 'boys', name: 'The Boys', glyph: 'B', color: '#7D021D', members: ['me','mike','dom','alex','chris','tony','nick','ryan'] },
+        { id: 'fantasy', name: 'Fantasy League', glyph: 'F', color: '#0E7F8E', members: ['me','mike','sam','jake','luis','ryan','alex','dom','nick','tony','chris'] },
+        { id: 'poker', name: 'Poker Night', glyph: 'P', color: '#B34A6A', members: ['me','mike','jake','luis','dom','sam'] },
+        { id: 'uf', name: 'UF Friends', glyph: 'U', color: '#C4651F', members: ['me','sam','jake','luis','nick'] }
+      ],
+      plans, messages,
+      unread: { boys: 3, fantasy: 1, poker: 0, uf: 1 },
+      my: { s: null, until: 0, note: '', tables: ['boys','fantasy','poker','uf'] }
+    };
+  }
+  function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); return v && v.tables ? v : null; } catch (e) { return null; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  let S = load() || seed();
+
+  const wide = () => window.matchMedia('(min-width: 861px)').matches;
+  const UI = { tab: 'tables', table: null, cal: today().slice(0, 7), day: today(), sheet: null, toast: null, draft: {}, dur: 'tonight' };
+  try { const h = location.hash.slice(1); if (['tables','tonight','calendar','me'].includes(h)) UI.tab = h; } catch (e) {}
+
+  // ---------- data helpers ----------
+  const tbl = id => S.tables.find(t => t.id === id);
+  const plan = id => S.plans.find(p => p.id === id);
+  function statusOf(pid) {
+    if (pid === 'me') return S.my.s && S.my.until > Date.now() ? S.my : null;
+    const st = FRIEND_STATUS[pid]; return st && st.until > Date.now() ? st : null;
+  }
+  const others = t => t.members.filter(m => m !== 'me');
+  const withStatus = (t, s) => others(t).filter(m => statusOf(m)?.s === s);
+  const myRsvp = p => p.going.includes('me') ? 'g' : p.maybe.includes('me') ? 'm' : p.cant.includes('me') ? 'c' : null;
+  function names(list) { const n = list.map(x => x === 'me' ? 'You' : PEOPLE[x].name); if (n.length < 2) return n.join(''); if (n.length === 2) return n.join(' and '); return n.slice(0, -1).join(', ') + ', and ' + n.at(-1); }
+  function occurrences(p, fromYmd, toYmd) {
+    const out = []; const step = p.repeat === 'weekly' ? 7 : p.repeat === 'biweekly' ? 14 : 0;
+    let d = parseYmd(p.date); const end = parseYmd(toYmd), start = parseYmd(fromYmd);
+    if (!step) { if (d >= start && d <= end) out.push(p.date); return out; }
+    let guard = 0; while (d <= end && guard++ < 200) { if (d >= start) out.push(ymd(d)); d = addDays(d, step); }
+    return out;
+  }
+  function plansOn(day) { return S.plans.filter(p => occurrences(p, day, day).length).sort((a, b) => (a.time || '99').localeCompare(b.time || '99')); }
+  function nextOccurrence(p) { const t = today(); const occ = occurrences(p, t, ymd(addDays(new Date(), 120))); return occ[0] || null; }
+  function upcoming(tableId) {
+    return S.plans.filter(p => !tableId || p.table === tableId).map(p => ({ p, d: nextOccurrence(p) })).filter(x => x.d)
+      .sort((a, b) => (a.d + (a.p.time || '99')).localeCompare(b.d + (b.p.time || '99')));
+  }
+  const whenText = (p, d) => `${fmtDay(d || p.date)}${p.time ? ' · ' + fmtTime(p.time) : p.vote ? ' · time vote open' : ''}`;
+  const repeatText = r => r === 'weekly' ? 'Every week' : r === 'biweekly' ? 'Every other week' : '';
+
+  // ---------- render pieces ----------
+  const ICON = {
+    tables: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><circle cx="12" cy="3.6" r="1.6"/><circle cx="12" cy="20.4" r="1.6"/><circle cx="4.7" cy="7.8" r="1.6"/><circle cx="19.3" cy="7.8" r="1.6"/><circle cx="4.7" cy="16.2" r="1.6"/><circle cx="19.3" cy="16.2" r="1.6"/></svg>',
+    tonight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+    me: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>',
+    send: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12 2-12 2z"/></svg>'
+  };
+  const TAB_NAMES = { tables: 'Tables', tonight: 'Tonight', calendar: 'Calendar', me: 'Me' };
+  function av(pid, dot = true, size) {
+    const p = PEOPLE[pid], st = dot ? statusOf(pid) : null;
+    const d = st ? `<span class="dot" style="background:${STATUS[st.s].color}"></span>` : '';
+    const sz = size ? `width:${size}px;height:${size}px;font-size:${Math.round(size * .4)}px;` : '';
+    return `<span class="av" style="background:${p.c};${sz}" title="${esc(p.name)}">${esc(p.name[0])}${d}</span>`;
+  }
+  const ticon = (t, s) => `<span class="ticon" style="background:${t.color}${s ? `;width:${s}px;height:${s}px;font-size:${Math.round(s * .42)}px;border-radius:${Math.round(s * .3)}px` : ''}">${t.glyph}</span>`;
+
+  function planCard(p, d) {
+    const t = tbl(p.table), mine = myRsvp(p);
+    const voting = p.vote ? `<div class="label">Vote on a time</div><div class="votes">${Object.keys(p.vote).map(k => `<button data-act="vote" data-plan="${p.id}" data-opt="${esc(k)}" aria-pressed="${p.vote[k].includes('me')}">${esc(k)} · ${p.vote[k].length}</button>`).join('')}</div>` : '';
+    return `<div class="plan">
+      <div class="ph"><div class="k">${esc(t.name)}${p.repeat ? ' · ' + repeatText(p.repeat) : ''}</div><div class="t">${esc(p.title)}</div><div class="w">${esc(whenText(p, d || nextOccurrence(p) || p.date))}${p.where ? ' · ' + esc(p.where) : ''}</div></div>
+      <div class="pb">
+        <div class="counts"><span class="stack">${p.going.slice(0, 6).map(x => av(x, false, 26)).join('')}</span><span><b>${p.going.length} going</b>${p.maybe.length ? ', ' + p.maybe.length + ' maybe' : ''}${p.cant.length ? ', ' + p.cant.length + " can't" : ''}</span></div>
+        ${voting}
+        <div class="rsvp">
+          <button class="g" data-act="rsvp" data-plan="${p.id}" data-v="g" aria-pressed="${mine === 'g'}">Going</button>
+          <button class="m" data-act="rsvp" data-plan="${p.id}" data-v="m" aria-pressed="${mine === 'm'}">Maybe</button>
+          <button class="c" data-act="rsvp" data-plan="${p.id}" data-v="c" aria-pressed="${mine === 'c'}">Can't</button>
+        </div>
+      </div></div>`;
+  }
+
+  function pulse(t) {
+    const free = withStatus(t, 'free'), gaming = withStatus(t, 'gaming'), out = withStatus(t, 'out');
+    const up = upcoming(t.id).slice(0, 3);
+    return `<div class="card">
+        <div class="label">Right now</div>
+        <div class="prow"><span class="stack">${free.map(x => av(x)).join('') || '<span class="note">Nobody yet</span>'}</span><span class="st"><b style="color:var(--free)">${free.length} free</b>${gaming.length ? ` · ${gaming.length} gaming` : ''}${out.length ? ` · ${out.length} out` : ''}</span></div>
+        ${free.length >= 2 ? `<button class="btn go" data-act="newplan" data-table="${t.id}" data-date="${today()}">Start something tonight</button>` : ''}
+      </div>
+      <div class="card"><div class="label">Coming up</div>
+        ${up.length ? up.map(({ p, d }) => `<div class="prow"><span class="nm">${esc(p.title)}<div class="note">${esc(whenText(p, d))}</div></span><span class="chip">${p.going.length} going</span></div>`).join('') : '<p class="note">No plans yet.</p>'}
+        <button class="btn line" data-act="newplan" data-table="${t.id}">+ New plan</button>
+      </div>
+      <div class="card"><div class="label">Members · ${t.members.length}</div>
+        ${t.members.map(m => { const st = statusOf(m); return `<div class="prow">${av(m)}<span class="nm">${m === 'me' ? 'You' : esc(PEOPLE[m].name)}</span><span class="st">${st ? esc(STATUS[st.s].label) : ''}</span></div>`; }).join('')}
+      </div>`;
+  }
+
+  function viewTables() {
+    const sel = UI.table || (wide() ? S.tables[0].id : null); if (sel && !UI.table) UI.table = sel;
+    const list = S.tables.map(t => {
+      const f = withStatus(t, 'free').length, up = upcoming(t.id)[0], msgs = S.messages[t.id] || [];
+      const last = [...msgs].reverse().find(m => m.text);
+      return `<button class="trow" data-act="open" data-table="${t.id}" aria-current="${sel === t.id}">${ticon(t)}
+        <span class="tmeta"><span class="tname">${esc(t.name)}</span><div class="tline">${last ? esc((last.from === 'me' ? 'You' : PEOPLE[last.from].name) + ': ' + last.text) : 'No messages yet'}</div>
+        <div class="chips">${f ? `<span class="chip">${f} free</span>` : ''}${up ? `<span class="chip n">${esc(up.p.title)} · ${esc(fmtDay(up.d))}</span>` : ''}</div></span>
+        ${S.unread[t.id] ? `<span class="unread">${S.unread[t.id]}</span>` : ''}</button>`;
+    }).join('') + `<button class="btn line" data-act="newtable" style="margin-top:6px">+ New Table</button>`;
+    let chat = '<div class="chatcol"></div>', side = '<aside class="side"></aside>';
+    if (sel) {
+      const t = tbl(sel);
+      let lastDay = '';
+      const msgs = (S.messages[t.id] || []).map(m => {
+        const d = ymd(new Date(m.ts)); let sep = '';
+        if (d !== lastDay) { lastDay = d; sep = `<div class="daysep">${esc(fmtDay(d).toUpperCase())}</div>`; }
+        if (m.plan) { const p = plan(m.plan); return p ? sep + `<div class="msg ${m.from === 'me' ? 'me' : ''}">${planCard(p)}</div>` : sep; }
+        const me = m.from === 'me', dayWord = /(tonight|today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.exec(m.text);
+        return sep + `<div class="msg ${me ? 'me' : ''}">${me ? '' : av(m.from)}<div class="bubble">${me ? '' : `<div class="who">${esc(PEOPLE[m.from].name)}</div>`}${esc(m.text)}${dayWord ? `<button class="mkplan" data-act="frommsg" data-msg="${m.id}">Turn into a plan</button>` : ''}<div class="time">${clock(m.ts)}</div></div></div>`;
+      }).join('');
+      const free = withStatus(t, 'free');
+      chat = `<div class="chatcol">
+        <div class="chathead">${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back to Tables">‹</button>'}${ticon(t, 38)}<div style="flex:1;min-width:0"><h2>${esc(t.name)}</h2><div class="note">${t.members.length} members · ${free.length} free tonight</div></div><button class="btn soft" data-act="newplan" data-table="${t.id}">+ Plan</button></div>
+        <div class="messages" id="messages">
+          <div class="card pulse-inline" style="display:none;flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap"><span class="stack">${free.map(x => av(x)).join('')}</span><span class="note"><b style="color:var(--ink)">${free.length} free tonight</b>${upcoming(t.id)[0] ? ' · next: ' + esc(upcoming(t.id)[0].p.title) + ', ' + esc(fmtDay(upcoming(t.id)[0].d)) : ''}</span>${free.length >= 2 ? `<button class="btn go" style="margin-left:auto" data-act="newplan" data-table="${t.id}" data-date="${today()}">Start something</button>` : ''}</div>
+          ${msgs || '<div class="empty">No messages yet. Say something or start a plan.</div>'}
+        </div>
+        <form class="composer" id="composer"><input id="msg" autocomplete="off" placeholder="Message ${esc(t.name)}" aria-label="Message" value="${esc(UI.draft[t.id] || '')}"><button class="send" aria-label="Send">${ICON.send}</button></form>
+      </div>`;
+      side = `<aside class="side">${pulse(t)}</aside>`;
+    }
+    return { title: 'Tables', body: `<div class="split ${sel && !wide() ? 'chatting' : ''}"><div class="tlist">${list}</div>${chat}${side}</div>`, raw: true };
+  }
+
+  function viewTonight() {
+    const my = statusOf('me');
+    const groups = Object.keys(STATUS).map(k => {
+      const ppl = Object.keys(FRIEND_STATUS).filter(p => statusOf(p)?.s === k);
+      if (!ppl.length) return '';
+      return `<div class="card"><div class="label" style="color:${STATUS[k].color}">${STATUS[k].label} · ${ppl.length}</div>${ppl.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="nm">${esc(PEOPLE[p].name)}${st.note ? `<div class="note">${esc(st.note)}</div>` : ''}</span><span class="st">until ${clock(st.until)}</span></div>`; }).join('')}</div>`;
+    }).join('');
+    const sugg = S.tables.map(t => ({ t, f: withStatus(t, 'free') })).filter(x => x.f.length >= 2).map(x => `<div class="card" style="flex-direction:row;align-items:center;gap:12px">${ticon(x.t, 40)}<div style="flex:1;min-width:0"><b>${x.f.length} free in ${esc(x.t.name)}</b><div class="note">${esc(names(x.f))}</div></div><button class="btn go" data-act="newplan" data-table="${x.t.id}" data-date="${today()}">Start</button></div>`).join('');
+    const body = `<div class="pad">
+      ${my ? `<div class="mystatus"><span class="av" style="background:var(--free);width:44px;height:44px;font-size:16px">G</span><div><b>${esc(STATUS[my.s].label)}</b><span style="opacity:.85">${my.note ? esc(my.note) + ' · ' : ''}until ${clock(my.until)} · visible to ${my.tables.length} Table${my.tables.length === 1 ? '' : 's'}</span></div><button class="btn" data-act="clearstatus">Clear</button></div>` : `<div class="card"><b style="font-size:17px">What are you up to today?</b><span class="note">Pick a status. It clears on its own, and only the Tables you choose can see it.</span></div>`}
+      <div class="statusgrid">${Object.keys(STATUS).map(k => `<button class="sbtn" data-act="status" data-s="${k}" aria-pressed="${my?.s === k}"><span class="sd" style="background:${STATUS[k].color}"></span>${STATUS[k].label}</button>`).join('')}</div>
+      <div class="twocol">
+        <div class="field"><span class="label">Show it for</span><div class="seg">${[['1h','1 hour'],['2h','2 hours'],['tonight','Until midnight']].map(([k, l]) => `<button data-act="dur" data-v="${k}" aria-pressed="${UI.dur === k}">${l}</button>`).join('')}</div></div>
+        <div class="field"><label class="label" for="note">Add a note (optional)</label><input id="note" placeholder="e.g. Helldivers after 9, anywhere in Brickell" value="${esc(S.my.note || '')}"></div>
+      </div>
+      <div class="field"><span class="label">Who can see it</span><div class="seg">${S.tables.map(t => `<button data-act="vis" data-table="${t.id}" aria-pressed="${S.my.tables.includes(t.id)}">${esc(t.name)}</button>`).join('')}</div></div>
+      ${sugg ? `<div class="label" style="margin-top:6px">Make it happen</div>${sugg}` : ''}
+      <div class="label" style="margin-top:6px">Your friends today</div>
+      <div class="twocol">${groups}</div>
+    </div>`;
+    return { title: 'Tonight', action: `<button class="btn primary" data-act="newplan" data-date="${today()}">+ Plan tonight</button>`, body };
+  }
+
+  function viewCalendar() {
+    const [y, m] = UI.cal.split('-').map(Number);
+    const first = new Date(y, m - 1, 1), start = addDays(first, -first.getDay());
+    const cells = [];
+    const daysIn = new Date(y, m, 0).getDate(), total = Math.ceil((first.getDay() + daysIn) / 7) * 7;
+    for (let i = 0; i < total; i++) {
+      const d = addDays(start, i), ds = ymd(d), ps = plansOn(ds), out = d.getMonth() !== m - 1;
+      cells.push(`<button class="day ${out ? 'out' : ''} ${ds === today() ? 'today' : ''}" data-act="pickday" data-day="${ds}" aria-pressed="${ds === UI.day}" aria-label="${fmtDay(ds)}, ${ps.length} plans"><span class="dn">${d.getDate()}</span>${ps.slice(0, 2).map(p => `<span class="ev" style="background:${tbl(p.table).color}">${p.time ? fmtTime(p.time).replace(':00', '') + ' ' : ''}${esc(p.title)}</span>`).join('')}${ps.length > 2 ? `<span class="more">+${ps.length - 2} more</span>` : ''}</button>`);
+    }
+    const dayPlans = plansOn(UI.day);
+    const isToday = UI.day === today();
+    const freeToday = Object.keys(FRIEND_STATUS).filter(p => statusOf(p)?.s === 'free');
+    const body = `<div class="calwrap">
+      <div class="calmain">
+        <div class="calhead"><button class="iconbtn" data-act="mon" data-d="-1" aria-label="Previous month">‹</button><h2>${MONTHS[m - 1]} ${y}</h2><button class="btn line" data-act="mon" data-d="0">Today</button><button class="iconbtn" data-act="mon" data-d="1" aria-label="Next month">›</button></div>
+        <div class="grid">${DOW.map(d => `<div class="dow">${d}</div>`).join('')}${cells.join('')}</div>
+        <div class="chips" style="margin-top:12px">${S.tables.map(t => `<span class="chip" style="background:transparent;color:var(--muted)"><span style="width:10px;height:10px;border-radius:3px;background:${t.color}"></span>${esc(t.name)}</span>`).join('')}</div>
+      </div>
+      <aside class="agenda">
+        <h3>${esc(fmtDay(UI.day))}</h3>
+        ${isToday && freeToday.length ? `<div class="card" style="flex-direction:row;align-items:center;gap:10px"><span class="stack">${freeToday.slice(0, 5).map(x => av(x)).join('')}</span><span class="note"><b style="color:var(--ink)">${freeToday.length} friends free</b> tonight</span></div>` : ''}
+        ${dayPlans.length ? dayPlans.map(p => planCard(p, UI.day)).join('') : '<div class="empty">Nothing planned. Be the one who makes it happen.</div>'}
+        <button class="btn primary" data-act="newplan" data-date="${UI.day}">+ Plan something on ${esc(fmtDay(UI.day))}</button>
+      </aside>
+    </div>`;
+    return { title: 'Calendar', action: `<button class="btn primary" data-act="newplan" data-date="${UI.day}">+ New plan</button>`, body, raw: true };
+  }
+
+  function viewMe() {
+    const going = upcoming().filter(x => myRsvp(x.p) === 'g');
+    const body = `<div class="pad">
+      <div class="card" style="flex-direction:row;align-items:center;gap:14px">${av('me', true, 52)}<div><b style="font-size:18px">George</b><div class="note">${statusOf('me') ? esc(STATUS[S.my.s].label) + ' until ' + clock(S.my.until) : 'No status set'} · ${S.tables.length} Tables</div></div></div>
+      <div class="label">You're going to</div>
+      ${going.length ? going.map(({ p, d }) => `<div class="card" style="flex-direction:row;align-items:center;gap:12px">${ticon(tbl(p.table), 40)}<div style="flex:1;min-width:0"><b>${esc(p.title)}</b><div class="note">${esc(whenText(p, d))} · ${esc(tbl(p.table).name)}</div></div><span class="chip">${p.going.length} going</span></div>`).join('') : '<div class="empty">You haven\'t said yes to anything yet. Check Calendar.</div>'}
+      <div class="card"><div class="label">Privacy</div><div>Your status clears on its own. Friends never see your location. No public profile, no follower counts, no ads in your chats.</div></div>
+      <div class="card"><div class="label">About this preview</div><div class="note">This is an early web version of Roundtable. Friends and their replies are samples, and everything you do is saved in this browser only.</div>
+        <div class="seg"><button data-act="reset">Reset sample data</button><a class="btn line" href="../" style="text-decoration:none">Back to the website</a></div></div>
+    </div>`;
+    return { title: 'Me', body };
+  }
+
+  function viewSheet() {
+    const s = UI.sheet;
+    if (s.kind === 'table') return `<div class="sheet-wrap" data-act="close"><form class="sheet" id="tableform" role="dialog" aria-modal="true" aria-label="New Table" data-stop="1">
+      <h2>New Table</h2><p class="note" style="margin-top:-6px">A private home for one friend group.</p>
+      <div class="field"><label class="label" for="tname">Name</label><input id="tname" required maxlength="30" placeholder="Golf crew, Roommates, Sunday League"></div>
+      <div class="field"><span class="label">Who's in</span><div class="seg">${Object.keys(PEOPLE).filter(p => p !== 'me').map(p => `<button type="button" data-act="pickmember" data-p="${p}" aria-pressed="${s.members.includes(p)}">${esc(PEOPLE[p].name)}</button>`).join('')}</div></div>
+      <button class="btn primary" style="padding:13px">Create Table</button><button type="button" class="btn" data-act="close">Cancel</button></form></div>`;
+    const t = tbl(s.table);
+    const times = s.title === 'Golf' ? ['09:00', '11:00', '14:00'] : ['19:00', '20:00', '21:00'];
+    return `<div class="sheet-wrap" data-act="close"><form class="sheet" id="planform" role="dialog" aria-modal="true" aria-label="New plan" data-stop="1">
+      <h2>New plan</h2>
+      <div class="field"><label class="label" for="ptable">Table</label><select id="ptable">${S.tables.map(x => `<option value="${x.id}" ${x.id === t.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
+      <div class="field"><label class="label" for="ptitle">What</label><input id="ptitle" required maxlength="40" value="${esc(s.title)}" placeholder="Poker, dinner, gaming"><div class="seg">${QUICK.map(q => `<button type="button" data-act="quick" data-v="${q}" aria-pressed="${s.title === q}">${q}</button>`).join('')}</div></div>
+      <div class="row2"><div class="field"><label class="label" for="pdate">Day</label><input id="pdate" type="date" required value="${s.date}" min="${today()}"></div>
+        <div class="field"><label class="label" for="ptime">Time</label><input id="ptime" type="time" value="${s.vote ? '' : s.time}" ${s.vote ? 'disabled' : ''}></div></div>
+      <div class="seg"><button type="button" data-act="votetoggle" aria-pressed="${s.vote}">Let the group vote on a time</button></div>
+      ${s.vote ? `<p class="note">Options: ${times.map(fmtTime).join(', ')}</p>` : ''}
+      <div class="row2"><div class="field"><label class="label" for="pwhere">Where (optional)</label><input id="pwhere" maxlength="40" value="${esc(s.where)}" placeholder="Mike's place, online, Topgolf"></div>
+        <div class="field"><label class="label" for="prepeat">Repeat</label><select id="prepeat"><option value="">Does not repeat</option><option value="weekly" ${s.repeat === 'weekly' ? 'selected' : ''}>Every week</option><option value="biweekly" ${s.repeat === 'biweekly' ? 'selected' : ''}>Every other week</option></select></div></div>
+      <button class="btn primary" style="padding:13px;font-size:15px">Send plan to the Table</button>
+      <button type="button" class="btn" data-act="close">Cancel</button>
+    </form></div>`;
+  }
+
+  // ---------- render ----------
+  function render() {
+    const focusId = document.activeElement && document.activeElement.id, mi = document.getElementById('msg');
+    const caret = mi && focusId === 'msg' ? mi.selectionStart : null;
+    if (mi && UI.table) UI.draft[UI.table] = mi.value;
+    const msgBox = document.getElementById('messages');
+    const atBottom = msgBox ? msgBox.scrollHeight - msgBox.scrollTop - msgBox.clientHeight < 60 : true;
+    const view = document.querySelector('.view'); const keepTop = view && !UI.resetScroll ? view.scrollTop : 0; UI.resetScroll = false;
+    const v = { tables: viewTables, tonight: viewTonight, calendar: viewCalendar, me: viewMe }[UI.tab]();
+    const nav = k => `<button class="navbtn" data-act="tab" data-tab="${k}" ${UI.tab === k ? 'aria-current="page"' : ''}>${ICON[k]}${TAB_NAMES[k]}</button>`;
+    const tab = k => `<button data-act="tab" data-tab="${k}" ${UI.tab === k ? 'aria-current="page"' : ''}>${ICON[k]}${TAB_NAMES[k]}</button>`;
+    const my = statusOf('me');
+    const hideTop = UI.tab === 'tables' && !wide() && UI.table;
+    document.getElementById('shell').innerHTML = `
+      <nav class="rail" aria-label="Main"><a class="brand" href="../"><svg aria-hidden="true"><use href="#r"/></svg>roundtable</a>
+        ${['tables','tonight','calendar','me'].map(nav).join('')}
+        <button class="me-card" data-act="tab" data-tab="tonight">${av('me', true)}<span><b>George</b><small>${my ? esc(STATUS[my.s].label) : 'Set your status'}</small></span></button></nav>
+      <main>
+        ${hideTop ? '' : `<header class="topbar"><span class="mobile-brand"><svg aria-hidden="true"><use href="#r"/></svg>${esc(TAB_NAMES[UI.tab])}</span><h1 class="desk-title">${esc(v.title)}</h1>${v.action || ''}</header>`}
+        ${v.raw ? v.body : `<div class="view">${v.body}</div>`}
+      </main>
+      <nav class="tabbar" aria-label="Main">${['tables','tonight','calendar','me'].map(tab).join('')}</nav>`;
+    document.querySelectorAll('.desk-title').forEach(h => { if (!wide()) h.style.display = 'none'; });
+    document.getElementById('layer').innerHTML = (UI.sheet ? viewSheet() : '') + (UI.toast ? `<div class="toast" role="status">${esc(UI.toast)}</div>` : '');
+    const nb = document.getElementById('messages'); if (nb && (atBottom || UI.scrollBottom)) nb.scrollTop = nb.scrollHeight; UI.scrollBottom = false;
+    const nv = document.querySelector('.view'); if (nv) nv.scrollTop = keepTop;
+    bindForms();
+    if (focusId === 'msg') { const m2 = document.getElementById('msg'); if (m2) { m2.focus(); if (caret != null) m2.setSelectionRange(caret, caret); } }
+  }
+  let toastTimer;
+  function toast(t) { UI.toast = t; clearTimeout(toastTimer); toastTimer = setTimeout(() => { UI.toast = null; document.getElementById('layer').querySelector('.toast')?.remove(); }, 2600); }
+
+  function bindForms() {
+    const c = document.getElementById('composer');
+    if (c) c.onsubmit = e => {
+      e.preventDefault(); const i = document.getElementById('msg'); const text = i.value.trim(); if (!text) return;
+      S.messages[UI.table].push({ id: uid(), from: 'me', text, ts: Date.now() }); UI.draft[UI.table] = ''; i.value = '';
+      save(); UI.scrollBottom = true; render(); document.getElementById('msg')?.focus();
+      maybeReply(UI.table, text);
+    };
+    const pf = document.getElementById('planform');
+    if (pf) {
+      pf.onsubmit = e => { e.preventDefault(); createPlan(); };
+      ['ptitle','pdate','ptime','pwhere','prepeat','ptable'].forEach(id => { const el = document.getElementById(id); if (el) el.oninput = el.onchange = syncSheet; });
+    }
+    const tf = document.getElementById('tableform');
+    if (tf) tf.onsubmit = e => { e.preventDefault(); createTable(); };
+    const note = document.getElementById('note');
+    if (note) note.onchange = () => { S.my.note = note.value.trim(); save(); if (statusOf('me')) render(); };
+  }
+  function syncSheet() {
+    const s = UI.sheet; if (!s || s.kind === 'table') return;
+    const g = id => document.getElementById(id);
+    s.title = g('ptitle').value; s.date = g('pdate').value || s.date; if (!s.vote) s.time = g('ptime').value; s.where = g('pwhere').value; s.repeat = g('prepeat').value; s.table = g('ptable').value;
+  }
+
+  // ---------- actions ----------
+  function openPlanSheet(opts = {}) {
+    const tid = opts.table || UI.table || S.tables[0].id;
+    UI.sheet = { kind: 'plan', table: tid, title: opts.title || '', date: opts.date || today(), time: opts.time || '20:00', where: '', repeat: '', vote: false };
+  }
+  function setRsvp(p, v) { ['going','maybe','cant'].forEach(k => p[k] = p[k].filter(x => x !== 'me')); ({ g: p.going, m: p.maybe, c: p.cant })[v].push('me'); }
+  function createPlan() {
+    syncSheet(); const s = UI.sheet; if (!s.title.trim()) return;
+    const times = s.title === 'Golf' ? ['09:00', '11:00', '14:00'] : ['19:00', '20:00', '21:00'];
+    const p = { id: 'p' + uid(), table: s.table, title: s.title.trim(), date: s.date, time: s.vote ? '' : s.time, where: s.where.trim(), repeat: s.repeat || '', going: ['me'], maybe: [], cant: [] };
+    if (s.vote) { p.vote = {}; times.forEach(x => p.vote[fmtTime(x)] = []); }
+    S.plans.push(p); S.messages[s.table].push({ id: uid(), from: 'me', plan: p.id, ts: Date.now() });
+    save(); const t = tbl(s.table); UI.sheet = null; UI.tab = 'tables'; UI.table = s.table; UI.scrollBottom = true;
+    toast(`Plan sent to ${t.name}`); render();
+    const free = withStatus(t, 'free'), pool = free.length ? free : others(t).filter(m => statusOf(m)?.s !== 'busy');
+    pool.slice(0, 3).forEach((pid, i) => setTimeout(() => {
+      if (!plan(p.id)) return; p.going.push(pid); if (p.vote) p.vote[Object.keys(p.vote)[1]].push(pid);
+      if (i === 0) S.messages[t.id].push({ id: uid(), from: pid, text: ['I\'m in', 'let\'s go', 'down'][i % 3], ts: Date.now() });
+      save(); if (UI.table === t.id || UI.tab === 'calendar') render(); toast(`${PEOPLE[pid].name} is going to ${p.title}`);
+    }, 1800 + i * 1700));
+  }
+  function createTable() {
+    const name = document.getElementById('tname').value.trim(); if (!name) return;
+    const id = 't' + uid(), colors = ['#2B62F0', '#17905A', '#6B5BD6', '#A9822F', '#0E7F8E'];
+    S.tables.push({ id, name, glyph: name[0].toUpperCase(), color: colors[S.tables.length % colors.length], members: ['me', ...UI.sheet.members] });
+    S.messages[id] = []; S.unread[id] = 0; S.my.tables.push(id); save();
+    UI.sheet = null; UI.tab = 'tables'; UI.table = id; toast(`${name} is ready. Start a plan or say hi.`); render();
+  }
+  const REPLIES = ["I'm in", 'down', 'what time?', "let's do it", 'say less', 'maybe, depends on work'];
+  function maybeReply(tid, text) {
+    const t = tbl(tid); const cand = others(t).filter(m => statusOf(m) && statusOf(m).s !== 'busy');
+    if (!cand.length || !/\?|anyone|who|tonight|down/i.test(text)) return;
+    const pid = cand[Math.floor(Math.random() * cand.length)];
+    setTimeout(() => { S.messages[tid].push({ id: uid(), from: pid, text: REPLIES[Math.floor(Math.random() * REPLIES.length)], ts: Date.now() }); save(); if (UI.table === tid && UI.tab === 'tables') render(); else { S.unread[tid] = (S.unread[tid] || 0) + 1; save(); } }, 1500 + Math.random() * 1500);
+  }
+
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-act]'); if (!el) return;
+    const a = el.dataset.act, d = el.dataset;
+    if (a === 'close' && e.target.closest('[data-stop]') && el.closest('[data-stop]') !== el && !el.matches('button')) return;
+    if (a === 'close' && el.classList.contains('sheet-wrap') && e.target !== el) return;
+    if (UI.sheet && UI.sheet.kind === 'plan' && ['quick','votetoggle'].includes(a)) syncSheet();
+    switch (a) {
+      case 'tab': UI.tab = d.tab; UI.resetScroll = true; UI.table = wide() ? UI.table : null; try { history.replaceState(null, '', '#' + d.tab); } catch (err) {} break;
+      case 'open': UI.tab = 'tables'; UI.table = d.table; S.unread[d.table] = 0; save(); UI.scrollBottom = true; break;
+      case 'back': UI.table = null; break;
+      case 'rsvp': { const p = plan(d.plan); setRsvp(p, d.v); save(); toast(d.v === 'g' ? `You're going to ${p.title}` : d.v === 'm' ? 'Marked maybe' : "Marked can't make it"); break; }
+      case 'vote': { const p = plan(d.plan); Object.values(p.vote).forEach(l => { const i = l.indexOf('me'); if (i > -1) l.splice(i, 1); }); p.vote[d.opt].push('me'); save(); break; }
+      case 'status': {
+        const dur = UI.dur, until = dur === '1h' ? Date.now() + 3600e3 : dur === '2h' ? Date.now() + 7200e3 : endOfDayTs();
+        if (S.my.s === d.s && statusOf('me')) { S.my.s = null; S.my.until = 0; } else { S.my.s = d.s; S.my.until = until; S.my.note = document.getElementById('note')?.value.trim() || ''; toast(`${STATUS[d.s].label} until ${clock(until)}`); }
+        save(); break;
+      }
+      case 'dur': UI.dur = d.v; if (statusOf('me')) { S.my.until = d.v === '1h' ? Date.now() + 3600e3 : d.v === '2h' ? Date.now() + 7200e3 : endOfDayTs(); save(); } break;
+      case 'clearstatus': S.my.s = null; S.my.until = 0; save(); toast('Status cleared'); break;
+      case 'vis': { const l = S.my.tables, i = l.indexOf(d.table); i > -1 ? l.splice(i, 1) : l.push(d.table); save(); break; }
+      case 'newplan': openPlanSheet({ table: d.table, date: d.date }); break;
+      case 'frommsg': {
+        let m; Object.values(S.messages).forEach(list => list.forEach(x => { if (x.id === d.msg) m = x; }));
+        const tid = Object.keys(S.messages).find(k => S.messages[k].includes(m));
+        const w = (/(tonight|today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.exec(m.text) || [''])[0].toLowerCase();
+        const idx = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].indexOf(w);
+        const date = w === 'tomorrow' ? ymd(addDays(new Date(), 1)) : idx > -1 ? ymd(nextDow(idx)) : today();
+        const known = QUICK.find(q => m.text.toLowerCase().includes(q.toLowerCase()));
+        openPlanSheet({ table: tid, date, title: known || '', time: known === 'Golf' ? '09:00' : '20:00' }); break;
+      }
+      case 'quick': UI.sheet.title = d.v; if (d.v === 'Golf' && UI.sheet.time >= '17:00') UI.sheet.time = '09:00'; break;
+      case 'votetoggle': UI.sheet.vote = !UI.sheet.vote; break;
+      case 'close': UI.sheet = null; break;
+      case 'pickday': UI.day = d.day; if (d.day.slice(0, 7) !== UI.cal) UI.cal = d.day.slice(0, 7); break;
+      case 'mon': { if (d.d === '0') { UI.cal = today().slice(0, 7); UI.day = today(); } else { const [y, m] = UI.cal.split('-').map(Number); const nd = new Date(y, m - 1 + Number(d.d), 1); UI.cal = ymd(nd).slice(0, 7); } break; }
+      case 'newtable': UI.sheet = { kind: 'table', members: [] }; break;
+      case 'pickmember': { const l = UI.sheet.members, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); const nm = document.getElementById('tname')?.value; render(); const n2 = document.getElementById('tname'); if (n2 && nm) n2.value = nm; return; }
+      case 'reset': try { localStorage.removeItem(KEY); } catch (err) {} S = seed(); UI.table = null; toast('Sample data reset'); break;
+      default: return;
+    }
+    render();
+  });
+  function endOfDayTs() { const x = new Date(); x.setHours(23, 59, 0, 0); return x.getTime(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && UI.sheet) { UI.sheet = null; render(); } });
+  let lastWide = wide();
+  window.addEventListener('resize', () => { if (wide() !== lastWide) { lastWide = wide(); render(); } });
+  setInterval(() => { if (!UI.sheet && document.activeElement?.id !== 'note') render(); }, 60000);
+  render();
+})();
+</script>
+</body>
+</html>

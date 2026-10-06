@@ -160,8 +160,9 @@ footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--mu
 footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
 @media (max-width: 860px) {
+  .nav-links a:not(:last-child) { display: none; }
   .hero-grid, .versus, .features, .steps, .privacy { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
+  
   .phone { transform: none; margin-top: 8px; }
   section { padding-block: 64px; }
   .privacy { padding: 36px 24px; }
@@ -182,7 +183,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <div class="wrap">
     <nav class="nav" aria-label="Main">
       <a class="brand" href="#top"><svg aria-hidden="true"><use href="#r"/></svg>roundtable</a>
-      <div class="nav-links"><a href="#how">How it works</a><a href="#tonight">Tonight</a><a href="#privacy">Privacy</a></div>
+      <div class="nav-links"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="app/" style="opacity:1;background:var(--ivory);color:var(--maroon-deep);padding:7px 14px;border-radius:999px">Open the app</a></div>
     </nav>
     <div class="hero-grid" id="top">
       <div>
@@ -190,7 +191,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
         <h1 style="margin-top:14px">The group chat that <em>actually</em> makes plans.</h1>
         <p class="lede">Roundtable is a private home for your crew. Talk, see who is free tonight, and turn "we should" into a plan with one tap.</p>
         <div class="cta-row">
-          <span class="pill-note"><span class="dot"></span>Private beta starts this fall</span>
+          <a class="pill-note" href="app/" style="text-decoration:none">Try the app now</a>
           <a class="ghost-link" href="#how">See how it works</a>
         </div>
       </div>
@@ -318,7 +319,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       <svg style="color:var(--accent-text)" aria-hidden="true"><use href="#r"/></svg>
       <h2>Get the group together.</h2>
       <p>The private beta opens to a small number of real friend groups first. Bring your Table.</p>
-      <span class="pill-note"><span class="dot"></span>Beta invites coming soon</span>
+      <a class="pill-note" href="app/" style="text-decoration:none">Open Roundtable</a>
     </div>
   </section>
 </main>
