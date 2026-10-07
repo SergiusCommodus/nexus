@@ -3,6 +3,7 @@
 (function () {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mode = window.NEXUS_INTRO || 'full';
+  const SOUND = new URL('intro.mp3', (document.currentScript && document.currentScript.src) || location.href).href;
   const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true" class="nx-mark"><defs><linearGradient id="nxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A8FF"/><stop offset=".55" stop-color="#7C5CFF"/><stop offset="1" stop-color="#3FD0F0"/></linearGradient></defs>'
     + '<ellipse class="nx-orbit" cx="32" cy="32" rx="29" ry="11" transform="rotate(-25 32 32)" fill="none" stroke="url(#nxg)" stroke-width="2.4"/>'
     + '<path class="nx-n" d="M20 44V20l24 24V20" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'
@@ -27,6 +28,17 @@
   #nx-intro.go .nx-tag { animation: nxPop .8s calc(var(--d, .9s) + .9s) ease-out forwards; }
   #nx-intro .nx-skip { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; text-align: center; font: 600 12px "Figtree", system-ui, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.35); }
   #nx-intro.out { opacity: 0; transform: scale(1.15); pointer-events: none; }
+
+  #nx-intro .nx-gate { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity .35s ease, transform .35s ease; }
+  #nx-intro.entered .nx-gate { opacity: 0; transform: scale(.9); pointer-events: none; }
+  #nx-intro .nx-enter { display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px 14px 16px; border-radius: 999px; border: 1px solid rgba(185,168,255,.45); background: rgba(20,16,60,.55); color: #fff; font: 700 18px "Figtree", system-ui, sans-serif; letter-spacing: .04em; cursor: pointer; box-shadow: 0 0 0 0 rgba(124,92,255,.55), 0 10px 40px -10px rgba(124,92,255,.8); animation: nxPulse 2.2s ease-out infinite; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  #nx-intro .nx-enter:hover { background: rgba(60,40,150,.6); }
+  #nx-intro .nx-enter:focus-visible { outline: 2px solid #B9A8FF; outline-offset: 4px; }
+  #nx-intro .nx-mini { width: 40px; height: 40px; overflow: visible; filter: drop-shadow(0 0 10px rgba(124,92,255,.7)); }
+  #nx-intro .nx-sound { font: 600 12px "Figtree", system-ui, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+  #nx-intro .nx-skip { opacity: 0; transition: opacity .4s 1s; }
+  #nx-intro.entered .nx-skip { opacity: 1; }
+  @keyframes nxPulse { 0% { box-shadow: 0 0 0 0 rgba(124,92,255,.55), 0 10px 40px -10px rgba(124,92,255,.8); } 70% { box-shadow: 0 0 0 18px rgba(124,92,255,0), 0 10px 40px -10px rgba(124,92,255,.8); } 100% { box-shadow: 0 0 0 0 rgba(124,92,255,0), 0 10px 40px -10px rgba(124,92,255,.8); } }
   @keyframes nxIn { to { opacity: 1; transform: none; } }
   @keyframes nxDraw { to { stroke-dashoffset: 0; } }
   @keyframes nxPop { to { opacity: 1; } }
@@ -73,29 +85,37 @@
   size(); addEventListener('resize', () => { size(); if (reduce) frame(0); });
   requestAnimationFrame(frame);
 
-  // ---------- launch intro ----------
-  let seen = false; try { seen = sessionStorage.getItem('nx-intro') === '1'; sessionStorage.setItem('nx-intro', '1'); } catch (e) {}
+  // ---------- launch intro: tap to enter, then sound + warp ----------
+  let seen = false; try { seen = sessionStorage.getItem('nx-intro') === '1'; } catch (e) {}
   if (mode === 'off' || reduce || seen) return;
   const short = mode === 'short';
-  const total = short ? 1900 : 3300;
-  const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'presentation');
+  const total = short ? 2200 : 4300;
+  const audio = new Audio(SOUND); audio.preload = 'auto'; audio.volume = .9;
+  const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Welcome to Nexus');
   ov.style.setProperty('--d', short ? '.25s' : '.9s');
-  ov.innerHTML = `<canvas></canvas><div class="nx-c">${MARK}<div class="nx-word">NEXUS</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div><div class="nx-skip">Tap to skip</div>`;
+  ov.innerHTML = `<canvas></canvas>
+    <div class="nx-c">${MARK}<div class="nx-word">NEXUS</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div>
+    <div class="nx-gate"><button type="button" class="nx-enter" aria-label="Enter Nexus with sound">${MARK.replace('class="nx-mark"', 'class="nx-mini"').replace(/nxg/g, 'nxg3').replace(/ class="nx-(orbit|n|moon)"/g, '')}<span>Tap to enter</span></button><div class="nx-sound">🔊 Sound on</div></div>
+    <div class="nx-skip">Tap to skip</div>`;
   document.body.appendChild(ov);
   document.documentElement.classList.add('nx-wait');
   const prevOverflow = document.documentElement.style.overflow; document.documentElement.style.overflow = 'hidden';
   const ic = ov.querySelector('canvas'), ix = ic.getContext('2d');
   let IW, IH;
   const isz = () => { const d = Math.min(devicePixelRatio || 1, 2); IW = innerWidth; IH = innerHeight; ic.width = IW * d; ic.height = IH * d; ix.setTransform(d, 0, 0, d, 0, 0); };
-  isz();
+  isz(); addEventListener('resize', isz);
   const warp = Array.from({ length: 420 }, () => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() }));
-  const t0 = performance.now(); let done = false;
-  ov.classList.add('go');
+  let t0 = 0, started = false, done = false;
+  setTimeout(() => ov.querySelector('.nx-enter').focus({ preventScroll: true }), 50);
   function wf(t) {
     if (done) return;
-    const e = (t - t0) / 1000;
-    // speed: fast warp at first, settling into a slow drift as the logo arrives
-    const sp = short ? Math.max(.004, .05 * Math.exp(-e * 3)) : (e < .9 ? .012 + e * .06 : Math.max(.003, .066 * Math.exp(-(e - .9) * 2.6)));
+    let sp;
+    if (!started) sp = .0025; // slow drift while waiting at the gate
+    else {
+      const e = (t - t0) / 1000;
+      // fast warp first, settling into a slow drift as the logo arrives
+      sp = short ? Math.max(.004, .05 * Math.exp(-e * 3)) : (e < 1 ? .012 + e * .06 : Math.max(.003, .072 * Math.exp(-(e - 1) * 2.2)));
+    }
     ix.fillStyle = 'rgba(2,3,10,.35)'; ix.fillRect(0, 0, IW, IH);
     const cx = IW / 2, cy = IH / 2, f = Math.max(IW, IH) * .5;
     for (const s of warp) {
@@ -108,13 +128,26 @@
     requestAnimationFrame(wf);
   }
   requestAnimationFrame(wf);
+  function fadeOut() {
+    // the clip fades out on its own; this just speeds it up where the browser allows volume changes
+    const v0 = audio.volume, t1 = performance.now();
+    (function step(t) { const k = Math.min(1, (t - t1) / 1800); try { audio.volume = v0 * (1 - k); } catch (e) {} if (k < 1) requestAnimationFrame(step); else audio.pause(); })(t1);
+  }
+  function start() {
+    if (started) return; started = true; t0 = performance.now();
+    try { sessionStorage.setItem('nx-intro', '1'); } catch (e) {}
+    try { const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (e) {}
+    ov.classList.add('go', 'entered');
+    setTimeout(end, total);
+  }
   function end() {
     if (done) return; done = true; ov.classList.add('out');
     document.documentElement.style.overflow = prevOverflow; document.documentElement.classList.remove('nx-wait');
-    setTimeout(() => ov.remove(), 900);
+    setTimeout(() => { ov.remove(); removeEventListener('resize', isz); }, 900);
+    setTimeout(fadeOut, 1200);
     document.dispatchEvent(new Event('nexus:ready'));
   }
-  ov.addEventListener('click', end);
-  addEventListener('keydown', end, { once: true });
-  setTimeout(end, total);
+  ov.addEventListener('click', () => { if (!started) start(); else end(); });
+  function onKey(e) { if (done) return removeEventListener('keydown', onKey); if (!started) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } } else end(); }
+  addEventListener('keydown', onKey);
 })();
