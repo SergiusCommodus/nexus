@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Nexus">
 <title>Nexus Demo</title>
 <meta name="theme-color" content="#04050C">
 <meta name="description" content="Try Nexus: group chats, events with RSVPs, a shared calendar, and who's free today.">
@@ -29,7 +30,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; margin: 0; overscroll-behavior: none; }
 body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 input, select, textarea { font: inherit; color: var(--ink); }
@@ -38,7 +39,7 @@ h1, h2, h3 { font-family: var(--display); margin: 0; letter-spacing: -.02em; tex
 .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .note { font-size: 13px; color: var(--muted); }
 
-#shell { height: 100%; display: grid; grid-template-columns: 76px 1fr; }
+#shell { height: 100%; height: 100dvh; display: grid; grid-template-columns: 76px 1fr; }
 /* rail */
 .rail { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 0; padding-top: calc(14px + env(safe-area-inset-top, 0px)); overflow-y: auto; }
 .rbtn { position: relative; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; font-size: 22px; background: var(--surface); border: 1px solid var(--line); transition: border-radius .2s, transform .2s; flex: none; }
@@ -191,7 +192,7 @@ button.lrow:hover { background: var(--panel); }
 .composer input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 11px 16px; }
 .plus { width: 40px; height: 40px; border-radius: 50%; background: var(--bubble); font-size: 22px; display: grid; place-items: center; flex: none; }
 .send { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #8A6BFF, #3FA8E0); color: #fff; display: grid; place-items: center; flex: none; }
-.menu { position: absolute; left: 14px; bottom: 64px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 6px; display: flex; flex-direction: column; min-width: 190px; z-index: 5; }
+.menu { position: absolute; left: 14px; bottom: 64px; background: var(--solid); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 6px; display: flex; flex-direction: column; min-width: 190px; z-index: 5; }
 .menu button { text-align: left; padding: 10px 12px; border-radius: 10px; font-weight: 600; display: flex; gap: 10px; align-items: center; }
 .menu button:hover { background: var(--panel); }
 .side { border-left: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -314,7 +315,17 @@ button.lrow:hover { background: var(--panel); }
   .sheet { border-radius: 24px 24px 0 0; max-height: 90vh; }
   .toast { bottom: 84px; }
   .members { padding: 16px; }
+  .top .hlogo { display: block; }
+  .top .grow .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
+  .hello { font-size: 24px; }
+  .lrow { padding: 13px 14px; gap: 12px; }
+  .lrow .t .note { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .sheet { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  main, .tabbar { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  main { background: rgba(8, 10, 26, .55); }
+  .composer { padding: 10px 12px; }
 }
+.hlogo { display: none; width: 30px; height: 30px; overflow: visible; flex: none; filter: drop-shadow(0 0 8px rgba(124,92,255,.6)); }
 @media (prefers-reduced-motion: no-preference) {
   .sheet { animation: up .22s ease-out; }
   .m.new { animation: up .25s ease-out; }
@@ -549,7 +560,7 @@ button.lrow:hover { background: var(--panel); }
       <div class="sec"><div class="sechead"><h2>To do today</h2><button class="btn line" data-act="newreminder">+ Reminder</button></div>
         ${todo.length ? `<div class="list">${todo.join('')}</div>` : '<div class="empty">All clear for today.</div>'}</div>
     </div>`;
-    return { head: `<div class="grow"><h1>Home</h1></div>`, body: `<div class="scroll">${body}</div>` };
+    return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Home</h1></div>`, body: `<div class="scroll">${body}</div>` };
   }
   function viewMoney() {
     const bs = [...S.bills].sort((a, b) => b.ts - a.ts);

@@ -9,8 +9,9 @@
     + '<circle class="nx-moon" cx="58.3" cy="19.7" r="4" fill="#3FD0F0"/></svg>';
 
   const css = `
-  html { background: #04050C radial-gradient(1200px 800px at 85% -10%, rgba(124,92,255,.22), transparent 60%) fixed, radial-gradient(900px 700px at -10% 110%, rgba(63,208,240,.13), transparent 60%) fixed; }
-  #nx-stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  html { background-color: #04050C; -webkit-tap-highlight-color: transparent; }
+  #nx-stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background-color: #04050C; background-image: radial-gradient(1200px 800px at 85% -10%, rgba(124,92,255,.22), transparent 60%), radial-gradient(900px 700px at -10% 110%, rgba(63,208,240,.13), transparent 60%); }
+  a, button { touch-action: manipulation; }
   #nx-intro { position: fixed; inset: 0; z-index: 9999; background: #02030A; display: grid; place-items: center; overflow: hidden; cursor: pointer; transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); }
   #nx-intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   #nx-intro .nx-c { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; color: #fff; font-family: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif; }
@@ -73,7 +74,8 @@
   requestAnimationFrame(frame);
 
   // ---------- launch intro ----------
-  if (mode === 'off' || reduce) return;
+  let seen = false; try { seen = sessionStorage.getItem('nx-intro') === '1'; sessionStorage.setItem('nx-intro', '1'); } catch (e) {}
+  if (mode === 'off' || reduce || seen) return;
   const short = mode === 'short';
   const total = short ? 1900 : 3300;
   const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'presentation');
