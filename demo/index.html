@@ -23,12 +23,12 @@
    Layout: group rail on the left (desktop), bottom tabs (phone). */
 :root {
   --maroon: #8466FF; --maroon-2: #9A82FF; --maroon-soft: rgba(132, 102, 255, .18); --accent: #B9A8FF; --cyan: #3FD0F0;
-  --grad: linear-gradient(135deg, #8A6BFF, #5B3BD1); --grad-2: linear-gradient(135deg, #8A6BFF, #3FA8E0);
+  --grad: linear-gradient(180deg, #7F63FF, #6A4FF0); --grad-2: linear-gradient(180deg, #7F63FF, #6A4FF0);
   --bg: transparent; --app: rgba(7, 9, 24, .74); --solid: #0C1028; --panel: rgba(12, 15, 38, .82); --surface: rgba(19, 23, 56, .78); --surface-2: rgba(28, 33, 74, .85);
   --ink: #EEF0FF; --muted: #A3ABD1; --dim: #6F77A3; --line: #262D5E; --line-2: #343C78; --bubble: #1B2252;
   --free: #3FD99A; --free-soft: rgba(63, 217, 154, .16); --gaming: #34B7C6; --out: #F09350; --watch: #E2C06A; --gym: #A08CFF; --busy: #7C83A6; --amber: #F2C15A;
   --shadow: 0 20px 50px -12px rgba(0, 0, 0, .7), 0 0 0 1px rgba(185, 168, 255, .08);
-  --glow: 0 8px 28px -8px rgba(124, 92, 255, .75);
+  --glow: 0 1px 0 rgba(255,255,255,.18) inset, 0 6px 16px -10px rgba(124, 92, 255, .9);
   --r-xl: 24px; --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
   --spring: cubic-bezier(.2, 1.35, .3, 1); --ease: cubic-bezier(.2, .8, .2, 1);
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -82,7 +82,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: scale(.96); }
 .btn.primary { background: var(--grad); color: #fff; box-shadow: var(--glow); }
-.btn.primary:hover { box-shadow: 0 12px 32px -8px rgba(124,92,255,.9); filter: brightness(1.08); }
+.btn.primary:hover { filter: brightness(1.08); }
 .btn.line { border-color: var(--line-2); background: var(--surface); }
 .btn.line:hover { background: var(--surface-2); }
 .btn.go { background: linear-gradient(135deg, #3FD99A, #1FAE78); color: #06130D; }
@@ -121,7 +121,7 @@ main { min-width: 0; min-height: 0; display: flex; flex-direction: column; backg
 .lrow + .lrow { border-top: 1px solid var(--line); }
 button.lrow:hover { background: var(--surface-2); }
 button.lrow:active { background: var(--panel); }
-.lrow .tile { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 24px; flex: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.lrow .tile { width: 46px; height: 46px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); display: grid; place-items: center; font-size: 24px; flex: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
 .lrow .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .lrow .t b { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lrow .t .note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -130,7 +130,7 @@ button.lrow:active { background: var(--panel); }
 .chip { font-size: 12.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; background: var(--surface-2); color: var(--muted); flex: none; white-space: nowrap; border: 1px solid var(--line); }
 .chip.g { background: var(--free-soft); color: var(--free); border-color: transparent; }
 .chip.m { background: rgba(242,193,90,.16); color: var(--amber); border-color: transparent; }
-.chip.p { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--glow); }
+.chip.p { background: transparent; color: var(--accent); border-color: rgba(185,168,255,.45); }
 .hello { font-family: var(--display); font-size: 28px; font-weight: 800; line-height: 1.15; }
 .hello + .note { margin-top: -20px; font-size: 15px; }
 .hpill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); font-weight: 700; font-size: 14px; white-space: nowrap; transition: background .2s, transform .18s; }
@@ -161,7 +161,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .ev { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; display: flex; flex-direction: column; text-align: left; transition: transform .25s var(--ease), box-shadow .25s, border-color .25s; min-width: 0; }
 .ev:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--line-2); }
 .cover { height: 92px; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; color: #fff; position: relative; width: 100%; }
-.cover::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 100% 0%, rgba(255,255,255,.18), transparent 50%); pointer-events: none; }
+.cover::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.2px); background-size: 22px 22px; opacity: .12; pointer-events: none; mask-image: linear-gradient(200deg, #000, transparent 70%); -webkit-mask-image: linear-gradient(200deg, #000, transparent 70%); }
 .cover .emo { font-size: 38px; line-height: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,.3)); position: relative; z-index: 1; }
 .cover .when { background: rgba(0,0,0,.28); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 12.5px; position: relative; z-index: 1; border: 1px solid rgba(255,255,255,.18); }
 .ev .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
@@ -197,7 +197,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .bwrap { display: flex; flex-direction: column; max-width: min(70%, 520px); min-width: 0; }
 .m.me .bwrap { align-items: flex-end; }
 .bub { background: var(--bubble); padding: 10px 14px; border-radius: 18px 18px 18px 6px; overflow-wrap: anywhere; position: relative; line-height: 1.4; border: 1px solid rgba(255,255,255,.04); }
-.m.me .bub { background: var(--grad); color: #fff; border-radius: 18px 18px 6px 18px; box-shadow: 0 6px 20px -8px rgba(124,92,255,.7); border: 0; }
+.m.me .bub { background: #5E48D8; color: #fff; border-radius: 18px 18px 6px 18px; border: 0; }
 .meta2 { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--muted); margin: 4px 6px 0; }
 .like { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; color: var(--muted); border-radius: 999px; padding: 2px 7px; transition: background .2s, color .2s; }
 .like:hover { background: var(--surface-2); color: var(--ink); }
@@ -288,7 +288,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .cell.out { background: var(--panel); }
 .cell.out .dn { opacity: .35; }
 .cell .dn { font-size: 13px; font-weight: 700; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
-.cell.today .dn { background: var(--grad); color: #fff; box-shadow: var(--glow); }
+.cell.today .dn { background: var(--maroon); color: #fff; }
 .cell[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); background: var(--surface-2); }
 .chipev { font-size: 11.5px; font-weight: 600; padding: 2px 6px; border-radius: 6px; background: var(--maroon-soft); color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .agenda { border-left: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
@@ -366,6 +366,29 @@ button.person:hover .ring.add { border-color: var(--accent); }
 #launch .lcard span { font-size: 13.5px; opacity: .85; }
 #launch .star { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; animation: burst .9s .15s var(--ease) forwards; opacity: 0; }
 
+/* ---------- icons ---------- */
+.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.14em; flex: none; display: inline-block; }
+.cover .emo { color: #fff; line-height: 0; }
+.cover .emo .i { stroke-width: 1.6; filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)); }
+.lrow .tile { color: #fff; }
+.lrow .tile .i { stroke-width: 1.7; }
+.lrow .tile.soft { background: var(--surface-2); color: var(--accent); }
+.gicon { color: var(--accent); }
+.rbtn.g { color: var(--gc); }
+.rem .e { color: var(--accent); }
+.check .i { width: 15px; height: 15px; stroke-width: 2.6; }
+.emojis button { display: grid; place-items: center; width: 42px; height: 42px; padding: 0 !important; color: var(--muted); }
+.emojis button .i { font-size: 20px; }
+.emojis button[aria-pressed="true"] { color: #0B0E20; }
+.menu button .i, .fabmenu .i { font-size: 18px; color: var(--accent); }
+.fab { color: #fff; } .fab .i { font-size: 26px; stroke-width: 2.2; transition: transform .3s var(--spring); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.iline { display: flex; align-items: center; gap: 8px; } .iline .i { color: var(--accent); }
+.label .i { font-size: 1.15em; vertical-align: -.2em; }
+.payopt .logo { font-size: 20px; }
+#launch .lcard .emo { line-height: 0; } #launch .lcard .emo .i { stroke-width: 1.5; }
+.note .i, .meta .i, .chip .i { opacity: .85; }
+
 /* ---------- orbit (home) ---------- */
 .orbitwrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .orbit { position: relative; width: min(100%, 460px); aspect-ratio: 1; margin: 0 auto; }
@@ -397,7 +420,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .pbig { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 6px 0 4px; }
 
 /* ---------- quick actions (rocket) ---------- */
-.fab { position: absolute; right: 22px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%; background: var(--grad-2); box-shadow: 0 12px 32px -8px rgba(124,92,255,.95), inset 0 0 0 1px rgba(255,255,255,.18); display: grid; place-items: center; font-size: 26px; z-index: 6; transition: transform .25s var(--spring), filter .2s, background .2s; }
+.fab { position: absolute; right: 22px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%; background: var(--grad-2); box-shadow: 0 10px 24px -10px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.2); display: grid; place-items: center; font-size: 26px; z-index: 6; transition: transform .25s var(--spring), filter .2s, background .2s; }
 .fab:hover { transform: translateY(-2px) scale(1.05); filter: brightness(1.08); }
 .fab:active { transform: scale(.92); }
 .fab[aria-expanded="true"] { background: var(--surface-2); box-shadow: 0 0 0 1px var(--line-2); font-size: 20px; }
@@ -575,7 +598,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
   };
   const GCOLORS = ['#7C5CFF', '#F09350', '#3FD0F0', '#3FD99A', '#E06BA8', '#E2C06A'];
   const COVERS = [['#2A1A78', '#7C5CFF'], ['#0B2A4A', '#2BA8D0'], ['#3B1260', '#B04FCF'], ['#101A40', '#4B6BE0'], ['#1A1440', '#5B3BD1'], ['#3A1A5E', '#E06BA8']];
-  const EMOJI = ['🍝', '🎮', '🥂', '🎬', '☕', '⛳', '📚', '🎉', '🏀', '🍕'];
+  const IP = {"dinner": "M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 1.5-3 4-3 7h3M17 3v18", "game": "M6.5 8.5h11A3.5 3.5 0 0 1 21 12v2.5a2.5 2.5 0 0 1-4.6 1.4L15 14H9l-1.4 1.9A2.5 2.5 0 0 1 3 14.5V12a3.5 3.5 0 0 1 3.5-3.5zM8 10.5v3M6.5 12h3M15.5 11.5h.01M17.5 13h.01", "glass": "M8 3h8l-.8 6.5a3.2 3.2 0 0 1-6.4 0zM12 13v7M8.5 21h7", "film": "M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21", "coffee": "M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c0 1 1 1.5 1 2.5M12 3.5c0 1 1 1.5 1 2.5", "flag": "M5 21V4M5 4h11l-2 3.5L16 11H5", "book": "M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6", "spark": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 3v3M17.5 4.5h3M5 17v3M3.5 18.5h3", "ball": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M3 12h18M12 3v18M5.8 5.6c3.2 3.2 3.2 9.6 0 12.8M18.2 5.6c-3.2 3.2-3.2 9.6 0 12.8", "pizza": "M12 3 3.5 19.5Q12 22.5 20.5 19.5zM5.2 16.3Q12 18.6 18.8 16.3M10.5 10.5h.01M13.5 13.5h.01M11 15h.01", "users": "M5.7 8a3.3 3.3 0 1 0 6.6 0a3.3 3.3 0 1 0 -6.6 0M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M16 4.6a3.3 3.3 0 0 1 0 6.6M21 20v-1a4 4 0 0 0-3-3.9", "home": "M4 11 12 4l8 7v8.5a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19.5z", "briefcase": "M5 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18", "music": "M9 18V5l11-2v13M3 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M14 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "plane": "M21 4 3 11l7 2.5L12.5 21z M10 13.5 21 4", "paw": "M6.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M14.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M3.1999999999999997 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M17.599999999999998 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M12 12.5c-3 0-5 3-5 5 0 1.8 1.6 2.6 3 2.1.8-.3 1.3-.6 2-.6s1.2.3 2 .6c1.4.5 3-.3 3-2.1 0-2-2-5-5-5z", "dumbbell": "M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11", "run": "M12.8 4.5a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0 -3.4 0M8 21l3-5.5 3 2.5v3M6 11.5l3.5-3.5 4 1.5 2.5 3H19M10 8.5 8 15", "pill": "M10.5 20.5a4.95 4.95 0 0 1-7-7l6-6a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7", "drop": "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z", "cart": "M7.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M16.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M3 4h2.5l2.2 11h11.6L21 8H7", "receipt": "M6 3h12v18l-2.5-1.5L13 21l-2-1.5L9 21l-1.5-1.5L6 21zM9 8h6M9 12h6M9 16h3", "cake": "M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2 1.5 3.5 1.5 5 0s3.5-1.5 5 0 3 1.5 4 0M12 12V8M12 5.8c.8-.7.8-1.8 0-2.6-.8.8-.8 1.9 0 2.6z", "alarm": "M4.5 13a7.5 7.5 0 1 0 15.0 0a7.5 7.5 0 1 0 -15.0 0M12 9.5V13l2.5 1.8M5 3 2.5 5.5M19 3l2.5 2.5", "car": "M4 15.5V12l2.2-5.5h11.6L20 12v3.5M3 15.5h18v3H3zM7.5 12h9M6.5 18.5V21M17.5 18.5V21", "back": "M9 10 4 15l5 5M4 15h11a5 5 0 0 0 0-10h-2", "check": "M5 12.5l4.5 4.5L19 7.5", "paid": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M8 12.5l2.8 2.8L16.5 9.5", "arrow": "M7 17 17 7M8.5 7H17v8.5", "phone": "M5 4h3.5l1.5 4.5-2 1.5a11 11 0 0 0 6 6l1.5-2 4.5 1.5V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z", "camera": "M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM8.5 13a3.5 3.5 0 1 0 7.0 0a3.5 3.5 0 1 0 -7.0 0", "clip": "M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4L14.5 7.5", "status": "M3.5 12a8.5 8.5 0 1 0 17.0 0a8.5 8.5 0 1 0 -17.0 0M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "poll": "M5 20V11M12 20V4M19 20v-6", "chat": "M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z", "alert": "M12 3.5 2.5 20h19zM12 10v4.5M12 17.5h.01", "calendar": "M6.5 5h11a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3zM3.5 10h17M8 3v4M16 3v4", "pin": "M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21zM9.5 9.5a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0", "bank": "M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18", "shield": "M12 3 4.5 6v6c0 4.4 3.3 7.5 7.5 9 4.2-1.5 7.5-4.6 7.5-9V6zM9 12l2.2 2.2L15.5 10", "plus": "M12 5v14M5 12h14", "trophy": "M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20.5h6M10 17h4v3.5h-4z", "flame": "M12 21a6 6 0 0 1-6-6c0-4 3-6 3.5-10 2 1.5 3.5 3 4 5 .8-.8 1.3-2 1.3-3 2 1.8 3.2 4.8 3.2 8a6 6 0 0 1-6 6z", "bolt": "M13 3 4.5 13.5H12L11 21l8.5-10.5H12z"};
+  const ic = (k, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${IP[k] || IP.spark}"/></svg>`;
+  const EMOJI = ['dinner', 'game', 'glass', 'film', 'coffee', 'flag', 'book', 'spark', 'ball', 'pizza'];
   const endOfDay = () => { const d = new Date(); d.setHours(23, 59, 0, 0); return d.getTime(); };
   const now = Date.now();
   const FRIEND_STATUS = {
@@ -588,18 +613,18 @@ button.person:hover .ring.add { border-color: var(--accent); }
   // ---------- fresh demo data (nothing is saved between visits) ----------
   try { localStorage.removeItem('roundtable-app-v1'); } catch (e) {}
   function samplePhoto(emoji, caption, c1, c2) {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="640" height="480" fill="url(#g)"/><text x="320" y="250" font-size="150" text-anchor="middle">${emoji}</text><text x="320" y="370" font-size="34" font-family="sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${caption}</text><text x="320" y="420" font-size="20" font-family="sans-serif" fill="#fff" opacity=".7" text-anchor="middle">Sample photo</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="640" height="480" fill="url(#g)"/><g transform="translate(248 96) scale(6)" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"><path d="${IP[emoji]}"/></g><text x="320" y="370" font-size="34" font-family="sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${caption}</text><text x="320" y="420" font-size="20" font-family="sans-serif" fill="#fff" opacity=".7" text-anchor="middle">Sample photo</text></svg>`;
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
   function seed() {
     const t = new Date();
     const ts = (daysAgo, h, m) => { const d = addDays(t, -daysAgo); d.setHours(h, m, 0, 0); return d.getTime(); };
     const events = [
-      { id: 'e1', group: 'family', emoji: '🍝', cover: 0, title: 'Sunday dinner', date: ymd(nextDow(0)), time: '18:00', where: "Mom and Dad's", host: 'mom', repeat: 'weekly', desc: 'Same as always. Dad is grilling if the weather holds.', going: ['mom','dad','ben'], maybe: ['emma'], cant: [], comments: [{ from: 'emma', text: 'Might be 20 min late, test Monday', ts: ts(0, 10, 6) }] },
-      { id: 'e2', group: 'friends', emoji: '🎮', cover: 1, title: 'Game night', date: ymd(nextDow(5)), time: '20:00', where: "Jordan's place", host: 'jordan', repeat: 'biweekly', desc: 'Mario Kart tournament. Loser buys pizza.', going: ['jordan','alex','maya'], maybe: ['sam'], cant: [], comments: [{ from: 'maya', text: 'Bringing the extra controllers', ts: ts(1, 19, 30) }] },
-      { id: 'e3', group: 'friends', emoji: '☕', cover: 5, title: 'Saturday brunch', date: ymd(nextDow(6)), time: '11:00', where: 'The corner cafe', host: 'sam', repeat: '', desc: 'Bottomless coffee, no phones at the table.', going: ['sam','alex'], maybe: ['jordan'], cant: ['chris'], comments: [] },
-      { id: 'e4', group: 'book', emoji: '📚', cover: 3, title: 'Book club', date: ymd(nextDow(4)), time: '19:00', where: "Priya's", host: 'priya', repeat: '', desc: 'Chapters 10 to 15. Wine and snacks provided.', going: ['priya','kate'], maybe: ['lena'], cant: [], comments: [{ from: 'kate', text: 'No spoilers but that ending...', ts: ts(0, 9, 31) }] },
-      { id: 'e5', group: 'family', emoji: '🎉', cover: 2, title: "Mom's birthday dinner", date: ymd(addDays(t, 12)), time: '19:00', where: 'Her favorite Italian place', host: 'ben', repeat: '', desc: "Don't tell Mom about the cake.", going: ['dad','emma','ben'], maybe: [], cant: [], comments: [] }
+      { id: 'e1', group: 'family', emoji: 'dinner', cover: 0, title: 'Sunday dinner', date: ymd(nextDow(0)), time: '18:00', where: "Mom and Dad's", host: 'mom', repeat: 'weekly', desc: 'Same as always. Dad is grilling if the weather holds.', going: ['mom','dad','ben'], maybe: ['emma'], cant: [], comments: [{ from: 'emma', text: 'Might be 20 min late, test Monday', ts: ts(0, 10, 6) }] },
+      { id: 'e2', group: 'friends', emoji: 'game', cover: 1, title: 'Game night', date: ymd(nextDow(5)), time: '20:00', where: "Jordan's place", host: 'jordan', repeat: 'biweekly', desc: 'Mario Kart tournament. Loser buys pizza.', going: ['jordan','alex','maya'], maybe: ['sam'], cant: [], comments: [{ from: 'maya', text: 'Bringing the extra controllers', ts: ts(1, 19, 30) }] },
+      { id: 'e3', group: 'friends', emoji: 'coffee', cover: 5, title: 'Saturday brunch', date: ymd(nextDow(6)), time: '11:00', where: 'The corner cafe', host: 'sam', repeat: '', desc: 'Bottomless coffee, no phones at the table.', going: ['sam','alex'], maybe: ['jordan'], cant: ['chris'], comments: [] },
+      { id: 'e4', group: 'book', emoji: 'book', cover: 3, title: 'Book club', date: ymd(nextDow(4)), time: '19:00', where: "Priya's", host: 'priya', repeat: '', desc: 'Chapters 10 to 15. Wine and snacks provided.', going: ['priya','kate'], maybe: ['lena'], cant: [], comments: [{ from: 'kate', text: 'No spoilers but that ending...', ts: ts(0, 9, 31) }] },
+      { id: 'e5', group: 'family', emoji: 'spark', cover: 2, title: "Mom's birthday dinner", date: ymd(addDays(t, 12)), time: '19:00', where: 'Her favorite Italian place', host: 'ben', repeat: '', desc: "Don't tell Mom about the cake.", going: ['dad','emma','ben'], maybe: [], cant: [], comments: [] }
     ];
     const messages = {
       friends: [
@@ -607,7 +632,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
         { id: uid(), event: 'e2', from: 'jordan', ts: ts(1, 19, 11) },
         { id: uid(), from: 'alex', text: 'anyone doing anything tonight?', ts: ts(0, 16, 40), likes: [] },
         { id: uid(), from: 'maya', text: 'on Mario Kart after 9 if anyone wants in', ts: ts(0, 16, 51), likes: ['jordan'] },
-        { id: uid(), from: 'jordan', ts: ts(0, 16, 58), likes: ['alex','maya'], file: { name: 'last-game-night.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('🏆', 'Last game night champs', '#2A2A30', '#7C5CFF') } },
+        { id: uid(), from: 'jordan', ts: ts(0, 16, 58), likes: ['alex','maya'], file: { name: 'last-game-night.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('trophy', 'Last game night champs', '#2A2A30', '#7C5CFF') } },
         { id: uid(), bill: 'b1', from: 'alex', ts: ts(5, 23, 11) },
         { id: uid(), poll: { q: 'Brunch spot Saturday?', opts: [{ t: 'The corner cafe', v: ['sam','alex'] }, { t: 'Pancake place', v: ['jordan'] }, { t: 'Bagels at the park', v: [] }] }, from: 'sam', ts: ts(0, 17, 2) },
         { id: uid(), event: 'e3', from: 'sam', ts: ts(0, 17, 6) }
@@ -616,7 +641,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
         { id: uid(), from: 'mom', text: 'Sunday dinner, same time as always?', ts: ts(1, 12, 2), likes: ['dad'] },
         { id: uid(), event: 'e1', from: 'mom', ts: ts(1, 12, 3) },
         { id: uid(), from: 'dad', text: 'I will grill if the weather holds', ts: ts(1, 13, 20), likes: ['mom','ben'] },
-        { id: uid(), from: 'mom', ts: ts(1, 13, 40), likes: ['dad','emma','ben'], file: { name: 'grill.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('🔥', 'Dad at the grill', '#7C5CFF', '#E0637C') } },
+        { id: uid(), from: 'mom', ts: ts(1, 13, 40), likes: ['dad','emma','ben'], file: { name: 'grill.svg', type: 'image/svg+xml', size: 900, url: samplePhoto('flame', 'Dad at the grill', '#7C5CFF', '#E0637C') } },
         { id: uid(), from: 'ben', text: "Don't forget Mom's birthday is coming up", ts: ts(0, 15, 41), likes: ['emma'] },
         { id: uid(), event: 'e5', from: 'ben', ts: ts(0, 15, 42) }
       ],
@@ -630,9 +655,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
     };
     return {
       groups: [
-        { id: 'friends', name: 'Friends', emoji: '🍻', color: '#7C5CFF', members: ['me','alex','jordan','sam','maya','chris'], hangout: ['maya'] },
-        { id: 'family', name: 'Family', emoji: '🏡', color: '#F09350', members: ['me','mom','dad','emma','ben'], hangout: [] },
-        { id: 'book', name: 'Book Club', emoji: '📚', color: '#3FD0F0', members: ['me','priya','lena','kate'], hangout: [] }
+        { id: 'friends', name: 'Friends', emoji: 'users', color: '#7C5CFF', members: ['me','alex','jordan','sam','maya','chris'], hangout: ['maya'] },
+        { id: 'family', name: 'Family', emoji: 'home', color: '#F09350', members: ['me','mom','dad','emma','ben'], hangout: [] },
+        { id: 'book', name: 'Book Club', emoji: 'book', color: '#3FD0F0', members: ['me','priya','lena','kate'], hangout: [] }
       ],
       events, messages, unread: { friends: 3, family: 2, book: 1 },
       dms: {
@@ -641,14 +666,14 @@ button.person:hover .ring.add { border-color: var(--accent); }
           { id: uid(), from: 'me', text: 'should be, what are you thinking', ts: ts(1, 18, 10), likes: ['alex'] },
           { id: uid(), from: 'alex', text: 'brunch sat, then game night fri. in?', ts: ts(0, 9, 12), likes: [] }
         ],
-        mom: [{ id: uid(), from: 'mom', text: 'Call me when you get a chance ❤️', ts: ts(0, 8, 30), likes: [] }]
+        mom: [{ id: uid(), from: 'mom', text: 'Call me when you get a chance', ts: ts(0, 8, 30), likes: [] }]
       },
       unreadDm: { alex: 1, mom: 1 },
       reminders: [
-        { id: 'r1', emoji: '💪', title: 'Workout', date: ymd(addDays(t, -14)), time: '06:30', repeat: 'weekdays', group: '', doneOn: {} },
-        { id: 'r2', emoji: '💧', title: 'Drink water', date: ymd(addDays(t, -14)), time: '14:00', repeat: 'daily', group: '', doneOn: {} },
-        { id: 'r3', emoji: '🛒', title: 'Grab dessert for Sunday dinner', date: ymd(addDays(nextDow(0), -1)), time: '12:00', repeat: '', group: 'family', doneOn: {} },
-        { id: 'r4', emoji: '📚', title: 'Finish chapters 10 to 15', date: ymd(addDays(nextDow(4), -1)), time: '20:00', repeat: '', group: 'book', doneOn: {} }
+        { id: 'r1', emoji: 'dumbbell', title: 'Workout', date: ymd(addDays(t, -14)), time: '06:30', repeat: 'weekdays', group: '', doneOn: {} },
+        { id: 'r2', emoji: 'drop', title: 'Drink water', date: ymd(addDays(t, -14)), time: '14:00', repeat: 'daily', group: '', doneOn: {} },
+        { id: 'r3', emoji: 'cart', title: 'Grab dessert for Sunday dinner', date: ymd(addDays(nextDow(0), -1)), time: '12:00', repeat: '', group: 'family', doneOn: {} },
+        { id: 'r4', emoji: 'book', title: 'Finish chapters 10 to 15', date: ymd(addDays(nextDow(4), -1)), time: '20:00', repeat: '', group: 'book', doneOn: {} }
       ],
       bills: [
         { id: 'b1', group: 'friends', event: null, title: 'Pizza after game night', total: 84, subtotal: 70, tip: 14, tipPct: 20, paidBy: 'alex', receipt: null, ts: ts(5, 23, 10),
@@ -686,7 +711,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
   const eventsOn = day => S.events.filter(e => occurrences(e, day, day).length).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
   const whenText = (e, d) => `${fmtDay(d || nextDate(e) || e.date)}${e.time ? ', ' + fmtTime(e.time) : ''}`;
   const repeatText = r => r === 'weekly' ? 'Every week' : r === 'biweekly' ? 'Every other week' : '';
-  const coverBg = e => { const c = COVERS[e.cover % COVERS.length]; return `background: linear-gradient(135deg, ${c[0]}, ${c[1]})`; };
+  const coverBg = e => { const c = COVERS[e.cover % COVERS.length]; return `background: radial-gradient(120% 130% at 100% 0%, ${c[1]}AA 0%, ${c[1]}33 45%, transparent 70%), linear-gradient(160deg, #161B3D, #0C0F25)`; };
 
   // ---------- pieces ----------
   const I = {
@@ -711,9 +736,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
   function eventCard(e, d, extra = '') {
     const g = grp(e.group);
     return `<div class="ev ${extra}">
-      <button class="cover" style="${coverBg(e)}" data-act="openev" data-ev="${e.id}" aria-label="Open ${esc(e.title)}"><span class="emo">${e.emoji}</span><span class="when">${esc(whenText(e, d))}</span></button>
+      <button class="cover" style="${coverBg(e)}" data-act="openev" data-ev="${e.id}" aria-label="Open ${esc(e.title)}"><span class="emo">${ic(e.emoji)}</span><span class="when">${esc(whenText(e, d))}</span></button>
       <div class="body">
-        <button style="text-align:left" data-act="openev" data-ev="${e.id}"><div class="title">${esc(e.title)}</div><div class="meta">${g.emoji} ${esc(g.name)}${e.where ? ' · ' + esc(e.where) : ''}${e.repeat ? ' · ' + repeatText(e.repeat) : ''}</div></button>
+        <button style="text-align:left" data-act="openev" data-ev="${e.id}"><div class="title">${esc(e.title)}</div><div class="meta">${ic(g.emoji)} ${esc(g.name)}${e.where ? ' · ' + esc(e.where) : ''}${e.repeat ? ' · ' + repeatText(e.repeat) : ''}</div></button>
         <div class="row">${stack(e.going)}<span><b>${e.going.length} going</b>${e.maybe.length ? ` · ${e.maybe.length} maybe` : ''}</span></div>
         ${rsvpBtns(e)}
       </div></div>`;
@@ -733,8 +758,8 @@ button.person:hover .ring.add { border-color: var(--accent); }
     }).join('');
     const unpaid = b.shares.filter(sh => !sh.paid && sh.p !== b.paidBy).length;
     return `<div class="bill">
-      <div class="bill-top">${b.receipt ? `<img class="receipt" src="${b.receipt}" alt="Receipt photo">` : `<span class="receipt">🧾</span>`}
-        <div class="t"><b>${esc(b.title)}</b><span class="note">${b.paidBy === 'me' ? 'You' : esc(nameOf(b.paidBy))} paid · ${g.emoji} ${esc(g.name)}${b.tip ? ` · ${money(b.tip)} tip` : ''}</span></div>
+      <div class="bill-top">${b.receipt ? `<img class="receipt" src="${b.receipt}" alt="Receipt photo">` : `<span class="receipt" style="color:var(--accent)">${ic('receipt')}</span>`}
+        <div class="t"><b>${esc(b.title)}</b><span class="note">${b.paidBy === 'me' ? 'You' : esc(nameOf(b.paidBy))} paid · ${ic(g.emoji)} ${esc(g.name)}${b.tip ? ` · ${money(b.tip)} tip` : ''}</span></div>
         <span class="total">${money(b.total)}</span></div>
       <div>${rows}</div>
       <span class="note">${unpaid ? `${unpaid} still to pay back` : 'Everyone is paid up'}</span>
@@ -752,12 +777,12 @@ button.person:hover .ring.add { border-color: var(--accent); }
   function evRow(e, d) {
     const g = grp(e.group), r = myRsvp(e);
     const chip = r === 'g' ? '<span class="chip g">Going</span>' : r === 'm' ? '<span class="chip m">Maybe</span>' : r === 'c' ? '<span class="chip">Can\'t go</span>' : '<span class="chip p">RSVP</span>';
-    return `<button class="lrow" data-act="openev" data-ev="${e.id}"><span class="tile" style="${coverBg(e)}">${e.emoji}</span><span class="t"><b>${esc(e.title)}</b><span class="note">${esc(whenText(e, d))} · ${g.emoji} ${esc(g.name)} · ${e.going.length} going</span></span>${chip}</button>`;
+    return `<button class="lrow" data-act="openev" data-ev="${e.id}"><span class="tile" style="${coverBg(e)}">${ic(e.emoji)}</span><span class="t"><b>${esc(e.title)}</b><span class="note">${esc(whenText(e, d))} · ${ic(g.emoji)} ${esc(g.name)} · ${e.going.length} going</span></span>${chip}</button>`;
   }
   function todoRows() {
     const t = today(), rows = [];
-    S.bills.forEach(b => { const sh = b.shares.find(x => x.p === 'me'); if (sh && !sh.paid && b.paidBy !== 'me') rows.push(`<div class="lrow"><span class="tile" style="background:var(--surface-2)">🧾</span><span class="t"><b>Pay ${esc(nameOf(b.paidBy))} ${money(sh.amt)}</b><span class="note">For ${esc(b.title)}</span></span><button class="btn primary sm" data-act="payback" data-b="${b.id}">Pay</button></div>`); });
-    S.reminders.filter(r => remOn(r, t)).sort((a, b) => (a.time || '').localeCompare(b.time || '')).forEach(r => { const done = !!r.doneOn[t]; rows.push(`<div class="lrow ${done ? 'done' : ''}"><span class="tile" style="background:var(--surface-2)">${r.emoji}</span><span class="t"><b>${esc(r.title)}</b><span class="note">${r.time ? fmtTime(r.time) : 'Today'}${r.repeat ? ' · ' + REPEAT[r.repeat] : ''}</span></span><button class="check ${UI.pop === 'rem:' + r.id ? 'pop' : ''}" data-act="remdone" data-r="${r.id}" data-day="${t}" aria-pressed="${done}" aria-label="Mark done">✓</button></div>`); });
+    S.bills.forEach(b => { const sh = b.shares.find(x => x.p === 'me'); if (sh && !sh.paid && b.paidBy !== 'me') rows.push(`<div class="lrow"><span class="tile soft">${ic('receipt')}</span><span class="t"><b>Pay ${esc(nameOf(b.paidBy))} ${money(sh.amt)}</b><span class="note">For ${esc(b.title)}</span></span><button class="btn primary sm" data-act="payback" data-b="${b.id}">Pay</button></div>`); });
+    S.reminders.filter(r => remOn(r, t)).sort((a, b) => (a.time || '').localeCompare(b.time || '')).forEach(r => { const done = !!r.doneOn[t]; rows.push(`<div class="lrow ${done ? 'done' : ''}"><span class="tile soft">${ic(r.emoji)}</span><span class="t"><b>${esc(r.title)}</b><span class="note">${r.time ? fmtTime(r.time) : 'Today'}${r.repeat ? ' · ' + REPEAT[r.repeat] : ''}</span></span><button class="check ${UI.pop === 'rem:' + r.id ? 'pop' : ''}" data-act="remdone" data-r="${r.id}" data-day="${t}" aria-pressed="${done}" aria-label="Mark done">${ic('check')}</button></div>`); });
     return rows;
   }
   function viewHome() {
@@ -765,7 +790,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const friends = [...new Set(S.groups.flatMap(others))].map(p => ({ p, st: statusOf(p) })).filter(x => x.st).sort((a, b) => (a.st.s === 'free' ? 0 : 1) - (b.st.s === 'free' ? 0 : 1));
     const freeCount = friends.filter(x => x.st.s === 'free').length;
     const up = upcoming().slice(0, 4), todo = todoRows();
-    const h = new Date().getHours(), greet = h < 12 ? 'Good morning ☀️' : h < 17 ? 'Good afternoon 🚀' : 'Good evening 🌙';
+    const h = new Date().getHours(), greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
     const inOrbit = friends.length;
     const body = `<div class="pad cols"><div class="col">
       <div><div class="hello">${greet}</div><div class="note" style="margin-top:4px;font-size:15px">${inOrbit} in your orbit, ${freeCount} free today${UI.welcome ? '. Tap your own circle to share what you\'re up to.' : '.'}</div></div>
@@ -778,7 +803,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     <div class="col desk">
       <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line sm" data-act="newgroup">+ New</button></div>${groupRows()}</div>
       <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line sm" data-act="view" data-v="money">See all</button></div>${moneyTiles()}</div>
-      ${(() => { const live = S.groups.filter(g => g.hangout.length); return live.length ? `<div class="sec"><div class="sechead"><h2>Live now</h2></div><div class="list">${live.map(g => `<button class="lrow" data-act="opengroup" data-g="${g.id}"><span class="tile" style="background:var(--surface-2)">${g.emoji}</span><span class="t"><b>${esc(g.name)} hangout</b><span class="note">${g.hangout.map(nameOf).join(', ')} ${g.hangout.length === 1 ? 'is' : 'are'} in the voice room</span></span><span class="live"></span></button>`).join('')}</div></div>` : ''; })()}
+      ${(() => { const live = S.groups.filter(g => g.hangout.length); return live.length ? `<div class="sec"><div class="sechead"><h2>Live now</h2></div><div class="list">${live.map(g => `<button class="lrow" data-act="opengroup" data-g="${g.id}"><span class="tile soft" style="color:${g.color}">${ic(g.emoji)}</span><span class="t"><b>${esc(g.name)} hangout</b><span class="note">${g.hangout.map(nameOf).join(', ')} ${g.hangout.length === 1 ? 'is' : 'are'} in the voice room</span></span><span class="live"></span></button>`).join('')}</div></div>` : ''; })()}
     </div></div>`;
     const dt = new Date(), sub = `${DOW[dt.getDay()]}, ${MONTHS[dt.getMonth()]} ${dt.getDate()}`;
     return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Your orbit</h1><div class="sub">${sub}</div></div>`, body: `<div class="scroll">${body}</div>` };
@@ -800,7 +825,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       const last = [...S.messages[g.id]].reverse().find(m => !m.typing && (m.text || m.event || m.poll || m.file || m.bill));
       const lt = !last ? 'No messages yet' : last.text ? `${nameOf(last.from)}: ${last.text}` : last.event ? `${nameOf(last.from)} shared an event` : last.file ? `${nameOf(last.from)} shared ${fileKind(last.file) === 'image' ? 'a photo' : 'a file'}` : last.bill ? `${nameOf(last.from)} split a bill` : `${nameOf(last.from)} started a poll`;
       const free = others(g).filter(p => statusOf(p)?.s === 'free').length;
-      return `<button class="grow-row" data-act="opengroup" data-g="${g.id}"><span class="gicon" style="width:48px;height:48px;font-size:24px">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><div class="last">${esc(lt)}</div><div class="note" style="margin-top:2px">${g.members.length} members${free ? ` · <span style="color:var(--free);font-weight:700">${free} free</span>` : ''}</div></span>${S.unread[g.id] ? `<span class="pill">${S.unread[g.id]}</span>` : ''}</button>`;
+      return `<button class="grow-row" data-act="opengroup" data-g="${g.id}"><span class="gicon" style="width:48px;height:48px;font-size:24px;color:${g.color};--gc:${g.color}">${ic(g.emoji)}</span><span class="t"><b>${esc(g.name)}</b><div class="last">${esc(lt)}</div><div class="note" style="margin-top:2px">${g.members.length} members${free ? ` · <span style="color:var(--free);font-weight:700">${free} free</span>` : ''}</div></span>${S.unread[g.id] ? `<span class="pill">${S.unread[g.id]}</span>` : ''}</button>`;
     }).join('')}</div>`;
   }
   function dmRows() {
@@ -817,18 +842,18 @@ button.person:hover .ring.add { border-color: var(--accent); }
   }
   function viewDm() {
     const p = UI.dm, st = statusOf(p), shared = sharedGroups(p), col = PEOPLE[p].c;
-    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="padding:0;border:0;background:none">${av(p, { size: 42 })}</span><div class="grow"><h1 style="font-size:21px">${esc(nameOf(p))}</h1><div class="sub">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status'}${shared.length ? ' · ' + shared.map(g => g.emoji + ' ' + esc(g.name)).join(', ') : ''}</div></div><button class="hpill" data-act="call" data-p="${p}">📞 Call</button>`;
+    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="padding:0;border:0;background:none">${av(p, { size: 42 })}</span><div class="grow"><h1 style="font-size:21px">${esc(nameOf(p))}</h1><div class="sub">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status'}${shared.length ? ' · ' + shared.map(g => esc(g.name)).join(', ') : ''}</div></div><button class="hpill" data-act="call" data-p="${p}">${ic('phone')} Call</button>`;
     let lastDay = '';
     const msgs = curMsgs().map(m => { const d = ymd(new Date(m.ts)); let sep = ''; if (d !== lastDay) { lastDay = d; sep = `<div class="day">${esc(fmtDay(d))}</div>`; } return sep + msgHtml(m); }).join('');
     const together = upcoming().filter(x => x.e.going.includes(p) || x.e.maybe.includes(p)).slice(0, 3);
     const gid = shared[0]?.id || S.groups[0].id;
     const body = `<div class="gwrap"><div class="chat">
         <div class="msgs" id="msgs">${msgs || `<div class="empty">Say hi to ${esc(nameOf(p))}.</div>`}</div>
-        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${gid}">🎉 Plan something</button><button type="button" data-act="pickfile" data-accept="image/*">📷 Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">📎 Share a file or PDF</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
+        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${gid}">${ic('calendar')} Plan something</button><button type="button" data-act="pickfile" data-accept="image/*">${ic('camera')} Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">${ic('clip')} Share a file or PDF</button><button type="button" data-act="status">${ic('status')} Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
           <button type="button" class="plus" data-act="menu" aria-label="More" aria-expanded="${!!UI.menu}">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(nameOf(p))}" value="${esc(UI.draft['dm:' + p] || '')}" aria-label="Message"><button class="send ${UI.sent ? 'sent' : ''}" aria-label="Send">${I.send}</button></form></div>
         <aside class="side">
-          <div class="card"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 64 })}</span><b style="font-size:18px">${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status set'}</span></div>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${g.emoji} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
-          <div class="card"><span class="label">Plans together</span>${together.length ? together.map(x => `<button class="lrow" data-act="openev" data-ev="${x.e.id}" style="padding:4px 0"><span class="tile" style="${coverBg(x.e)}">${x.e.emoji}</span><span class="t"><b>${esc(x.e.title)}</b><span class="note">${esc(whenText(x.e, x.d))}</span></span></button>`).join('') : '<p class="note">Nothing yet.</p>'}<button class="btn line sm" data-act="newevent" data-g="${gid}">+ Plan something</button></div>
+          <div class="card"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 64 })}</span><b style="font-size:18px">${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status set'}</span></div>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${ic(g.emoji)} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
+          <div class="card"><span class="label">Plans together</span>${together.length ? together.map(x => `<button class="lrow" data-act="openev" data-ev="${x.e.id}" style="padding:4px 0"><span class="tile" style="${coverBg(x.e)}">${ic(x.e.emoji)}</span><span class="t"><b>${esc(x.e.title)}</b><span class="note">${esc(whenText(x.e, x.d))}</span></span></button>`).join('') : '<p class="note">Nothing yet.</p>'}<button class="btn line sm" data-act="newevent" data-g="${gid}">+ Plan something</button></div>
           ${(() => { const ph = curMsgs().filter(m => m.file && fileKind(m.file) === 'image').slice(-6).reverse(); return ph.length ? `<div class="card"><span class="label">Photos</span><div class="sidegal">${ph.map(m => `<button data-act="viewimg" data-m="${m.id}" aria-label="Open photo"><img src="${m.file.url}" alt=""></button>`).join('')}</div></div>` : ''; })()}
         </aside></div>`;
     return { head, body, topClass: 'gtop', topStyle: `--gc:${col}` };
@@ -845,7 +870,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       return `<div class="m ${me ? 'me' : ''} ${isNew}" data-id="${m.id}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))}</div>${inner}<div class="meta2"><span>${clock(m.ts)}</span><button class="like" data-act="like" data-m="${m.id}" aria-pressed="${liked}" aria-label="Like">${I.heart}${m.likes.length || ''}</button></div></div></div>`;
     }
     if (m.bill) { const b = bill(m.bill); if (!b) return ''; const mine = b.shares.find(x => x.p === 'me');
-      return `<div class="m ${me ? 'me' : ''} ${isNew}" data-id="${m.id}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} split a bill</div><button class="billmsg" data-act="gtab" data-t="bills"><span class="label">🧾 Bill</span><b>${esc(b.title)} · ${money(b.total)}</b><span class="note">${b.shares.length} people · ${money(b.shares[0].amt)} each${mine && !mine.paid && b.paidBy !== 'me' ? ` · <b style="color:var(--ink)">you owe ${money(mine.amt)}</b>` : ''}</span></button></div></div>`; }
+      return `<div class="m ${me ? 'me' : ''} ${isNew}" data-id="${m.id}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))} split a bill</div><button class="billmsg" data-act="gtab" data-t="bills"><span class="label">${ic('receipt')} Bill</span><b>${esc(b.title)} · ${money(b.total)}</b><span class="note">${b.shares.length} people · ${money(b.shares[0].amt)} each${mine && !mine.paid && b.paidBy !== 'me' ? ` · <b style="color:var(--ink)">you owe ${money(mine.amt)}</b>` : ''}</span></button></div></div>`; }
     if (m.poll) {
       const total = m.poll.opts.reduce((a, o) => a + o.v.length, 0) || 1;
       return `<div class="m ${me ? 'me' : ''} ${isNew}" data-id="${m.id}">${me ? '' : av(m.from)}<div class="bwrap"><div class="who">${esc(nameOf(m.from))}</div><div class="poll"><span class="label">Poll</span><b>${esc(m.poll.q)}</b>${m.poll.opts.map((o, i) => `<button class="opt" data-act="vote" data-m="${m.id}" data-i="${i}" aria-pressed="${o.v.includes('me')}"><span class="bar" style="width:${Math.round(o.v.length / total * 100)}%"></span><span>${esc(o.t)}</span><span>${o.v.length}</span></button>`).join('')}<span class="note">Tap to vote · ${m.poll.opts.reduce((a, o) => a + o.v.length, 0)} votes</span></div></div></div>`;
@@ -867,7 +892,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
   function viewGroup() {
     const g = grp(UI.group);
     const free = others(g).filter(p => statusOf(p)?.s === 'free');
-    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon">${g.emoji}</span><div class="grow"><h1 style="font-size:21px">${esc(g.name)}</h1><button class="note" data-act="members" style="text-decoration:underline;text-underline-offset:3px;display:block">${g.members.length} members${free.length ? ` · ${free.length} free` : ''}</button></div><button class="hpill" data-act="hang" data-g="${g.id}" aria-pressed="${g.hangout.includes('me')}" title="Open voice room"><span class="live"></span>${g.hangout.includes('me') ? 'Leave' : 'Hangout'}${g.hangout.length ? ' · ' + g.hangout.length : ''}</button>`;
+    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="color:${g.color}">${ic(g.emoji)}</span><div class="grow"><h1 style="font-size:21px">${esc(g.name)}</h1><button class="note" data-act="members" style="text-decoration:underline;text-underline-offset:3px;display:block">${g.members.length} members${free.length ? ` · ${free.length} free` : ''}</button></div><button class="hpill" data-act="hang" data-g="${g.id}" aria-pressed="${g.hangout.includes('me')}" title="Open voice room"><span class="live"></span>${g.hangout.includes('me') ? 'Leave' : 'Hangout'}${g.hangout.length ? ' · ' + g.hangout.length : ''}</button>`;
     const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Photos & files']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
     let body;
     if (UI.gtab === 'chat') {
@@ -876,12 +901,12 @@ button.person:hover .ring.add { border-color: var(--accent); }
       const nx = upcoming(g.id)[0];
       body = `<div class="gwrap"><div class="chat">
         <div class="msgs" id="msgs">${msgs || '<div class="empty">No messages yet. Say hi.</div>'}</div>
-        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">🎉 Create an event</button><button type="button" data-act="newpoll">📊 Start a poll</button><button type="button" data-act="pickfile" data-accept="image/*">📷 Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">📎 Share a file or PDF</button><button type="button" data-act="newsplit" data-g="${g.id}">🧾 Split a bill</button><button type="button" data-act="newreminder" data-g="${g.id}">⏰ Set a reminder</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
+        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${g.id}">${ic('calendar')} Create an event</button><button type="button" data-act="newpoll">${ic('poll')} Start a poll</button><button type="button" data-act="pickfile" data-accept="image/*">${ic('camera')} Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">${ic('clip')} Share a file or PDF</button><button type="button" data-act="newsplit" data-g="${g.id}">${ic('receipt')} Split a bill</button><button type="button" data-act="newreminder" data-g="${g.id}">${ic('alarm')} Set a reminder</button><button type="button" data-act="status">${ic('status')} Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
           <button type="button" class="plus" data-act="menu" aria-label="More" aria-expanded="${!!UI.menu}">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(g.name)}" value="${esc(UI.draft[g.id] || '')}" aria-label="Message"><button class="send ${UI.sent ? 'sent' : ''}" aria-label="Send">${I.send}</button></form></div>
         <aside class="side">
-          ${nx ? `<div class="card"><span class="label">Next up</span><button class="lrow" data-act="openev" data-ev="${nx.e.id}" style="padding:4px 0;margin:-4px 0"><span class="tile" style="${coverBg(nx.e)}">${nx.e.emoji}</span><span class="t"><b>${esc(nx.e.title)}</b><span class="note">${esc(whenText(nx.e, nx.d))} · ${nx.e.going.length} going</span></span></button>${rsvpBtns(nx.e)}</div>` : ''}
+          ${nx ? `<div class="card"><span class="label">Next up</span><button class="lrow" data-act="openev" data-ev="${nx.e.id}" style="padding:4px 0;margin:-4px 0"><span class="tile" style="${coverBg(nx.e)}">${ic(nx.e.emoji)}</span><span class="t"><b>${esc(nx.e.title)}</b><span class="note">${esc(whenText(nx.e, nx.d))} · ${nx.e.going.length} going</span></span></button>${rsvpBtns(nx.e)}</div>` : ''}
           ${hangoutCard(g)}
-          <div class="card"><span class="label">Free today · ${free.length}</span>${free.length ? free.map(p => `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><button class="btn line sm" data-act="status">👋</button></div>`).join('') : '<p class="note">Nobody yet. Set your status so friends know you are around.</p>'}</div>
+          <div class="card"><span class="label">Free today · ${free.length}</span>${free.length ? free.map(p => `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><button class="btn line sm" data-act="dm" data-p="${p}">Message</button></div>`).join('') : '<p class="note">Nobody yet. Set your status so friends know you are around.</p>'}</div>
           ${(() => { const ph = S.messages[g.id].filter(m => m.file && fileKind(m.file) === 'image').slice(-6).reverse(); return ph.length ? `<div class="card"><div class="sechead"><span class="label">Photos</span><button class="note" data-act="gtab" data-t="files" style="text-decoration:underline">See all</button></div><div class="sidegal">${ph.map(m => `<button data-act="viewimg" data-m="${m.id}" aria-label="Open photo"><img src="${m.file.url}" alt=""></button>`).join('')}</div></div>` : ''; })()}
         </aside></div>`;
     } else if (UI.gtab === 'events') {
@@ -912,7 +937,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     let cells = '';
     for (let i = 0; i < total; i++) {
       const d = addDays(start, i), ds = ymd(d), es = eventsOn(ds), out = d.getMonth() !== m - 1;
-      cells += `<button class="cell ${out ? 'out' : ''} ${ds === today() ? 'today' : ''}" data-act="pickday" data-day="${ds}" aria-pressed="${ds === UI.day}" aria-label="${fmtDay(ds)}, ${es.length} events"><span class="dn">${d.getDate()}</span>${es.slice(0, 2).map(e => `<span class="chipev">${e.emoji} ${esc(e.title)}</span>`).join('')}${es.length > 2 ? `<span class="note" style="font-size:11px">+${es.length - 2} more</span>` : ''}</button>`;
+      cells += `<button class="cell ${out ? 'out' : ''} ${ds === today() ? 'today' : ''}" data-act="pickday" data-day="${ds}" aria-pressed="${ds === UI.day}" aria-label="${fmtDay(ds)}, ${es.length} events"><span class="dn">${d.getDate()}</span>${es.slice(0, 2).map(e => `<span class="chipev">${ic(e.emoji)} ${esc(e.title)}</span>`).join('')}${es.length > 2 ? `<span class="note" style="font-size:11px">+${es.length - 2} more</span>` : ''}</button>`;
     }
     const dayEv = eventsOn(UI.day);
     const body = `<div class="calwrap"><div class="calmain">
@@ -952,11 +977,11 @@ button.person:hover .ring.add { border-color: var(--accent); }
     }
     if (s.kind === 'event') {
       return wrap(`<form class="in" id="evform"><h2>New event</h2>
-        <div class="cover" style="${coverBg({ cover: s.cover })};border-radius:18px;height:110px"><span class="emo">${s.emoji}</span><span class="when">${esc(s.title || 'Your event')}</span></div>
-        <div class="seg emojis">${EMOJI.map(x => `<button type="button" data-act="emoji" data-v="${x}" aria-pressed="${s.emoji === x}">${x}</button>`).join('')}</div>
+        <div class="cover" style="${coverBg({ cover: s.cover })};border-radius:18px;height:110px"><span class="emo">${ic(s.emoji)}</span><span class="when">${esc(s.title || 'Your event')}</span></div>
+        <div class="seg emojis">${EMOJI.map(x => `<button type="button" data-act="emoji" data-v="${x}" aria-pressed="${s.emoji === x}" aria-label="${x}">${ic(x)}</button>`).join('')}</div>
         <div class="field"><label class="label" for="etitle">Name it</label><input id="etitle" required maxlength="40" placeholder="Taco night, Movie at 8, Pickup game" value="${esc(s.title)}"></div>
         <div class="row2"><div class="field"><label class="label" for="edate">Day</label><input id="edate" type="date" required min="${today()}" value="${s.date}"></div><div class="field"><label class="label" for="etime">Time</label><input id="etime" type="time" value="${s.time}"></div></div>
-        <div class="row2"><div class="field"><label class="label" for="ewhere">Where</label><input id="ewhere" maxlength="40" placeholder="Jordan's place" value="${esc(s.where)}"></div><div class="field"><label class="label" for="egroup">Invite</label><select id="egroup">${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${g.emoji} ${esc(g.name)}</option>`).join('')}</select></div></div>
+        <div class="row2"><div class="field"><label class="label" for="ewhere">Where</label><input id="ewhere" maxlength="40" placeholder="Jordan's place" value="${esc(s.where)}"></div><div class="field"><label class="label" for="egroup">Invite</label><select id="egroup">${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${esc(g.name)}</option>`).join('')}</select></div></div>
         <div class="field"><label class="label" for="erepeat">Repeat</label><select id="erepeat"><option value="">Just once</option><option value="weekly" ${s.repeat === 'weekly' ? 'selected' : ''}>Every week</option><option value="biweekly" ${s.repeat === 'biweekly' ? 'selected' : ''}>Every other week</option></select></div>
         <button class="btn primary" style="padding:13px;font-size:15px">Send invite</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New event');
     }
@@ -971,10 +996,10 @@ button.person:hover .ring.add { border-color: var(--accent); }
       const sa = splitAmounts(s), eq = sa.amts;
       const off = s.mode === 'custom' && Math.abs(sa.base - sa.bill) > .009;
       return wrap(`<form class="in" id="splitform"><h2>Split a bill</h2>
-        <label class="upload" for="rfile">${s.receipt ? `<img src="${s.receipt}" alt="Receipt preview">` : '<span style="font-size:30px">📸</span>'}<span><b>${s.receipt ? 'Receipt added' : 'Add a photo of the receipt'}</b><span class="note" style="display:block">In the full app, Nexus reads the total for you. You'll also be able to forward receipt emails.</span></span></label>
+        <label class="upload" for="rfile">${s.receipt ? `<img src="${s.receipt}" alt="Receipt preview">` : `<span style="font-size:30px;color:var(--accent)">${ic('camera')}</span>`}<span><b>${s.receipt ? 'Receipt added' : 'Add a photo of the receipt'}</b><span class="note" style="display:block">In the full app, Nexus reads the total for you. You'll also be able to forward receipt emails.</span></span></label>
         <input id="rfile" type="file" accept="image/*" hidden>
-        <div class="row2"><div class="field"><label class="label" for="sgroup">Group</label><select id="sgroup">${S.groups.map(x => `<option value="${x.id}" ${x.id === s.group ? 'selected' : ''}>${x.emoji} ${esc(x.name)}</option>`).join('')}</select></div>
-          <div class="field"><label class="label" for="sevent">For an event</label><select id="sevent"><option value="">No event</option>${evs.map(x => `<option value="${x.id}" ${x.id === s.event ? 'selected' : ''}>${x.emoji} ${esc(x.title)}</option>`).join('')}</select></div></div>
+        <div class="row2"><div class="field"><label class="label" for="sgroup">Group</label><select id="sgroup">${S.groups.map(x => `<option value="${x.id}" ${x.id === s.group ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
+          <div class="field"><label class="label" for="sevent">For an event</label><select id="sevent"><option value="">No event</option>${evs.map(x => `<option value="${x.id}" ${x.id === s.event ? 'selected' : ''}>${esc(x.title)}</option>`).join('')}</select></div></div>
         <div class="row2"><div class="field"><label class="label" for="stitle">What for</label><input id="stitle" required maxlength="40" placeholder="Dinner, groceries, tickets" value="${esc(s.title)}"></div>
           <div class="field"><label class="label" for="stotal">Bill amount</label><input id="stotal" required inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="0.00" value="${s.total}"></div></div>
         <div class="field"><span class="label">Tip</span><div class="seg">${[['0','No tip'],['15','15%'],['18','18%'],['20','20%'],['22','22%'],['custom','Custom']].map(([k, l]) => `<button type="button" data-act="tip" data-v="${k}" aria-pressed="${s.tip === k}">${l}</button>`).join('')}${s.tip === 'custom' ? `<input id="tipc" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="${s.tipCustom}" placeholder="%" aria-label="Custom tip percent" style="width:84px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px">` : ''}</div>
@@ -998,42 +1023,42 @@ button.person:hover .ring.add { border-color: var(--accent); }
       return wrap(`<div class="in"><h2>Send with Zelle</h2><p class="note" style="margin-top:-6px">Open your bank app, choose Zelle, and send:</p>
         <div class="card"><div class="splitrow"><span class="n">Amount</span><b>${money(sh.amt)}</b></div><div class="splitrow"><span class="n">To</span><b>${esc(nameOf(to))}</b></div><div class="splitrow"><span class="n">Zelle</span><b style="user-select:all">${esc(ZELLE[to])}</b></div></div>
         <button class="btn line" data-act="copyzelle" data-v="${esc(ZELLE[to])}">Copy ${esc(nameOf(to))}'s Zelle info</button>
-        ${S.bank ? `<div class="card" style="flex-direction:row;gap:10px;align-items:center"><span>🏦</span><span class="note">Your bank is linked, so Nexus marks this paid automatically once the Zelle payment shows up.</span></div>` : `<button class="btn line" data-act="bank">Link your bank so payments confirm automatically</button>`}
+        ${S.bank ? `<div class="card" style="flex-direction:row;gap:10px;align-items:center"><span style="color:var(--accent);font-size:20px">${ic('bank')}</span><span class="note">Your bank is linked, so Nexus marks this paid automatically once the Zelle payment shows up.</span></div>` : `<button class="btn line" data-act="bank">Link your bank so payments confirm automatically</button>`}
         <button class="btn primary" data-act="markmine" data-b="${b.id}" data-v="Zelle">I sent it</button><button class="btn" data-act="close">Cancel</button></div>`, 'Zelle');
     }
     if (s.kind === 'bank') {
       return wrap(`<div class="in"><h2>Link your bank</h2><p class="note" style="margin-top:-6px">Nexus uses Plaid to connect securely. You sign in with your bank inside Plaid's window, and Nexus never sees your password.</p>
-        <div class="card" style="gap:8px"><b>What linking does</b><span>✅ Split a card charge in one tap</span><span>✅ Confirms Zelle paybacks automatically</span><span>🚫 Nexus never moves your money or stores your login</span></div>
+        <div class="card" style="gap:8px"><b>What linking does</b><span class="iline">${ic('check')} Split a card charge in one tap</span><span class="iline">${ic('check')} Confirms Zelle paybacks automatically</span><span class="iline">${ic('shield')} Nexus never moves your money or stores your login</span></div>
         <span class="label">Pick a bank (demo)</span>
-        ${['Demo Bank', 'Sample Credit Union', 'Test Savings & Loan'].map((b, i) => `<button class="payopt" data-act="linkbank" data-v="${b}" data-mask="${['4821', '0937', '5520'][i]}"><span class="logo" style="background:${['#3A3A42', '#7C5CFF', '#5A5A63'][i]}">🏦</span><span class="t"><b>${b}</b><small>Checking account</small></span></button>`).join('')}
+        ${['Demo Bank', 'Sample Credit Union', 'Test Savings & Loan'].map((b, i) => `<button class="payopt" data-act="linkbank" data-v="${b}" data-mask="${['4821', '0937', '5520'][i]}"><span class="logo" style="background:${['#3A3A42', '#7C5CFF', '#5A5A63'][i]}">${ic('bank')}</span><span class="t"><b>${b}</b><small>Checking account</small></span></button>`).join('')}
         <p class="note">This demo uses pretend banks and data. In the real app, this button opens Plaid.</p>
         <button class="btn" data-act="close">Cancel</button></div>`, 'Link your bank');
     }
     if (s.kind === 'reminder') {
       return wrap(`<form class="in" id="remform"><h2>New reminder</h2>
-        <div class="seg emojis">${['💪','🏃','💊','💧','📚','🛒','🧾','🎂','⏰'].map(x => `<button type="button" data-act="remoji" data-v="${x}" aria-pressed="${s.emoji === x}">${x}</button>`).join('')}</div>
+        <div class="seg emojis">${['dumbbell','run','pill','drop','book','cart','receipt','cake','alarm'].map(x => `<button type="button" data-act="remoji" data-v="${x}" aria-pressed="${s.emoji === x}" aria-label="${x}">${ic(x)}</button>`).join('')}</div>
         <div class="field"><label class="label" for="rtitle">Remind me to</label><input id="rtitle" required maxlength="50" placeholder="Work out, take vitamins, call Mom" value="${esc(s.title)}"></div>
         <div class="row2"><div class="field"><label class="label" for="rdate">Starting</label><input id="rdate" type="date" required value="${s.date}"></div><div class="field"><label class="label" for="rtime">Time</label><input id="rtime" type="time" required value="${s.time}"></div></div>
         <div class="field"><span class="label">Repeat</span><div class="seg">${Object.entries(REPEAT).map(([k, l]) => `<button type="button" data-act="rrep" data-v="${k}" aria-pressed="${s.repeat === k}">${l}</button>`).join('')}</div></div>
-        <div class="field"><label class="label" for="rgroup">Share with a group (optional)</label><select id="rgroup"><option value="">Just me</option>${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${g.emoji} ${esc(g.name)}</option>`).join('')}</select><span class="note">Shared reminders post to the group, so friends can hold you to it.</span></div>
+        <div class="field"><label class="label" for="rgroup">Share with a group (optional)</label><select id="rgroup"><option value="">Just me</option>${S.groups.map(g => `<option value="${g.id}" ${g.id === s.group ? 'selected' : ''}>${esc(g.name)}</option>`).join('')}</select><span class="note">Shared reminders post to the group, so friends can hold you to it.</span></div>
         <button class="btn primary" style="padding:13px;font-size:15px">Save reminder</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New reminder');
     }
     if (s.kind === 'members') {
       const g = grp(UI.group), outside = Object.keys(PEOPLE).filter(p => p !== 'me' && !g.members.includes(p));
-      return wrap(`<div class="in"><h2>${g.emoji} ${esc(g.name)}</h2><p class="note" style="margin-top:-8px">${g.members.length} in this orbit</p>
+      return wrap(`<div class="in"><h2>${ic(g.emoji)} ${esc(g.name)}</h2><p class="note" style="margin-top:-8px">${g.members.length} in this orbit</p>
         <div class="list">${g.members.map(p => { const st = statusOf(p); return `<div class="lrow">${av(p)}<span class="t"><b>${p === 'me' ? 'You' : esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span>${p === 'me' ? '' : `<span class="mrow acts"><button class="btn line sm" data-act="dm" data-p="${p}">Message</button><button class="btn sm" data-act="removep" data-p="${p}" style="color:var(--out)">Remove</button></span>`}</div>`; }).join('')}</div>
         ${outside.length ? `<div class="field"><span class="label">Add to this orbit</span><div class="seg">${outside.map(p => `<button data-act="addmember" data-p="${p}">+ ${esc(nameOf(p))}</button>`).join('')}</div></div>` : ''}
         <button class="btn" data-act="leavegroup" style="color:var(--out)">Delete this group</button><button class="btn line" data-act="close">Done</button></div>`, 'Members');
     }
     if (s.kind === 'confirm') {
       const g = grp(s.g);
-      if (s.type === 'remove') return wrap(`<div class="in"><span class="label warn">⚠️ Attention</span><h2 style="margin-top:-6px">${esc(nameOf(s.p))} is being removed from your orbit</h2><p class="note" style="margin-top:-6px">They'll leave ${g.emoji} ${esc(g.name)} and lose its chat, events and bills. You can add them back anytime.</p><button class="btn danger lg" data-act="doremove" data-p="${s.p}" data-g="${g.id}">Remove ${esc(nameOf(s.p))}</button><button class="btn" data-act="members">Keep them</button></div>`, 'Remove');
-      return wrap(`<div class="in"><span class="label warn">⚠️ Attention</span><h2 style="margin-top:-6px">Delete ${g.emoji} ${esc(g.name)}?</h2><p class="note" style="margin-top:-6px">The chat, ${S.events.filter(e => e.group === g.id).length} events, photos and bills in this group will be gone for all ${g.members.length} members.</p><button class="btn danger lg" data-act="doleave" data-g="${g.id}">Delete group</button><button class="btn" data-act="members">Keep it</button></div>`, 'Delete group');
+      if (s.type === 'remove') return wrap(`<div class="in"><span class="label warn">${ic('alert')} Attention</span><h2 style="margin-top:-6px">${esc(nameOf(s.p))} is being removed from your orbit</h2><p class="note" style="margin-top:-6px">They'll leave ${ic(g.emoji)} ${esc(g.name)} and lose its chat, events and bills. You can add them back anytime.</p><button class="btn danger lg" data-act="doremove" data-p="${s.p}" data-g="${g.id}">Remove ${esc(nameOf(s.p))}</button><button class="btn" data-act="members">Keep them</button></div>`, 'Remove');
+      return wrap(`<div class="in"><span class="label warn">${ic('alert')} Attention</span><h2 style="margin-top:-6px">Delete ${ic(g.emoji)} ${esc(g.name)}?</h2><p class="note" style="margin-top:-6px">The chat, ${S.events.filter(e => e.group === g.id).length} events, photos and bills in this group will be gone for all ${g.members.length} members.</p><button class="btn danger lg" data-act="doleave" data-g="${g.id}">Delete group</button><button class="btn" data-act="members">Keep it</button></div>`, 'Delete group');
     }
     if (s.kind === 'person') {
       const p = s.p, st = statusOf(p), shared = sharedGroups(p);
-      return wrap(`<div class="in"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 76 })}</span><h2>${esc(nameOf(p))}</h2><span class="note" style="margin-top:-4px">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status set'}</span>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${g.emoji} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
-        <button class="btn primary lg" data-act="dm" data-p="${p}">💬 Message ${esc(nameOf(p))}</button><button class="btn line lg" data-act="newevent" data-g="${shared[0]?.id || S.groups[0].id}">🎉 Plan something</button><button class="btn" data-act="close">Close</button></div>`, nameOf(p));
+      return wrap(`<div class="in"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 76 })}</span><h2>${esc(nameOf(p))}</h2><span class="note" style="margin-top:-4px">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status set'}</span>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${ic(g.emoji)} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
+        <button class="btn primary lg" data-act="dm" data-p="${p}">${ic('chat')} Message ${esc(nameOf(p))}</button><button class="btn line lg" data-act="newevent" data-g="${shared[0]?.id || S.groups[0].id}">${ic('calendar')} Plan something</button><button class="btn" data-act="close">Close</button></div>`, nameOf(p));
     }
     if (s.kind === 'newdm') {
       return wrap(`<div class="in"><h2>New message</h2><div class="list">${Object.keys(PEOPLE).filter(p => p !== 'me').map(p => { const st = statusOf(p); return `<button class="lrow" data-act="dm" data-p="${p}">${av(p)}<span class="t"><b>${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span><span class="chip">Message</span></button>`; }).join('')}</div><button class="btn" data-act="close">Cancel</button></div>`, 'New message');
@@ -1041,7 +1066,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     if (s.kind === 'group') {
       return wrap(`<form class="in" id="grpform"><h2>New group</h2>
         <div class="field"><label class="label" for="gname">Name</label><input id="gname" required maxlength="30" placeholder="Roommates, Running club, Work friends"></div>
-        <div class="field"><span class="label">Icon</span><div class="seg emojis">${['🏃','🏠','💼','⚽','🎸','🍳','✈️','🐶'].map(x => `<button type="button" data-act="gemoji" data-v="${x}" aria-pressed="${s.emoji === x}">${x}</button>`).join('')}</div></div>
+        <div class="field"><span class="label">Icon</span><div class="seg emojis">${['users','home','briefcase','ball','music','dinner','plane','paw','run','bolt'].map(x => `<button type="button" data-act="gemoji" data-v="${x}" aria-pressed="${s.emoji === x}" aria-label="${x}">${ic(x)}</button>`).join('')}</div></div>
         <div class="field"><span class="label">Add people</span><div class="seg">${Object.keys(PEOPLE).filter(p => p !== 'me').map(p => `<button type="button" data-act="addp" data-p="${p}" aria-pressed="${s.members.includes(p)}">${esc(nameOf(p))}</button>`).join('')}</div></div>
         <button class="btn primary" style="padding:13px">Create group</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New group');
     }
@@ -1056,12 +1081,12 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const g = grp(e.group), d = nextDate(e) || e.date;
     const list = (ids, label) => ids.length ? `<div><span class="label">${label} · ${ids.length}</span><div class="guests" style="margin-top:8px">${ids.map(p => `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}${p === e.host ? ' <span class="note">· host</span>' : ''}</span></div>`).join('')}</div></div>` : '';
     return `<div class="ov" data-act="close" data-ov="1"><div class="sheet detail" role="dialog" aria-modal="true" aria-label="${esc(e.title)}" data-stop="1">
-      <div class="cover" style="${coverBg(e)}"><span class="emo">${e.emoji}</span><button class="iconbtn" data-act="close" aria-label="Close" style="align-self:flex-start;margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff">×</button></div>
+      <div class="cover" style="${coverBg(e)}"><span class="emo">${ic(e.emoji)}</span><button class="iconbtn" data-act="close" aria-label="Close" style="align-self:flex-start;margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff">×</button></div>
       <div class="in">
-        <div><h2>${esc(e.title)}</h2><div class="note" style="margin-top:4px">Hosted by ${esc(nameOf(e.host))} · ${g.emoji} ${esc(g.name)}</div></div>
-        <div class="card" style="gap:6px"><div>🗓️ <b>${esc(whenText(e, d))}</b>${e.repeat ? ` · ${repeatText(e.repeat)}` : ''}</div>${e.where ? `<div>📍 ${esc(e.where)}</div>` : ''}${e.desc ? `<div class="note">${esc(e.desc)}</div>` : ''}</div>
+        <div><h2>${esc(e.title)}</h2><div class="note" style="margin-top:4px">Hosted by ${esc(nameOf(e.host))} · ${ic(g.emoji)} ${esc(g.name)}</div></div>
+        <div class="card" style="gap:6px"><div class="iline">${ic('calendar')} <b>${esc(whenText(e, d))}</b>${e.repeat ? ` · ${repeatText(e.repeat)}` : ''}</div>${e.where ? `<div class="iline">${ic('pin')} ${esc(e.where)}</div>` : ''}${e.desc ? `<div class="note">${esc(e.desc)}</div>` : ''}</div>
         ${rsvpBtns(e)}
-        <div class="seg"><button data-act="addcal">Add to my calendar</button><button data-act="copylink" data-ev="${e.id}">Copy invite link</button><button data-act="newsplit" data-g="${e.group}" data-ev="${e.id}">🧾 Split the bill</button></div>
+        <div class="seg"><button data-act="addcal">Add to my calendar</button><button data-act="copylink" data-ev="${e.id}">Copy invite link</button><button data-act="newsplit" data-g="${e.group}" data-ev="${e.id}">${ic('receipt')} Split the bill</button></div>
         <div class="field"><span class="label">Remind me</span><div class="seg">${[['','Off'],['1d','1 day before'],['2h','2 hours before'],['30m','30 minutes before']].map(([k, l]) => `<button data-act="remind" data-ev="${e.id}" data-v="${k}" aria-pressed="${(e.remind || '') === k}">${l}</button>`).join('')}</div></div>
         ${S.bills.filter(b => b.event === e.id).map(billCard).join('')}
         ${list(e.going, 'Going')}${list(e.maybe, 'Maybe')}${list(e.cant, "Can't go")}
@@ -1087,7 +1112,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${I.groups.replace('<svg', '<svg class="ico"')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
       <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${I.money.replace('<svg', '<svg class="ico"')}</button>
       <hr>
-      ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${g.emoji}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
+      ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${ic(g.emoji)}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
       <button class="rbtn add" data-act="newgroup" aria-label="New group" title="New group">+</button>
       ${dmPeople().length ? '<hr>' : ''}
       ${dmPeople().slice(0, 4).map(p => `<button class="rbtn dmb" data-act="dm" data-p="${p}" aria-label="${esc(nameOf(p))}" title="${esc(nameOf(p))}" ${UI.view === 'dm' && UI.dm === p ? 'aria-current="page"' : ''}>${av(p)}${S.unreadDm[p] ? `<span class="badge">${S.unreadDm[p]}</span>` : ''}</button>`).join('')}
@@ -1099,7 +1124,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const key = UI.view + ':' + (UI.group || '') + ':' + (UI.dm || '') + ':' + (UI.view === 'group' ? UI.gtab : '');
     const enter = key !== UI.lastKey; UI.lastKey = key;
     const showFab = !(UI.view === 'group' && UI.gtab === 'chat') && UI.view !== 'dm';
-    const fab = showFab ? `<button class="fab" data-act="fab" aria-expanded="${!!UI.fab}" aria-label="Quick actions">${UI.fab ? '✕' : '🚀'}</button>${UI.fab ? `<div class="fabmenu">${[['newevent','🎉','New event'],['newsplit','🧾','Split a bill'],['newreminder','⏰','Reminder'],['newgroup','👥','New group'],['newdm','💬','New message']].map(([a, i, l], k) => `<button data-act="${a}" style="animation-delay:${k * .04}s"><span>${l}</span><i>${i}</i></button>`).join('')}</div>` : ''}` : '';
+    const fab = showFab ? `<button class="fab" data-act="fab" aria-expanded="${!!UI.fab}" aria-label="Quick actions">${ic('plus')}</button>${UI.fab ? `<div class="fabmenu">${[['newevent','calendar','New event'],['newsplit','receipt','Split a bill'],['newreminder','alarm','Reminder'],['newgroup','users','New group'],['newdm','chat','New message']].map(([a, i, l], k) => `<button data-act="${a}" style="animation-delay:${k * .04}s"><span>${l}</span><i>${ic(i)}</i></button>`).join('')}</div>` : ''}` : '';
     document.getElementById('shell').innerHTML = `${rail}<main class="${enter ? 'enter' : ''}"><header class="top ${v.topClass || ''}" style="${v.topStyle || ''}">${v.head}</header>${v.tabs || ''}${v.body}${fab}</main>${tabbar}`;
     UI.pop = null; UI.sent = false; UI.popGroup = null;
     document.querySelectorAll('#msgs .m.new').forEach(el => { if (el.dataset.id) UI.seen.add(el.dataset.id); });
@@ -1116,7 +1141,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     document.getElementById('launch')?.remove();
     const el = document.createElement('div'); el.id = 'launch'; el.setAttribute('aria-hidden', 'true');
     const stars = Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2, d = 110 + Math.random() * 120; return `<span class="star" style="--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px;animation-delay:${.12 + Math.random() * .12}s"></span>`; }).join('');
-    el.innerHTML = `${stars}<div class="lcard ${o.anim || ''}" style="${o.bg}"><span class="emo">${o.emoji}</span><b>${esc(o.title)}</b><span>${esc(o.sub || '')}</span></div>`;
+    el.innerHTML = `${stars}<div class="lcard ${o.anim || ''}" style="${o.bg}"><span class="emo">${ic(o.emoji)}</span><b>${esc(o.title)}</b><span>${esc(o.sub || '')}</span></div>`;
     document.body.appendChild(el); setTimeout(() => el.remove(), 1400);
   }
   function orbitFx(pid, dir) {
@@ -1148,7 +1173,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
         const r = { id: 'r' + uid(), emoji: s2.emoji, title: s2.title.trim(), date: s2.date, time: s2.time, repeat: s2.repeat, group: s2.group, doneOn: {} };
         S.reminders.push(r); UI.sheet = null;
         launch({ emoji: r.emoji, title: r.title, sub: remWhen(r, nextRem(r) || r.date), bg: 'background:linear-gradient(135deg,#2A1A78,#8A6BFF)' });
-        if (r.group) S.messages[r.group].push({ id: uid(), sys: `You set a shared reminder: ${r.emoji} ${r.title}, ${remWhen(r, nextRem(r) || r.date)}`, ts: Date.now() });
+        if (r.group) S.messages[r.group].push({ id: uid(), sys: `You set a shared reminder: ${r.title}, ${remWhen(r, nextRem(r) || r.date)}`, ts: Date.now() });
         toast(`Reminder saved: ${r.title}, ${remWhen(r, nextRem(r) || r.date)}`); };
       ['rtitle','rdate','rtime','rgroup'].forEach(id => { document.getElementById(id).oninput = syncRem; });
     }
@@ -1172,7 +1197,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
   function setRsvp(e, v) { ['going','maybe','cant'].forEach(k => e[k] = e[k].filter(x => x !== 'me')); ({ g: e.going, m: e.maybe, c: e.cant })[v].push('me'); }
   function openGroup(id) { UI.view = 'group'; UI.group = id; UI.dm = null; UI.gtab = 'chat'; UI.menu = false; UI.sheet = null; UI.modal = null; S.unread[id] = 0; UI.toBottom = true; UI.resetScroll = true; }
   function openDm(p) { UI.view = 'dm'; UI.dm = p; UI.group = null; UI.menu = false; UI.sheet = null; UI.modal = null; if (!S.dms[p]) S.dms[p] = []; S.unreadDm[p] = 0; UI.toBottom = true; UI.resetScroll = true; }
-  const DM_REPLIES = ['yes!', 'down', "let's do it", 'what time?', 'haha ok', 'say less', 'sure, send me the details', '👀'];
+  const DM_REPLIES = ['yes!', 'down', "let's do it", 'what time?', 'haha ok', 'say less', 'sure, send me the details', 'ooh tell me more'];
   function simulateDm(p, text) {
     const st = statusOf(p), mine = S.dms[p].at(-1);
     if (!st || st.s === 'busy') return;
@@ -1181,7 +1206,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     setTimeout(() => { S.dms[p].push({ id: tid, from: p, typing: true, ts: Date.now() }); if (UI.view === 'dm' && UI.dm === p) { UI.toBottom = true; render(); } }, 900);
     setTimeout(() => { const l = S.dms[p], i = l.findIndex(m => m.id === tid); const msg = { id: uid(), from: p, text: pick(DM_REPLIES), ts: Date.now(), likes: [] }; if (i > -1) l[i] = msg; else l.push(msg); if (UI.view === 'dm' && UI.dm === p) { UI.toBottom = true; render(); } else { S.unreadDm[p] = (S.unreadDm[p] || 0) + 1; render(); } }, 2300 + Math.random() * 1200);
   }
-  function newEventSheet(o = {}) { UI.menu = false; UI.sheet = { kind: 'event', group: o.group || UI.group || S.groups[0].id, title: o.title || '', date: o.date || today(), time: o.time || '19:00', where: '', repeat: '', emoji: o.emoji || '🎉', cover: Math.floor(Math.random() * COVERS.length) }; }
+  function newEventSheet(o = {}) { UI.menu = false; UI.sheet = { kind: 'event', group: o.group || UI.group || S.groups[0].id, title: o.title || '', date: o.date || today(), time: o.time || '19:00', where: '', repeat: '', emoji: o.emoji || 'spark', cover: Math.floor(Math.random() * COVERS.length) }; }
   function createEvent() {
     syncEvent(); const s = UI.sheet; if (!s.title.trim()) return;
     const e = { id: 'e' + uid(), group: s.group, emoji: s.emoji, cover: s.cover, title: s.title.trim(), date: s.date, time: s.time, where: s.where.trim(), host: 'me', repeat: s.repeat, desc: '', going: ['me'], maybe: [], cant: [], comments: [] };
@@ -1230,15 +1255,15 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const b = { id: 'b' + uid(), group: s.group, event: s.event || null, title: s.title.trim(), total, subtotal: sa.bill, tip: sa.tip, tipPct: sa.pct, paidBy: s.paidBy, receipt: s.receipt, ts: Date.now(), shares: s.people.map((p, i) => ({ p, amt: amts[i], paid: p === s.paidBy })) };
     S.bills.push(b); S.messages[s.group].push({ id: uid(), bill: b.id, from: 'me', ts: Date.now() }); if (s.tx) S.splitTx[s.tx] = true;
     UI.sheet = null; openGroup(s.group); UI.gtab = 'bills';
-    launch({ emoji: '🧾', title: `${money(total)} split ${s.people.length} ways`, sub: `${money(amts[0])} each · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
+    launch({ emoji: 'receipt', title: `${money(total)} split ${s.people.length} ways`, sub: `${money(amts[0])} each · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
     toast(`Bill split. ${s.people.length} people, ${money(amts[0])} each`);
-    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Zelle'; UI.pop = 'share:' + b.id + ':' + debtor.p; launch({ emoji: '✅', title: `${nameOf(debtor.p)} paid you ${money(debtor.amt)}`, sub: S.bank ? 'Zelle, confirmed by your bank' : b.title, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); toast(S.bank ? `${nameOf(debtor.p)}'s Zelle payment of ${money(debtor.amt)} showed up in your bank. Marked paid.` : `${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
+    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Zelle'; UI.pop = 'share:' + b.id + ':' + debtor.p; launch({ emoji: 'paid', title: `${nameOf(debtor.p)} paid you ${money(debtor.amt)}`, sub: S.bank ? 'Zelle, confirmed by your bank' : b.title, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); toast(S.bank ? `${nameOf(debtor.p)}'s Zelle payment of ${money(debtor.amt)} showed up in your bank. Marked paid.` : `${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
   }
   function markMine(b, method) {
     const sh = b.shares.find(x => x.p === 'me'); sh.paid = true; sh.method = method; UI.sheet = null;
     S.messages[b.group].push({ id: uid(), sys: `You paid ${nameOf(b.paidBy)} back ${money(sh.amt)} for ${b.title} (${method})`, ts: Date.now() });
     UI.pop = 'share:' + b.id + ':me';
-    launch({ emoji: '💸', title: `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}`, sub: `${b.title} · ${method}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
+    launch({ emoji: 'arrow', title: `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}`, sub: `${b.title} · ${method}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
     toast(method === 'Zelle' && S.bank ? `Zelle payment to ${nameOf(b.paidBy)} confirmed in your bank` : `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}. They'll get a notification.`);
   }
   function createPoll() {
@@ -1254,7 +1279,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     S.messages[id] = [{ id: uid(), sys: `You created ${name}`, ts: Date.now() }]; S.unread[id] = 0;
     UI.sheet = null; openGroup(id); UI.popGroup = id; launch({ emoji: gem, title: name, sub: `${grp(id).members.length} in orbit · your new group`, bg: `background:linear-gradient(135deg,#0B2A4A,${grp(id).color})` }); toast(`${name} is ready`);
   }
-  const REPLIES = ["I'm in", 'down', 'what time?', "let's do it", 'yes!', 'maybe, depends on work', 'haha', '❤️'];
+  const REPLIES = ["I'm in", 'down', 'what time?', "let's do it", 'yes!', 'maybe, depends on work', 'haha', 'love that'];
   function simulateReply(gid, text) {
     const g = grp(gid), cand = others(g).filter(p => statusOf(p) && statusOf(p).s !== 'busy');
     const mine = S.messages[gid].at(-1);
@@ -1305,8 +1330,8 @@ button.person:hover .ring.add { border-color: var(--accent); }
   const remWhen = (r, day) => `${fmtDay(day)}${r.time ? ', ' + fmtTime(r.time) : ''}${r.repeat ? ' · ' + REPEAT[r.repeat] : ''}`;
   function remRow(r, day) {
     const done = !!r.doneOn[day], g = r.group ? grp(r.group) : null;
-    return `<div class="rem ${done ? 'done' : ''}"><span class="e">${r.emoji}</span><div class="t"><b>${esc(r.title)}</b><span class="note">${esc(remWhen(r, day))}${g ? ` · shared with ${g.emoji} ${esc(g.name)}` : ''}</span></div>
-      <button class="check ${UI.pop === 'rem:' + r.id ? 'pop' : ''}" data-act="remdone" data-r="${r.id}" data-day="${day}" aria-pressed="${done}" aria-label="Mark done">✓</button><button class="iconbtn" data-act="remdel" data-r="${r.id}" aria-label="Delete reminder" style="width:32px;height:32px;font-size:15px">×</button></div>`;
+    return `<div class="rem ${done ? 'done' : ''}"><span class="e">${ic(r.emoji)}</span><div class="t"><b>${esc(r.title)}</b><span class="note">${esc(remWhen(r, day))}${g ? ` · shared with ${ic(g.emoji)} ${esc(g.name)}` : ''}</span></div>
+      <button class="check ${UI.pop === 'rem:' + r.id ? 'pop' : ''}" data-act="remdone" data-r="${r.id}" data-day="${day}" aria-pressed="${done}" aria-label="Mark done">${ic('check')}</button><button class="iconbtn" data-act="remdel" data-r="${r.id}" aria-label="Delete reminder" style="width:32px;height:32px;font-size:15px">×</button></div>`;
   }
   function remList(limit) {
     const items = S.reminders.map(r => { const t = today(); const d = remOn(r, t) ? t : nextRem(r); return d ? { r, d } : null; }).filter(Boolean)
@@ -1338,14 +1363,14 @@ button.person:hover .ring.add { border-color: var(--accent); }
     if (cand.length) setTimeout(() => { last.likes.push(pick(cand)); render(); }, 1500);
   }
   const TXNS = () => { const t = new Date(); const d = n => ymd(addDays(t, -n)); return [
-    { id: 't1', name: 'Komodo', amt: 186.40, date: d(1), cat: '🍽️' }, { id: 't2', name: 'Uber', amt: 23.18, date: d(1), cat: '🚗' },
-    { id: 't3', name: 'Whole Foods', amt: 64.92, date: d(2), cat: '🛒' }, { id: 't4', name: 'AMC Theatres', amt: 54.00, date: d(4), cat: '🎬' },
-    { id: 't5', name: 'Zelle from Jordan', amt: -21.00, date: d(5), cat: '↩️' }]; };
+    { id: 't1', name: 'Komodo', amt: 186.40, date: d(1), cat: 'dinner' }, { id: 't2', name: 'Uber', amt: 23.18, date: d(1), cat: 'car' },
+    { id: 't3', name: 'Whole Foods', amt: 64.92, date: d(2), cat: 'cart' }, { id: 't4', name: 'AMC Theatres', amt: 54.00, date: d(4), cat: 'film' },
+    { id: 't5', name: 'Zelle from Jordan', amt: -21.00, date: d(5), cat: 'back' }]; };
   function bankCard() {
-    if (!S.bank) return `<div class="card" style="flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:26px">🏦</span><div style="flex:1;min-width:200px"><b>Link your bank</b><div class="note">Split a card charge in one tap, and let Zelle paybacks confirm on their own.</div></div><button class="btn primary" data-act="bank">Link with Plaid</button></div>`;
+    if (!S.bank) return `<div class="card" style="flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap"><span class="gicon" style="color:var(--accent)">${ic('bank')}</span><div style="flex:1;min-width:200px"><b>Link your bank</b><div class="note">Split a card charge in one tap, and let Zelle paybacks confirm on their own.</div></div><button class="btn primary" data-act="bank">Link with Plaid</button></div>`;
     const tx = TXNS().filter(x => x.amt > 0 && !S.splitTx[x.id]);
     return `<div class="card"><div class="sechead"><span class="label">Recent charges · ${esc(S.bank.name)} ••${S.bank.mask}</span><button class="note" data-act="unlink" style="text-decoration:underline">Unlink</button></div>
-      ${tx.length ? tx.slice(0, 4).map(x => `<div class="prow"><span class="gicon" style="width:36px;height:36px;font-size:17px">${x.cat}</span><span class="n">${esc(x.name)}<div class="note">${esc(fmtDay(x.date))}</div></span><b style="font-variant-numeric:tabular-nums">${money(x.amt)}</b><button class="btn line sm" data-act="splittx" data-t="${x.id}">Split</button></div>`).join('') : '<p class="note">No new charges to split.</p>'}</div>`;
+      ${tx.length ? tx.slice(0, 4).map(x => `<div class="prow"><span class="gicon" style="width:36px;height:36px;font-size:18px;color:var(--accent)">${ic(x.cat)}</span><span class="n">${esc(x.name)}<div class="note">${esc(fmtDay(x.date))}</div></span><b style="font-variant-numeric:tabular-nums">${money(x.amt)}</b><button class="btn line sm" data-act="splittx" data-t="${x.id}">Split</button></div>`).join('') : '<p class="note">No new charges to split.</p>'}</div>`;
   }
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
 
@@ -1397,7 +1422,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'newevent': newEventSheet({ group: d.g, date: d.date }); break;
       case 'emoji': UI.sheet.emoji = d.v; break;
       case 'newpoll': UI.menu = false; UI.sheet = { kind: 'poll' }; break;
-      case 'newgroup': UI.sheet = { kind: 'group', emoji: '🏃', members: [] }; break;
+      case 'newgroup': UI.sheet = { kind: 'group', emoji: 'users', members: [] }; break;
       case 'gemoji': { const n = document.getElementById('gname')?.value; UI.sheet.emoji = d.v; render(); if (n) document.getElementById('gname').value = n; return; }
       case 'addp': { const n = document.getElementById('gname')?.value, l = UI.sheet.members, i = l.indexOf(d.p); i > -1 ? l.splice(i, 1) : l.push(d.p); render(); if (n) document.getElementById('gname').value = n; return; }
       case 'openev': UI.modal = d.ev; break;
@@ -1417,8 +1442,8 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'unlink': S.bank = null; return toast('Bank unlinked');
       case 'splittx': { const x = TXNS().find(t => t.id === d.t); newSplitSheet({ group: UI.view === 'group' ? UI.group : undefined }); Object.assign(UI.sheet, { title: x.name, total: String(x.amt), tip: '0', tx: x.id }); break; }
       case 'copyzelle': { const v = d.v; try { navigator.clipboard.writeText(v).then(() => toast('Copied ' + v), () => toast(v)); } catch (e) { toast(v); } return; }
-      case 'remindme': { const b = bill(d.b), sh = b.shares.find(x => x.p === 'me'); S.reminders.push({ id: 'r' + uid(), emoji: '🧾', title: `Pay ${nameOf(b.paidBy)} back ${money(sh.amt)}`, date: ymd(addDays(new Date(), 1)), time: '09:00', repeat: '', group: '', doneOn: {} }); UI.sheet = null; return toast('Reminder set for tomorrow at 9 AM'); }
-      case 'newreminder': UI.menu = false; UI.sheet = { kind: 'reminder', emoji: '💪', title: '', date: d.date || today(), time: '18:00', repeat: '', group: d.g || '' }; break;
+      case 'remindme': { const b = bill(d.b), sh = b.shares.find(x => x.p === 'me'); S.reminders.push({ id: 'r' + uid(), emoji: 'receipt', title: `Pay ${nameOf(b.paidBy)} back ${money(sh.amt)}`, date: ymd(addDays(new Date(), 1)), time: '09:00', repeat: '', group: '', doneOn: {} }); UI.sheet = null; return toast('Reminder set for tomorrow at 9 AM'); }
+      case 'newreminder': UI.menu = false; UI.sheet = { kind: 'reminder', emoji: 'dumbbell', title: '', date: d.date || today(), time: '18:00', repeat: '', group: d.g || '' }; break;
       case 'remoji': syncRem(); UI.sheet.emoji = d.v; break;
       case 'rrep': syncRem(); UI.sheet.repeat = d.v; break;
       case 'remdone': { const r = rem(d.r); UI.pop = 'rem:' + r.id; if (r.doneOn[d.day]) delete r.doneOn[d.day]; else { r.doneOn[d.day] = true; toast(r.repeat ? `Nice. ${r.title} done for ${fmtDay(d.day).toLowerCase()}` : `Done: ${r.title}`); return; } break; }
@@ -1426,7 +1451,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'pickfile': { UI.menu = false; const inp = document.getElementById('upfile'); if (inp) { inp.accept = d.accept || ''; inp.value = ''; inp.click(); } return; }
       case 'viewimg': UI.viewer = d.m; break;
       case 'remindpay': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); S.messages[b.group].push({ id: uid(), sys: `Reminder sent to ${nameOf(d.p)}: ${money(sh.amt)} for ${b.title}`, ts: Date.now() }); return toast(`Reminder sent to ${nameOf(d.p)}`); }
-      case 'markpaid': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; UI.pop = 'share:' + b.id + ':' + d.p; const left = b.shares.filter(x => !x.paid && x.p !== b.paidBy).length; launch(left ? { emoji: '✅', title: `${nameOf(d.p)} paid you ${money(sh.amt)}`, sub: `${left} still to pay back · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' } : { emoji: '🎉', title: 'All settled up', sub: `${b.title} · everyone paid`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); return toast(left ? `${nameOf(d.p)} marked as paid` : `${b.title} is all settled`); }
+      case 'markpaid': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; UI.pop = 'share:' + b.id + ':' + d.p; const left = b.shares.filter(x => !x.paid && x.p !== b.paidBy).length; launch(left ? { emoji: 'paid', title: `${nameOf(d.p)} paid you ${money(sh.amt)}`, sub: `${left} still to pay back · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' } : { emoji: 'spark', title: 'All settled up', sub: `${b.title} · everyone paid`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); return toast(left ? `${nameOf(d.p)} marked as paid` : `${b.title} is all settled`); }
       case 'remind': { const e = evt(d.ev); e.remind = d.v; setEventReminder(e, d.v); return toast(d.v ? `We'll remind you ${({ '1d': '1 day', '2h': '2 hours', '30m': '30 minutes' })[d.v]} before ${e.title}` : 'Reminder off'); }
       case 'addcal': return toast('Added to your calendar');
       case 'copylink': { const t = `Join me on Nexus: ${evt(d.ev).title}, ${whenText(evt(d.ev))}`; try { navigator.clipboard.writeText(t).then(() => toast('Invite copied. Paste it in any chat.'), () => toast('Invite links work once Nexus launches')); } catch (e) { toast('Invite links work once Nexus launches'); } return; }
@@ -1444,6 +1469,6 @@ button.person:hover .ring.add { border-color: var(--accent); }
   render();
 })();
 </script>
-<script>window.NEXUS_INTRO = 'short';</script><script src="../space.js?v=6"></script>
+<script>window.NEXUS_INTRO = 'short';</script><script src="../space.js?v=7"></script>
 </body>
 </html>
