@@ -1,0 +1,5 @@
+<!doctype html><meta charset="utf-8"><title>Astro</title><script>
+// A link into the app (for example /nexus/app/chat/123) opens the app itself.
+var p = location.pathname, i = p.indexOf('/app/');
+location.replace(i >= 0 ? p.slice(0, i + 5) : '/' + p.split('/')[1] + '/');
+</script>
