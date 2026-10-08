@@ -70,7 +70,7 @@ h1, h2, h3 { font-family: var(--display); margin: 0; letter-spacing: -.02em; tex
 .rail .rbtn.add:hover { color: var(--ink); border-style: solid; }
 
 /* ---------- main + header ---------- */
-main { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--app); backdrop-filter: blur(2px); position: relative; }
+main { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--app); backdrop-filter: blur(2px); position: relative; overflow: hidden; }
 .top { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--line); min-height: 68px; padding-top: calc(14px + env(safe-area-inset-top, 0px)); background: linear-gradient(180deg, rgba(20,24,60,.55), transparent); }
 .top h1 { font-size: 22px; font-weight: 800; }
 .top .grow { flex: 1; min-width: 0; }
@@ -320,7 +320,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .guests { display: flex; flex-direction: column; gap: 8px; }
 .cmt { display: flex; gap: 10px; align-items: flex-start; }
 .cmt .bub { padding: 7px 11px; }
-.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--solid); padding: 11px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; z-index: 30; box-shadow: 0 16px 40px -8px rgba(0,0,0,.7); max-width: 92vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.toast { position: fixed; left: 50%; top: 82px; transform: translateX(-50%); background: var(--ink); color: var(--solid); padding: 11px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; z-index: 30; box-shadow: 0 16px 40px -8px rgba(0,0,0,.7); max-width: 92vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tabbar { display: none; }
 .upload { border: 2px dashed var(--line-2); border-radius: 16px; padding: 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: border-color .2s, background .2s; }
 .upload:hover { border-color: var(--accent); background: var(--maroon-soft); }
@@ -366,7 +366,84 @@ button.person:hover .ring.add { border-color: var(--accent); }
 #launch .lcard span { font-size: 13.5px; opacity: .85; }
 #launch .star { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; animation: burst .9s .15s var(--ease) forwards; opacity: 0; }
 
+/* ---------- orbit (home) ---------- */
+.orbitwrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.orbit { position: relative; width: min(100%, 460px); aspect-ratio: 1; margin: 0 auto; }
+.orbit::before { content: ""; position: absolute; inset: 22%; border-radius: 50%; background: radial-gradient(circle, rgba(124,92,255,.26), rgba(63,208,240,.05) 52%, transparent 70%); pointer-events: none; }
+.orbit .ring { position: absolute; left: 50%; top: 50%; width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2); border-radius: 50%; border: 1px dashed rgba(185,168,255,.38); box-shadow: inset 0 0 50px -16px rgba(124,92,255,.45); }
+.orbit .ring.r1 { --d: 54%; } .orbit .ring.r2 { --d: 90%; border-color: rgba(185,168,255,.22); }
+.orbit .rot { position: absolute; inset: 0; animation: spin var(--t) linear infinite; }
+.orbit .r2 .rot { animation-direction: reverse; }
+.orbit .ob { position: absolute; inset: 0; transform: rotate(var(--a)); pointer-events: none; }
+.orbit .pos { position: absolute; left: 100%; top: 50%; width: 0; height: 0; transform: rotate(calc(-1 * var(--a))); }
+.orbit .pos > button { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); animation: spin var(--t) linear infinite reverse; pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: filter .2s; }
+.orbit .r2 .pos > button { animation-direction: normal; }
+@keyframes spinc { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.orbit .pos > button { animation-name: spinc; }
+.orbit .ob > button:hover { filter: brightness(1.15); }
+.orbit .ob > button:hover .oav { transform: scale(1.08); }
+.oav { display: inline-grid; border-radius: 50%; padding: 3px; background: var(--c, var(--line-2)); box-shadow: 0 0 22px -6px var(--c, transparent); transition: transform .2s var(--spring); }
+.oav .av { border: 3px solid var(--solid); width: 50px; height: 50px; font-size: 18px; }
+.orbit .r2 .oav .av { width: 42px; height: 42px; font-size: 15px; }
+.orbit .ob small { font-size: 11px; font-weight: 700; color: var(--ink); background: rgba(8,10,26,.78); border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.orbit .you { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 2; }
+.orbit .you .av { width: 72px; height: 72px; font-size: 26px; border: 3px solid var(--solid); box-shadow: 0 0 0 3px var(--c, var(--line-2)), 0 0 44px -6px var(--c, transparent); transition: transform .2s var(--spring); }
+.orbit .you:hover .av { transform: scale(1.05); }
+.orbit .you.add .av { box-shadow: 0 0 0 2px var(--line-2); }
+.orbit .you small { font-size: 12px; font-weight: 700; color: var(--muted); background: rgba(8,10,26,.78); border: 1px solid var(--line); padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.orbit .you.add small { color: var(--accent); border-color: var(--accent); }
+.orbit .you:not(.add) .av::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--c); opacity: .5; animation: ringpulse 2.4s ease-out infinite; }
+.orbit .empty-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, 70px); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.pbig { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 6px 0 4px; }
+
+/* ---------- quick actions (rocket) ---------- */
+.fab { position: absolute; right: 22px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%; background: var(--grad-2); box-shadow: 0 12px 32px -8px rgba(124,92,255,.95), inset 0 0 0 1px rgba(255,255,255,.18); display: grid; place-items: center; font-size: 26px; z-index: 6; transition: transform .25s var(--spring), filter .2s, background .2s; }
+.fab:hover { transform: translateY(-2px) scale(1.05); filter: brightness(1.08); }
+.fab:active { transform: scale(.92); }
+.fab[aria-expanded="true"] { background: var(--surface-2); box-shadow: 0 0 0 1px var(--line-2); font-size: 20px; }
+.fabmenu { position: absolute; right: 22px; bottom: 92px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 6; }
+.fabmenu button { display: flex; align-items: center; gap: 10px; padding: 7px 7px 7px 16px; border-radius: 999px; background: var(--solid); border: 1px solid var(--line-2); font-weight: 700; font-size: 14px; box-shadow: var(--shadow); animation: rise .3s var(--spring) both; transition: background .15s, transform .15s; }
+.fabmenu button i { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-style: normal; font-size: 18px; }
+.fabmenu button:hover { background: var(--surface-2); transform: translateX(-3px); }
+
+/* ---------- group identity ---------- */
+.top.gtop { background: linear-gradient(180deg, color-mix(in srgb, var(--gc) 26%, transparent), transparent 92%); }
+.top.gtop .gicon { border-color: color-mix(in srgb, var(--gc) 55%, transparent); box-shadow: 0 0 22px -6px var(--gc); }
+.rbtn.g[aria-current="page"] { box-shadow: 0 0 0 2px var(--gc), 0 0 24px -4px var(--gc); }
+.rbtn.g[aria-current="page"]::before { background: var(--gc); box-shadow: 0 0 12px var(--gc); }
+.rbtn.g.new { animation: bpop .5s var(--spring); box-shadow: 0 0 0 2px var(--gc), 0 0 30px -2px var(--gc); }
+.rbtn.dmb { border-radius: 50%; background: transparent; border: 0; }
+.rbtn.dmb .av { width: 40px; height: 40px; font-size: 15px; }
+.rbtn.dmb[aria-current="page"] { box-shadow: 0 0 0 2px var(--accent), 0 0 24px -4px rgba(124,92,255,.8); }
+.grow-row.new { animation: rise .5s var(--spring), glowin 1.6s ease-out; }
+.label.warn { color: var(--amber); }
+.btn.danger { background: linear-gradient(135deg, #F0735A, #C9342B); color: #fff; box-shadow: 0 8px 24px -8px rgba(240,115,90,.75); }
+.share.paidpop { animation: paidflash 1.3s var(--ease); border-radius: 10px; }
+.share.paidpop .tag { animation: pop .55s var(--spring); }
+.mrow { display: flex; align-items: center; gap: 10px; }
+.mrow .n { flex: 1; min-width: 0; }
+.mrow .n b { display: block; }
+.mrow .acts { display: flex; gap: 6px; }
+.lcard.dissolve { animation: dissolve 1.25s var(--ease) forwards !important; }
+
+/* ---------- orbit in/out overlay ---------- */
+#orbitfx { position: fixed; inset: 0; z-index: 40; pointer-events: none; display: grid; place-items: center; overflow: hidden; }
+#orbitfx .oring { position: absolute; width: 280px; height: 280px; border-radius: 50%; border: 2px dashed rgba(185,168,255,.65); box-shadow: 0 0 70px -10px rgba(124,92,255,.85); animation: ringin 1.7s var(--ease) both; }
+#orbitfx.out .oring { border-color: rgba(240,147,80,.75); box-shadow: 0 0 70px -10px rgba(240,147,80,.75); }
+#orbitfx .who { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #fff; text-align: center; }
+#orbitfx .who b { font-family: var(--display); font-size: 22px; font-weight: 800; }
+#orbitfx .who span { font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+#orbitfx.in .who { animation: enorbit 1.7s var(--spring) both; }
+#orbitfx.out .who { animation: deorbit 1.7s var(--ease) both; }
+
 /* ---------- motion ---------- */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes glowin { 0% { box-shadow: 0 0 0 0 rgba(124,92,255,.7); } 100% { box-shadow: 0 0 0 14px rgba(124,92,255,0); } }
+@keyframes paidflash { 0% { background: rgba(63,217,154,.35); } 100% { background: transparent; } }
+@keyframes dissolve { 0% { transform: scale(.6); opacity: 0; } 18% { transform: scale(1.04); opacity: 1; } 55% { transform: scale(1) rotate(0); opacity: 1; } 100% { transform: scale(0) rotate(-25deg); opacity: 0; filter: blur(6px); } }
+@keyframes ringin { 0% { transform: scale(.3); opacity: 0; } 22% { transform: scale(1); opacity: 1; } 80% { opacity: 1; } 100% { transform: scale(1.18); opacity: 0; } }
+@keyframes enorbit { 0% { transform: translate(-60vw, 30vh) scale(.3); opacity: 0; } 42% { transform: translate(0, 0) scale(1.1); opacity: 1; } 58% { transform: scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: scale(.9); } }
+@keyframes deorbit { 0% { transform: scale(1); opacity: 1; } 32% { transform: scale(1.06); opacity: 1; } 100% { transform: translate(60vw, -45vh) scale(.2) rotate(40deg); opacity: 0; } }
 @keyframes pop { 0% { transform: scale(.7); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 @keyframes bpop { from { transform: scale(0); } to { transform: scale(1); } }
 @keyframes heart { 0% { transform: scale(.6); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
@@ -385,7 +462,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
 @keyframes burst { 0% { transform: translate(-50%, -50%) scale(.4); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; } }
 @keyframes viewin { from { opacity: 0; transform: translateY(10px); } }
 @keyframes slideup { from { transform: translateY(40px); opacity: 0; } }
-@keyframes toastin { from { transform: translate(-50%, 16px); opacity: 0; } }
+@keyframes toastin { from { transform: translate(-50%, -16px); opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
   .sheet { animation: slideup .32s var(--spring); }
   .m.new .bwrap { animation: msgin .45s var(--spring); transform-origin: bottom left; }
@@ -438,8 +515,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
   .ov { align-items: flex-end; padding: 0; }
   .sheet { border-radius: var(--r-xl) var(--r-xl) 0 0; max-height: 90vh; padding-bottom: env(safe-area-inset-bottom, 0px); border-bottom: 0; }
   .sheet .in { padding: 20px 18px 24px; }
-  .toast { bottom: auto; top: calc(66px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 32px); }
-  @keyframes toastin { from { transform: translate(-50%, -16px); opacity: 0; } }
+  .toast { top: calc(66px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 32px); }
   .members { padding: 16px; }
   .lrow { padding: 13px 14px; gap: 12px; }
   .lrow .t .note { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -449,6 +525,13 @@ button.person:hover .ring.add { border-color: var(--accent); }
   .bills { grid-template-columns: 1fr; }
   .money { grid-template-columns: 1fr 1fr; }
   .mtile .amt { font-size: 26px; }
+  .orbit { width: min(100%, 330px); }
+  .orbit .ring.r2 { --d: 86%; }
+  .oav .av { width: 42px; height: 42px; font-size: 15px; } .orbit .r2 .oav .av { width: 36px; height: 36px; font-size: 13px; }
+  .orbit .you .av { width: 60px; height: 60px; font-size: 22px; }
+  .orbit .ob small { font-size: 10px; }
+  .fab { right: 16px; bottom: 16px; width: 54px; height: 54px; } .fabmenu { right: 16px; bottom: 82px; }
+  .mrow .acts .btn { padding: 6px 9px; }
 }
 @media (max-width: 380px) { .money { grid-template-columns: 1fr; } }
 @media (max-width: 860px) { .desk { display: none; } }
@@ -490,6 +573,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     gym:   { label: 'Gym', long: 'At the gym', color: 'var(--gym)' },
     busy:  { label: 'Busy', long: 'Busy', color: 'var(--busy)' }
   };
+  const GCOLORS = ['#7C5CFF', '#F09350', '#3FD0F0', '#3FD99A', '#E06BA8', '#E2C06A'];
   const COVERS = [['#2A1A78', '#7C5CFF'], ['#0B2A4A', '#2BA8D0'], ['#3B1260', '#B04FCF'], ['#101A40', '#4B6BE0'], ['#1A1440', '#5B3BD1'], ['#3A1A5E', '#E06BA8']];
   const EMOJI = ['🍝', '🎮', '🥂', '🎬', '☕', '⛳', '📚', '🎉', '🏀', '🍕'];
   const endOfDay = () => { const d = new Date(); d.setHours(23, 59, 0, 0); return d.getTime(); };
@@ -546,11 +630,20 @@ button.person:hover .ring.add { border-color: var(--accent); }
     };
     return {
       groups: [
-        { id: 'friends', name: 'Friends', emoji: '🍻', members: ['me','alex','jordan','sam','maya','chris'], hangout: ['maya'] },
-        { id: 'family', name: 'Family', emoji: '🏡', members: ['me','mom','dad','emma','ben'], hangout: [] },
-        { id: 'book', name: 'Book Club', emoji: '📚', members: ['me','priya','lena','kate'], hangout: [] }
+        { id: 'friends', name: 'Friends', emoji: '🍻', color: '#7C5CFF', members: ['me','alex','jordan','sam','maya','chris'], hangout: ['maya'] },
+        { id: 'family', name: 'Family', emoji: '🏡', color: '#F09350', members: ['me','mom','dad','emma','ben'], hangout: [] },
+        { id: 'book', name: 'Book Club', emoji: '📚', color: '#3FD0F0', members: ['me','priya','lena','kate'], hangout: [] }
       ],
       events, messages, unread: { friends: 3, family: 2, book: 1 },
+      dms: {
+        alex: [
+          { id: uid(), from: 'alex', text: 'yo you around this weekend?', ts: ts(1, 18, 2), likes: [] },
+          { id: uid(), from: 'me', text: 'should be, what are you thinking', ts: ts(1, 18, 10), likes: ['alex'] },
+          { id: uid(), from: 'alex', text: 'brunch sat, then game night fri. in?', ts: ts(0, 9, 12), likes: [] }
+        ],
+        mom: [{ id: uid(), from: 'mom', text: 'Call me when you get a chance ❤️', ts: ts(0, 8, 30), likes: [] }]
+      },
+      unreadDm: { alex: 1, mom: 1 },
       reminders: [
         { id: 'r1', emoji: '💪', title: 'Workout', date: ymd(addDays(t, -14)), time: '06:30', repeat: 'weekdays', group: '', doneOn: {} },
         { id: 'r2', emoji: '💧', title: 'Drink water', date: ymd(addDays(t, -14)), time: '14:00', repeat: 'daily', group: '', doneOn: {} },
@@ -567,7 +660,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     };
   }
   let S = seed();
-  const UI = { seen: new Set(), view: 'home', group: null, gtab: 'chat', sheet: null, modal: null, menu: false, cal: today().slice(0, 7), day: today(), welcome: true, toast: null, draft: {}, dur: 'today' };
+  const UI = { seen: new Set(), view: 'home', group: null, dm: null, fab: false, gtab: 'chat', sheet: null, modal: null, menu: false, cal: today().slice(0, 7), day: today(), welcome: true, toast: null, draft: {}, dur: 'today' };
   const wide = () => matchMedia('(min-width: 861px)').matches;
 
   // ---------- data helpers ----------
@@ -577,6 +670,10 @@ button.person:hover .ring.add { border-color: var(--accent); }
   const others = g => g.members.filter(m => m !== 'me');
   const myRsvp = e => e.going.includes('me') ? 'g' : e.maybe.includes('me') ? 'm' : e.cant.includes('me') ? 'c' : null;
   const nameOf = pid => PEOPLE[pid].name;
+  const curMsgs = () => UI.view === 'dm' ? (S.dms[UI.dm] || (S.dms[UI.dm] = [])) : S.messages[UI.group];
+  const findMsg = id => { let m; Object.values(S.messages).concat(Object.values(S.dms)).forEach(l => l.forEach(x => { if (x.id === id) m = x; })); return m; };
+  const sharedGroups = p => S.groups.filter(g => g.members.includes(p));
+  const dmPeople = () => Object.keys(S.dms).filter(p => S.dms[p].length).sort((a, b) => (S.dms[b].at(-1)?.ts || 0) - (S.dms[a].at(-1)?.ts || 0));
   function occurrences(e, from, to) {
     const step = e.repeat === 'weekly' ? 7 : e.repeat === 'biweekly' ? 14 : 0, out = [];
     let d = parseYmd(e.date); const a = parseYmd(from), b = parseYmd(to);
@@ -632,7 +729,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       else if (sh.p === 'me') right = `<button class="btn primary sm" data-act="payback" data-b="${b.id}">Pay ${esc(nameOf(b.paidBy))}</button>`;
       else if (b.paidBy === 'me') right = `<span style="display:flex;gap:6px"><button class="btn line sm" data-act="remindpay" data-b="${b.id}" data-p="${sh.p}">Remind</button><button class="btn line sm" data-act="markpaid" data-b="${b.id}" data-p="${sh.p}">Mark paid</button></span>`;
       else right = '<span class="tag due">Owes</span>';
-      return `<div class="share">${av(sh.p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(sh.p))}</span><span class="a">${money(sh.amt)}</span>${right}</div>`;
+      return `<div class="share ${UI.pop === 'share:' + b.id + ':' + sh.p ? 'paidpop' : ''}">${av(sh.p, { dot: false, size: 28 })}<span class="n">${esc(nameOf(sh.p))}</span><span class="a">${money(sh.amt)}</span>${right}</div>`;
     }).join('');
     const unpaid = b.shares.filter(sh => !sh.paid && sh.p !== b.paidBy).length;
     return `<div class="bill">
@@ -669,12 +766,10 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const freeCount = friends.filter(x => x.st.s === 'free').length;
     const up = upcoming().slice(0, 4), todo = todoRows();
     const h = new Date().getHours(), greet = h < 12 ? 'Good morning ☀️' : h < 17 ? 'Good afternoon 🚀' : 'Good evening 🌙';
+    const inOrbit = friends.length;
     const body = `<div class="pad cols"><div class="col">
-      <div><div class="hello">${greet}</div><div class="note" style="margin-top:4px;font-size:15px">${freeCount} friend${freeCount === 1 ? ' is' : 's are'} free today${UI.welcome ? '. Tap your circle to share what you\'re up to.' : '.'}</div></div>
-      <div class="strip">
-          <button class="person" data-act="status"><span class="ring ${me ? 'me' : 'add'}" style="${me ? `background:${STATUS[me.s].color};color:${STATUS[me.s].color}` : ''}">${me ? av('me', { dot: false }) : '<span style="font-size:26px;color:var(--muted)">+</span>'}</span><b>You</b><small>${me ? STATUS[me.s].long : 'Set status'}</small></button>
-          ${friends.map(({ p, st }) => `<div class="person"><span class="ring" style="background:${STATUS[st.s].color}">${av(p, { dot: false })}</span><b>${esc(nameOf(p))}</b><small>${STATUS[st.s].long}</small></div>`).join('')}
-      </div>
+      <div><div class="hello">${greet}</div><div class="note" style="margin-top:4px;font-size:15px">${inOrbit} in your orbit, ${freeCount} free today${UI.welcome ? '. Tap your own circle to share what you\'re up to.' : '.'}</div></div>
+      <div class="orbitwrap">${orbitHtml(friends, me)}<span class="note">Inner ring is free today. Tap anyone to message them.</span></div>
       <div class="sec"><div class="sechead"><h2>Coming up</h2><button class="btn line sm" data-act="view" data-v="calendar">Calendar</button></div>
         ${up.length ? `<div class="list">${up.map(x => evRow(x.e, x.d)).join('')}</div>` : '<div class="empty">Nothing planned yet.</div>'}</div>
       <div class="sec"><div class="sechead"><h2>To do today</h2><button class="btn line sm" data-act="newreminder">+ Reminder</button></div>
@@ -686,7 +781,12 @@ button.person:hover .ring.add { border-color: var(--accent); }
       ${(() => { const live = S.groups.filter(g => g.hangout.length); return live.length ? `<div class="sec"><div class="sechead"><h2>Live now</h2></div><div class="list">${live.map(g => `<button class="lrow" data-act="opengroup" data-g="${g.id}"><span class="tile" style="background:var(--surface-2)">${g.emoji}</span><span class="t"><b>${esc(g.name)} hangout</b><span class="note">${g.hangout.map(nameOf).join(', ')} ${g.hangout.length === 1 ? 'is' : 'are'} in the voice room</span></span><span class="live"></span></button>`).join('')}</div></div>` : ''; })()}
     </div></div>`;
     const dt = new Date(), sub = `${DOW[dt.getDay()]}, ${MONTHS[dt.getMonth()]} ${dt.getDate()}`;
-    return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Home</h1><div class="sub">${sub}</div></div><button class="btn primary" data-act="newevent">+ Event</button>`, body: `<div class="scroll">${body}</div>` };
+    return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Your orbit</h1><div class="sub">${sub}</div></div>`, body: `<div class="scroll">${body}</div>` };
+  }
+  function orbitHtml(friends, me) {
+    const inner = friends.filter(x => x.st.s === 'free'), outer = friends.filter(x => x.st.s !== 'free');
+    const ring = (list, cls, t) => `<div class="ring ${cls}" style="--t:${t}s"><div class="rot">${list.map((x, i) => `<div class="ob" style="--a:${Math.round(i / list.length * 360 - 90)}deg"><div class="pos"><button data-act="person" data-p="${x.p}" aria-label="${esc(nameOf(x.p))}, ${STATUS[x.st.s].long}"><span class="oav" style="--c:${STATUS[x.st.s].color}">${av(x.p, { dot: false })}</span><small>${esc(nameOf(x.p))}</small></button></div></div>`).join('')}</div></div>`;
+    return `<div class="orbit">${ring(outer, 'r2', 160)}${ring(inner, 'r1', 95)}<button class="you ${me ? '' : 'add'}" data-act="status" style="${me ? `--c:${STATUS[me.s].color}` : ''}" aria-label="Set your status">${av('me', { dot: false })}<small>${me ? STATUS[me.s].long : 'Set status'}</small></button></div>`;
   }
   function viewMoney() {
     const bs = [...S.bills].sort((a, b) => b.ts - a.ts);
@@ -703,7 +803,36 @@ button.person:hover .ring.add { border-color: var(--accent); }
       return `<button class="grow-row" data-act="opengroup" data-g="${g.id}"><span class="gicon" style="width:48px;height:48px;font-size:24px">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><div class="last">${esc(lt)}</div><div class="note" style="margin-top:2px">${g.members.length} members${free ? ` · <span style="color:var(--free);font-weight:700">${free} free</span>` : ''}</div></span>${S.unread[g.id] ? `<span class="pill">${S.unread[g.id]}</span>` : ''}</button>`;
     }).join('')}</div>`;
   }
-  function viewGroups() { return { head: `<div class="grow"><h1>Groups</h1></div><button class="btn primary" data-act="newgroup">+ New</button>`, body: `<div class="scroll"><div class="pad">${groupRows()}</div></div>` }; }
+  function dmRows() {
+    const ps = dmPeople();
+    if (!ps.length) return '<div class="empty">No direct messages yet. Tap someone in your orbit to start one.</div>';
+    return `<div class="grows">${ps.map(p => { const last = S.dms[p].at(-1), st = statusOf(p); const lt = last.text ? `${last.from === 'me' ? 'You: ' : ''}${last.text}` : last.file ? `${last.from === 'me' ? 'You' : nameOf(p)} shared ${fileKind(last.file) === 'image' ? 'a photo' : 'a file'}` : last.event ? 'Shared an event' : '';
+      return `<button class="grow-row" data-act="dm" data-p="${p}">${av(p, { size: 48 })}<span class="t"><b>${esc(nameOf(p))}</b><div class="last">${esc(lt)}</div><div class="note" style="margin-top:2px">${st ? STATUS[st.s].long : 'No status'} · ${clock(last.ts)}</div></span>${S.unreadDm[p] ? `<span class="pill">${S.unreadDm[p]}</span>` : ''}</button>`; }).join('')}</div>`;
+  }
+  function viewGroups() {
+    const body = `<div class="pad">
+      <div class="sec"><div class="sechead"><h2>Groups</h2><button class="btn primary sm" data-act="newgroup">+ New group</button></div>${groupRows()}</div>
+      <div class="sec"><div class="sechead"><h2>Direct messages</h2><button class="btn line sm" data-act="newdm">+ New message</button></div>${dmRows()}</div></div>`;
+    return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Chats</h1></div>`, body: `<div class="scroll">${body}</div>` };
+  }
+  function viewDm() {
+    const p = UI.dm, st = statusOf(p), shared = sharedGroups(p), col = PEOPLE[p].c;
+    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="padding:0;border:0;background:none">${av(p, { size: 42 })}</span><div class="grow"><h1 style="font-size:21px">${esc(nameOf(p))}</h1><div class="sub">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status'}${shared.length ? ' · ' + shared.map(g => g.emoji + ' ' + esc(g.name)).join(', ') : ''}</div></div><button class="hpill" data-act="call" data-p="${p}">📞 Call</button>`;
+    let lastDay = '';
+    const msgs = curMsgs().map(m => { const d = ymd(new Date(m.ts)); let sep = ''; if (d !== lastDay) { lastDay = d; sep = `<div class="day">${esc(fmtDay(d))}</div>`; } return sep + msgHtml(m); }).join('');
+    const together = upcoming().filter(x => x.e.going.includes(p) || x.e.maybe.includes(p)).slice(0, 3);
+    const gid = shared[0]?.id || S.groups[0].id;
+    const body = `<div class="gwrap"><div class="chat">
+        <div class="msgs" id="msgs">${msgs || `<div class="empty">Say hi to ${esc(nameOf(p))}.</div>`}</div>
+        <form class="composer" id="composer">${UI.menu ? `<div class="menu"><button type="button" data-act="newevent" data-g="${gid}">🎉 Plan something</button><button type="button" data-act="pickfile" data-accept="image/*">📷 Share a photo</button><button type="button" data-act="pickfile" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,image/*,application/pdf">📎 Share a file or PDF</button><button type="button" data-act="status">🟢 Set your status</button></div>` : ''}<input type="file" id="upfile" multiple hidden>
+          <button type="button" class="plus" data-act="menu" aria-label="More" aria-expanded="${!!UI.menu}">+</button><input id="msg" autocomplete="off" placeholder="Message ${esc(nameOf(p))}" value="${esc(UI.draft['dm:' + p] || '')}" aria-label="Message"><button class="send ${UI.sent ? 'sent' : ''}" aria-label="Send">${I.send}</button></form></div>
+        <aside class="side">
+          <div class="card"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 64 })}</span><b style="font-size:18px">${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status set'}</span></div>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${g.emoji} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
+          <div class="card"><span class="label">Plans together</span>${together.length ? together.map(x => `<button class="lrow" data-act="openev" data-ev="${x.e.id}" style="padding:4px 0"><span class="tile" style="${coverBg(x.e)}">${x.e.emoji}</span><span class="t"><b>${esc(x.e.title)}</b><span class="note">${esc(whenText(x.e, x.d))}</span></span></button>`).join('') : '<p class="note">Nothing yet.</p>'}<button class="btn line sm" data-act="newevent" data-g="${gid}">+ Plan something</button></div>
+          ${(() => { const ph = curMsgs().filter(m => m.file && fileKind(m.file) === 'image').slice(-6).reverse(); return ph.length ? `<div class="card"><span class="label">Photos</span><div class="sidegal">${ph.map(m => `<button data-act="viewimg" data-m="${m.id}" aria-label="Open photo"><img src="${m.file.url}" alt=""></button>`).join('')}</div></div>` : ''; })()}
+        </aside></div>`;
+    return { head, body, topClass: 'gtop', topStyle: `--gc:${col}` };
+  }
 
   function msgHtml(m, g) {
     const me = m.from === 'me', isNew = m.ts > Date.now() - 4000 && !UI.seen.has(m.id) ? 'new' : '';
@@ -773,7 +902,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       UI.gtab = 'chat'; return viewGroup();
       body = `<div class="scroll"><div class="members">${g.members.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><span class="s">${st ? STATUS[st.s].long : 'No status'}</span></div>`; }).join('')}</div></div>`;
     }
-    return { head, tabs, body };
+    return { head, tabs, body, topClass: 'gtop', topStyle: `--gc:${g.color || '#7C5CFF'}` };
   }
 
   function viewCalendar() {
@@ -890,8 +1019,24 @@ button.person:hover .ring.add { border-color: var(--accent); }
         <button class="btn primary" style="padding:13px;font-size:15px">Save reminder</button><button type="button" class="btn" data-act="close">Cancel</button></form>`, 'New reminder');
     }
     if (s.kind === 'members') {
-      const g = grp(UI.group);
-      return wrap(`<div class="in"><h2>${g.emoji} ${esc(g.name)} · ${g.members.length} members</h2><div class="list">${g.members.map(p => { const st = statusOf(p); return `<div class="lrow">${av(p)}<span class="t"><b>${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span></div>`; }).join('')}</div><button class="btn" data-act="close">Done</button></div>`, 'Members');
+      const g = grp(UI.group), outside = Object.keys(PEOPLE).filter(p => p !== 'me' && !g.members.includes(p));
+      return wrap(`<div class="in"><h2>${g.emoji} ${esc(g.name)}</h2><p class="note" style="margin-top:-8px">${g.members.length} in this orbit</p>
+        <div class="list">${g.members.map(p => { const st = statusOf(p); return `<div class="lrow">${av(p)}<span class="t"><b>${p === 'me' ? 'You' : esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span>${p === 'me' ? '' : `<span class="mrow acts"><button class="btn line sm" data-act="dm" data-p="${p}">Message</button><button class="btn sm" data-act="removep" data-p="${p}" style="color:var(--out)">Remove</button></span>`}</div>`; }).join('')}</div>
+        ${outside.length ? `<div class="field"><span class="label">Add to this orbit</span><div class="seg">${outside.map(p => `<button data-act="addmember" data-p="${p}">+ ${esc(nameOf(p))}</button>`).join('')}</div></div>` : ''}
+        <button class="btn" data-act="leavegroup" style="color:var(--out)">Delete this group</button><button class="btn line" data-act="close">Done</button></div>`, 'Members');
+    }
+    if (s.kind === 'confirm') {
+      const g = grp(s.g);
+      if (s.type === 'remove') return wrap(`<div class="in"><span class="label warn">⚠️ Attention</span><h2 style="margin-top:-6px">${esc(nameOf(s.p))} is being removed from your orbit</h2><p class="note" style="margin-top:-6px">They'll leave ${g.emoji} ${esc(g.name)} and lose its chat, events and bills. You can add them back anytime.</p><button class="btn danger lg" data-act="doremove" data-p="${s.p}" data-g="${g.id}">Remove ${esc(nameOf(s.p))}</button><button class="btn" data-act="members">Keep them</button></div>`, 'Remove');
+      return wrap(`<div class="in"><span class="label warn">⚠️ Attention</span><h2 style="margin-top:-6px">Delete ${g.emoji} ${esc(g.name)}?</h2><p class="note" style="margin-top:-6px">The chat, ${S.events.filter(e => e.group === g.id).length} events, photos and bills in this group will be gone for all ${g.members.length} members.</p><button class="btn danger lg" data-act="doleave" data-g="${g.id}">Delete group</button><button class="btn" data-act="members">Keep it</button></div>`, 'Delete group');
+    }
+    if (s.kind === 'person') {
+      const p = s.p, st = statusOf(p), shared = sharedGroups(p);
+      return wrap(`<div class="in"><div class="pbig"><span class="oav" style="--c:${st ? STATUS[st.s].color : 'var(--line-2)'}">${av(p, { dot: false, size: 76 })}</span><h2>${esc(nameOf(p))}</h2><span class="note" style="margin-top:-4px">${st ? STATUS[st.s].long + ' until ' + clock(st.until) : 'No status set'}</span>${shared.length ? `<div class="seg" style="justify-content:center">${shared.map(g => `<button class="chip" data-act="opengroup" data-g="${g.id}">${g.emoji} ${esc(g.name)}</button>`).join('')}</div>` : ''}</div>
+        <button class="btn primary lg" data-act="dm" data-p="${p}">💬 Message ${esc(nameOf(p))}</button><button class="btn line lg" data-act="newevent" data-g="${shared[0]?.id || S.groups[0].id}">🎉 Plan something</button><button class="btn" data-act="close">Close</button></div>`, nameOf(p));
+    }
+    if (s.kind === 'newdm') {
+      return wrap(`<div class="in"><h2>New message</h2><div class="list">${Object.keys(PEOPLE).filter(p => p !== 'me').map(p => { const st = statusOf(p); return `<button class="lrow" data-act="dm" data-p="${p}">${av(p)}<span class="t"><b>${esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span><span class="chip">Message</span></button>`; }).join('')}</div><button class="btn" data-act="close">Cancel</button></div>`, 'New message');
     }
     if (s.kind === 'group') {
       return wrap(`<form class="in" id="grpform"><h2>New group</h2>
@@ -903,7 +1048,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
     return '';
   }
   function viewerHtml() {
-    let m; Object.values(S.messages).forEach(l => l.forEach(x => { if (x.id === UI.viewer) m = x; })); if (!m) return '';
+    const m = findMsg(UI.viewer); if (!m || !m.file) return '';
     return `<div class="ov" data-act="close" data-ov="1" style="background:rgba(0,0,0,.85)"><div class="viewer" data-stop="1"><img src="${m.file.url}" alt="${esc(m.file.name)}"><div class="bar"><span style="flex:1;min-width:0">${esc(nameOf(m.from))} · ${clock(m.ts)}</span><a class="btn line" style="color:var(--ink);text-decoration:none" href="${m.file.url}" download="${esc(m.file.name)}" target="_blank" rel="noopener">Save</a><button class="btn line" style="color:var(--ink)" data-act="close">Close</button></div></div></div>`;
   }
   function modalHtml() {
@@ -928,29 +1073,35 @@ button.person:hover .ring.add { border-color: var(--accent); }
   // ---------- render ----------
   function render() {
     const fid = document.activeElement?.id, mi = document.getElementById('msg');
-    if (mi && UI.group) UI.draft[UI.group] = mi.value;
+    const dk = UI.view === 'dm' ? 'dm:' + UI.dm : UI.group; if (mi && dk) UI.draft[dk] = mi.value;
     const caret = mi && fid === 'msg' ? mi.selectionStart : null;
     const box = document.getElementById('msgs'); const atBottom = box ? box.scrollHeight - box.scrollTop - box.clientHeight < 80 : true;
     const sc = document.querySelector('main .scroll'); const keep = sc && !UI.resetScroll ? sc.scrollTop : 0; UI.resetScroll = false;
     if (UI.view === 'group' && !UI.group) UI.view = wide() ? 'home' : 'groups';
-    const v = { home: viewHome, groups: viewGroups, group: viewGroup, calendar: viewCalendar, money: viewMoney, you: viewYou }[UI.view]();
+    if (UI.view === 'dm' && !UI.dm) UI.view = 'groups';
+    const v = { home: viewHome, groups: viewGroups, group: viewGroup, dm: viewDm, calendar: viewCalendar, money: viewMoney, you: viewYou }[UI.view]();
     const me = statusOf('me');
     const rail = `<nav class="rail" aria-label="Groups">
       <button class="rbtn home" data-act="view" data-v="home" aria-label="Home" ${UI.view === 'home' ? 'aria-current="page"' : ''}><svg aria-hidden="true"><use href="#r"/></svg></button>
       <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${I.calendar.replace('<svg', '<svg class="ico"')}</button>
+      <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${I.groups.replace('<svg', '<svg class="ico"')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
       <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${I.money.replace('<svg', '<svg class="ico"')}</button>
       <hr>
-      ${S.groups.map(g => `<button class="rbtn" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${g.emoji}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
+      ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${g.emoji}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
       <button class="rbtn add" data-act="newgroup" aria-label="New group" title="New group">+</button>
+      ${dmPeople().length ? '<hr>' : ''}
+      ${dmPeople().slice(0, 4).map(p => `<button class="rbtn dmb" data-act="dm" data-p="${p}" aria-label="${esc(nameOf(p))}" title="${esc(nameOf(p))}" ${UI.view === 'dm' && UI.dm === p ? 'aria-current="page"' : ''}>${av(p)}${S.unreadDm[p] ? `<span class="badge">${S.unreadDm[p]}</span>` : ''}</button>`).join('')}
       <button class="rbtn you" data-act="view" data-v="you" aria-label="You" ${UI.view === 'you' ? 'aria-current="page"' : ''} style="border-radius:50%;overflow:visible">${av('me')}</button>
     </nav>`;
-    const tabOf = { home: 'home', groups: 'groups', group: 'groups', calendar: 'calendar', money: 'money', you: 'you' }[UI.view];
-    const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0);
-    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Home'],['groups','Groups'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
-    const key = UI.view + ':' + (UI.group || '') + ':' + (UI.view === 'group' ? UI.gtab : '');
+    const tabOf = { home: 'home', groups: 'groups', group: 'groups', dm: 'groups', calendar: 'calendar', money: 'money', you: 'you' }[UI.view];
+    const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0) + Object.values(S.unreadDm).reduce((a, b) => a + b, 0);
+    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Orbit'],['groups','Chats'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
+    const key = UI.view + ':' + (UI.group || '') + ':' + (UI.dm || '') + ':' + (UI.view === 'group' ? UI.gtab : '');
     const enter = key !== UI.lastKey; UI.lastKey = key;
-    document.getElementById('shell').innerHTML = `${rail}<main class="${enter ? 'enter' : ''}"><header class="top">${v.head}</header>${v.tabs || ''}${v.body}</main>${tabbar}`;
-    UI.pop = null; UI.sent = false;
+    const showFab = !(UI.view === 'group' && UI.gtab === 'chat') && UI.view !== 'dm';
+    const fab = showFab ? `<button class="fab" data-act="fab" aria-expanded="${!!UI.fab}" aria-label="Quick actions">${UI.fab ? '✕' : '🚀'}</button>${UI.fab ? `<div class="fabmenu">${[['newevent','🎉','New event'],['newsplit','🧾','Split a bill'],['newreminder','⏰','Reminder'],['newgroup','👥','New group'],['newdm','💬','New message']].map(([a, i, l], k) => `<button data-act="${a}" style="animation-delay:${k * .04}s"><span>${l}</span><i>${i}</i></button>`).join('')}</div>` : ''}` : '';
+    document.getElementById('shell').innerHTML = `${rail}<main class="${enter ? 'enter' : ''}"><header class="top ${v.topClass || ''}" style="${v.topStyle || ''}">${v.head}</header>${v.tabs || ''}${v.body}${fab}</main>${tabbar}`;
+    UI.pop = null; UI.sent = false; UI.popGroup = null;
     document.querySelectorAll('#msgs .m.new').forEach(el => { if (el.dataset.id) UI.seen.add(el.dataset.id); });
     document.getElementById('layer').innerHTML = (UI.sheet ? sheetHtml() : '') + (UI.modal ? modalHtml() : '') + (UI.viewer ? viewerHtml() : '') + (UI.toast ? `<div class="toast" role="status">${esc(UI.toast)}</div>` : '');
     const nb = document.getElementById('msgs'), stick = nb && (atBottom || UI.toBottom);
@@ -965,24 +1116,32 @@ button.person:hover .ring.add { border-color: var(--accent); }
     document.getElementById('launch')?.remove();
     const el = document.createElement('div'); el.id = 'launch'; el.setAttribute('aria-hidden', 'true');
     const stars = Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2, d = 110 + Math.random() * 120; return `<span class="star" style="--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px;animation-delay:${.12 + Math.random() * .12}s"></span>`; }).join('');
-    el.innerHTML = `${stars}<div class="lcard" style="${o.bg}"><span class="emo">${o.emoji}</span><b>${esc(o.title)}</b><span>${esc(o.sub || '')}</span></div>`;
+    el.innerHTML = `${stars}<div class="lcard ${o.anim || ''}" style="${o.bg}"><span class="emo">${o.emoji}</span><b>${esc(o.title)}</b><span>${esc(o.sub || '')}</span></div>`;
     document.body.appendChild(el); setTimeout(() => el.remove(), 1400);
+  }
+  function orbitFx(pid, dir) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.getElementById('orbitfx')?.remove();
+    const el = document.createElement('div'); el.id = 'orbitfx'; el.className = dir; el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = `<div class="oring"></div><div class="who">${av(pid, { dot: false, size: 76 })}<b>${esc(nameOf(pid))}</b><span>${dir === 'in' ? 'Added to your orbit' : 'Removed from your orbit'}</span></div>`;
+    document.body.appendChild(el); setTimeout(() => el.remove(), 1750);
   }
   let tt; function toast(t) { UI.toast = t; clearTimeout(tt); tt = setTimeout(() => { UI.toast = null; document.querySelector('#layer .toast')?.remove(); }, 2600); render(); }
 
   function bind() {
     const c = document.getElementById('composer');
-    if (c) c.onsubmit = e => { e.preventDefault(); const i = document.getElementById('msg'), text = i.value.trim(); if (!text) return; const g = UI.group;
-      S.messages[g].push({ id: uid(), from: 'me', text, ts: Date.now(), likes: [] }); UI.draft[g] = ''; i.value = ''; UI.menu = false; UI.toBottom = true; UI.sent = true; render(); document.getElementById('msg')?.focus(); simulateReply(g, text); };
+    if (c) c.onsubmit = e => { e.preventDefault(); const i = document.getElementById('msg'), text = i.value.trim(); if (!text) return;
+      const isDm = UI.view === 'dm', g = UI.group, p = UI.dm;
+      curMsgs().push({ id: uid(), from: 'me', text, ts: Date.now(), likes: [] }); UI.draft[isDm ? 'dm:' + p : g] = ''; i.value = ''; UI.menu = false; UI.toBottom = true; UI.sent = true; render(); document.getElementById('msg')?.focus(); if (isDm) simulateDm(p, text); else simulateReply(g, text); };
     const ef = document.getElementById('evform');
     if (ef) { ef.onsubmit = e => { e.preventDefault(); createEvent(); }; ['etitle','edate','etime','ewhere','egroup','erepeat'].forEach(id => { const el = document.getElementById(id); el.oninput = el.onchange = syncEvent; }); }
     const up = document.getElementById('upfile');
-    if (up) up.onchange = () => { if (up.files && up.files.length) addFiles(UI.group, up.files); };
+    if (up) up.onchange = () => { if (up.files && up.files.length) addFiles(UI.group || UI.dm, up.files); };
     const chat = document.querySelector('.chat');
     if (chat && !chat.dataset.dnd) { chat.dataset.dnd = '1';
       chat.addEventListener('dragover', e => { e.preventDefault(); chat.classList.add('drop'); });
       chat.addEventListener('dragleave', e => { if (!chat.contains(e.relatedTarget)) chat.classList.remove('drop'); });
-      chat.addEventListener('drop', e => { e.preventDefault(); chat.classList.remove('drop'); if (e.dataTransfer?.files?.length) addFiles(UI.group, e.dataTransfer.files); }); }
+      chat.addEventListener('drop', e => { e.preventDefault(); chat.classList.remove('drop'); if (e.dataTransfer?.files?.length) addFiles(UI.group || UI.dm, e.dataTransfer.files); }); }
     const rf = document.getElementById('remform');
     if (rf) {
       rf.onsubmit = e => { e.preventDefault(); syncRem(); const s2 = UI.sheet; if (!s2.title.trim()) return;
@@ -1011,7 +1170,17 @@ button.person:hover .ring.add { border-color: var(--accent); }
 
   // ---------- actions ----------
   function setRsvp(e, v) { ['going','maybe','cant'].forEach(k => e[k] = e[k].filter(x => x !== 'me')); ({ g: e.going, m: e.maybe, c: e.cant })[v].push('me'); }
-  function openGroup(id) { UI.view = 'group'; UI.group = id; UI.gtab = 'chat'; UI.menu = false; S.unread[id] = 0; UI.toBottom = true; UI.resetScroll = true; }
+  function openGroup(id) { UI.view = 'group'; UI.group = id; UI.dm = null; UI.gtab = 'chat'; UI.menu = false; UI.sheet = null; UI.modal = null; S.unread[id] = 0; UI.toBottom = true; UI.resetScroll = true; }
+  function openDm(p) { UI.view = 'dm'; UI.dm = p; UI.group = null; UI.menu = false; UI.sheet = null; UI.modal = null; if (!S.dms[p]) S.dms[p] = []; S.unreadDm[p] = 0; UI.toBottom = true; UI.resetScroll = true; }
+  const DM_REPLIES = ['yes!', 'down', "let's do it", 'what time?', 'haha ok', 'say less', 'sure, send me the details', '👀'];
+  function simulateDm(p, text) {
+    const st = statusOf(p), mine = S.dms[p].at(-1);
+    if (!st || st.s === 'busy') return;
+    setTimeout(() => { mine.likes.push(p); if (UI.dm === p) render(); }, 1200);
+    const tid = uid();
+    setTimeout(() => { S.dms[p].push({ id: tid, from: p, typing: true, ts: Date.now() }); if (UI.view === 'dm' && UI.dm === p) { UI.toBottom = true; render(); } }, 900);
+    setTimeout(() => { const l = S.dms[p], i = l.findIndex(m => m.id === tid); const msg = { id: uid(), from: p, text: pick(DM_REPLIES), ts: Date.now(), likes: [] }; if (i > -1) l[i] = msg; else l.push(msg); if (UI.view === 'dm' && UI.dm === p) { UI.toBottom = true; render(); } else { S.unreadDm[p] = (S.unreadDm[p] || 0) + 1; render(); } }, 2300 + Math.random() * 1200);
+  }
   function newEventSheet(o = {}) { UI.menu = false; UI.sheet = { kind: 'event', group: o.group || UI.group || S.groups[0].id, title: o.title || '', date: o.date || today(), time: o.time || '19:00', where: '', repeat: '', emoji: o.emoji || '🎉', cover: Math.floor(Math.random() * COVERS.length) }; }
   function createEvent() {
     syncEvent(); const s = UI.sheet; if (!s.title.trim()) return;
@@ -1063,11 +1232,13 @@ button.person:hover .ring.add { border-color: var(--accent); }
     UI.sheet = null; openGroup(s.group); UI.gtab = 'bills';
     launch({ emoji: '🧾', title: `${money(total)} split ${s.people.length} ways`, sub: `${money(amts[0])} each · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
     toast(`Bill split. ${s.people.length} people, ${money(amts[0])} each`);
-    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Zelle'; toast(S.bank ? `${nameOf(debtor.p)}'s Zelle payment of ${money(debtor.amt)} showed up in your bank. Marked paid.` : `${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
+    if (b.paidBy === 'me') { const debtor = b.shares.find(x => !x.paid && x.p !== 'me'); if (debtor) setTimeout(() => { if (!bill(b.id)) return; debtor.paid = true; debtor.method = 'Zelle'; UI.pop = 'share:' + b.id + ':' + debtor.p; launch({ emoji: '✅', title: `${nameOf(debtor.p)} paid you ${money(debtor.amt)}`, sub: S.bank ? 'Zelle, confirmed by your bank' : b.title, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); toast(S.bank ? `${nameOf(debtor.p)}'s Zelle payment of ${money(debtor.amt)} showed up in your bank. Marked paid.` : `${nameOf(debtor.p)} paid you back ${money(debtor.amt)}`); }, 3500); }
   }
   function markMine(b, method) {
     const sh = b.shares.find(x => x.p === 'me'); sh.paid = true; sh.method = method; UI.sheet = null;
     S.messages[b.group].push({ id: uid(), sys: `You paid ${nameOf(b.paidBy)} back ${money(sh.amt)} for ${b.title} (${method})`, ts: Date.now() });
+    UI.pop = 'share:' + b.id + ':me';
+    launch({ emoji: '💸', title: `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}`, sub: `${b.title} · ${method}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' });
     toast(method === 'Zelle' && S.bank ? `Zelle payment to ${nameOf(b.paidBy)} confirmed in your bank` : `Paid ${nameOf(b.paidBy)} ${money(sh.amt)}. They'll get a notification.`);
   }
   function createPoll() {
@@ -1079,9 +1250,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
   }
   function createGroup() {
     const name = document.getElementById('gname').value.trim(); if (!name) return;
-    const id = 'g' + uid(), gem = UI.sheet.emoji; S.groups.push({ id, name, emoji: gem, members: ['me', ...UI.sheet.members], hangout: [] });
+    const id = 'g' + uid(), gem = UI.sheet.emoji; S.groups.push({ id, name, emoji: gem, color: GCOLORS[S.groups.length % GCOLORS.length], members: ['me', ...UI.sheet.members], hangout: [] });
     S.messages[id] = [{ id: uid(), sys: `You created ${name}`, ts: Date.now() }]; S.unread[id] = 0;
-    UI.sheet = null; openGroup(id); launch({ emoji: gem, title: name, sub: `${grp(id).members.length} members · your new group`, bg: 'background:linear-gradient(135deg,#0B2A4A,#2BA8D0)' }); toast(`${name} is ready`);
+    UI.sheet = null; openGroup(id); UI.popGroup = id; launch({ emoji: gem, title: name, sub: `${grp(id).members.length} in orbit · your new group`, bg: `background:linear-gradient(135deg,#0B2A4A,${grp(id).color})` }); toast(`${name} is ready`);
   }
   const REPLIES = ["I'm in", 'down', 'what time?', "let's do it", 'yes!', 'maybe, depends on work', 'haha', '❤️'];
   function simulateReply(gid, text) {
@@ -1157,13 +1328,14 @@ button.person:hover .ring.add { border-color: var(--accent); }
     return `<a class="filecard" href="${f.url}" target="_blank" rel="noopener" download="${esc(f.name)}"><span class="fileicon ${k === 'pdf' ? '' : k}">${label}</span><span class="t"><b>${esc(f.name)}</b><span class="note">${fileSize(f.size)} · Tap to open</span></span></a>`;
   }
   function addFiles(gid, files) {
+    const list = curMsgs();
     [...files].slice(0, 10).forEach(file => {
       if (file.size > 25 * 1048576) return toast(`${file.name} is over 25 MB`);
-      S.messages[gid].push({ id: uid(), from: 'me', ts: Date.now(), likes: [], file: { name: file.name, type: file.type || '', size: file.size, url: URL.createObjectURL(file) } });
+      list.push({ id: uid(), from: 'me', ts: Date.now(), likes: [], file: { name: file.name, type: file.type || '', size: file.size, url: URL.createObjectURL(file) } });
     });
     UI.menu = false; UI.toBottom = true; render();
-    const g = grp(gid), cand = others(g).filter(p => statusOf(p)?.s !== 'busy'), last = S.messages[gid].at(-1);
-    if (cand.length) setTimeout(() => { last.likes.push(pick(cand)); if (UI.group === gid) render(); }, 1500);
+    const cand = UI.view === 'dm' ? [UI.dm].filter(p => statusOf(p)?.s !== 'busy') : others(grp(gid)).filter(p => statusOf(p)?.s !== 'busy'), last = list.at(-1);
+    if (cand.length) setTimeout(() => { last.likes.push(pick(cand)); render(); }, 1500);
   }
   const TXNS = () => { const t = new Date(); const d = n => ymd(addDays(t, -n)); return [
     { id: 't1', name: 'Komodo', amt: 186.40, date: d(1), cat: '🍽️' }, { id: 't2', name: 'Uber', amt: 23.18, date: d(1), cat: '🚗' },
@@ -1178,25 +1350,44 @@ button.person:hover .ring.add { border-color: var(--accent); }
   const untilFor = k => k === '1h' ? Date.now() + 3600e3 : k === '3h' ? Date.now() + 3 * 3600e3 : endOfDay();
 
   document.addEventListener('click', ev => {
-    const el = ev.target.closest('[data-act]'); if (!el) { if (UI.menu && !ev.target.closest('.menu')) { UI.menu = false; render(); } return; }
+    const el = ev.target.closest('[data-act]'); if (!el) { if ((UI.menu && !ev.target.closest('.menu')) || UI.fab) { UI.menu = false; UI.fab = false; render(); } return; }
     const a = el.dataset.act, d = el.dataset;
+    if (a !== 'fab') UI.fab = false;
     if (el.dataset.ov && ev.target !== el) return; // clicks inside an open sheet
     if (UI.sheet?.kind === 'event' && ['emoji'].includes(a)) syncEvent();
     switch (a) {
-      case 'view': UI.view = d.v; UI.menu = false; UI.resetScroll = true; if (d.v !== 'group' && !wide()) UI.group = null; break;
+      case 'view': UI.view = d.v; UI.menu = false; UI.resetScroll = true; if (d.v !== 'group' && !wide()) UI.group = null; if (d.v !== 'dm') UI.dm = null; break;
       case 'opengroup': openGroup(d.g); break;
-      case 'back': UI.view = 'groups'; UI.group = null; break;
+      case 'back': UI.view = 'groups'; UI.group = null; UI.dm = null; break;
       case 'gtab': UI.gtab = d.t; UI.toBottom = true; UI.resetScroll = true; break;
       case 'hidewelcome': UI.welcome = false; break;
       case 'members': UI.sheet = { kind: 'members' }; break;
+      case 'fab': UI.fab = !UI.fab; break;
+      case 'dm': openDm(d.p); break;
+      case 'newdm': UI.menu = false; UI.sheet = { kind: 'newdm' }; break;
+      case 'person': UI.sheet = { kind: 'person', p: d.p }; break;
+      case 'call': return toast(`Calling ${nameOf(d.p)}. Voice and video calls arrive with the full app.`);
+      case 'removep': UI.sheet = { kind: 'confirm', type: 'remove', p: d.p, g: UI.group }; break;
+      case 'doremove': { const g = grp(d.g), p = d.p; g.members = g.members.filter(x => x !== p); g.hangout = g.hangout.filter(x => x !== p);
+        S.events.filter(e => e.group === g.id).forEach(e => ['going','maybe','cant'].forEach(k => e[k] = e[k].filter(x => x !== p)));
+        S.messages[g.id].push({ id: uid(), sys: `You removed ${nameOf(p)} from ${g.name}`, ts: Date.now() });
+        UI.sheet = { kind: 'members' }; orbitFx(p, 'out'); return toast(`${nameOf(p)} removed from your orbit`); }
+      case 'addmember': { const g = grp(UI.group), p = d.p; if (!g.members.includes(p)) g.members.push(p);
+        S.messages[g.id].push({ id: uid(), sys: `You added ${nameOf(p)} to ${g.name}`, ts: Date.now() });
+        orbitFx(p, 'in'); return toast(`${nameOf(p)} added to your orbit`); }
+      case 'leavegroup': UI.sheet = { kind: 'confirm', type: 'leave', g: UI.group }; break;
+      case 'doleave': { const g = grp(d.g); S.groups = S.groups.filter(x => x !== g); delete S.messages[g.id]; delete S.unread[g.id];
+        S.events = S.events.filter(e => e.group !== g.id); S.bills = S.bills.filter(b => b.group !== g.id); S.reminders = S.reminders.filter(rm => !(rm.group === g.id || (rm.event && !evt(rm.event))));
+        UI.sheet = null; UI.group = null; UI.view = wide() ? 'home' : 'groups';
+        launch({ emoji: g.emoji, title: `${g.name} deleted`, sub: 'Chat, events and bills removed', bg: 'background:linear-gradient(135deg,#3A1A1A,#C9342B)', anim: 'dissolve' }); return toast(`${g.name} is gone`); }
       case 'menu': UI.menu = !UI.menu; break;
       case 'rsvp': { const e = evt(d.ev); setRsvp(e, d.v); UI.pop = `rsvp:${e.id}:${d.v}`; return toast(d.v === 'g' ? `You're going to ${e.title}` : d.v === 'm' ? `Maybe for ${e.title}` : `You can't make ${e.title}`); }
-      case 'like': { const m = S.messages[UI.group].find(x => x.id === d.m); const i = m.likes.indexOf('me'); i > -1 ? m.likes.splice(i, 1) : m.likes.push('me'); break; }
-      case 'vote': { const m = S.messages[UI.group].find(x => x.id === d.m); m.poll.opts.forEach(o => { const i = o.v.indexOf('me'); if (i > -1) o.v.splice(i, 1); }); m.poll.opts[+d.i].v.push('me'); break; }
+      case 'like': { const m = curMsgs().find(x => x.id === d.m); const i = m.likes.indexOf('me'); i > -1 ? m.likes.splice(i, 1) : m.likes.push('me'); break; }
+      case 'vote': { const m = curMsgs().find(x => x.id === d.m); m.poll.opts.forEach(o => { const i = o.v.indexOf('me'); if (i > -1) o.v.splice(i, 1); }); m.poll.opts[+d.i].v.push('me'); break; }
       case 'frommsg': {
-        const m = S.messages[UI.group].find(x => x.id === d.m), w = (/\b(tonight|today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.exec(m.text) || [''])[0].toLowerCase();
+        const m = curMsgs().find(x => x.id === d.m), w = (/\b(tonight|today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.exec(m.text) || [''])[0].toLowerCase();
         const idx = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].indexOf(w);
-        newEventSheet({ group: UI.group, date: w === 'tomorrow' ? ymd(addDays(new Date(), 1)) : idx > -1 ? ymd(nextDow(idx)) : today(), title: '' }); break;
+        newEventSheet({ group: UI.group || sharedGroups(UI.dm)[0]?.id, date: w === 'tomorrow' ? ymd(addDays(new Date(), 1)) : idx > -1 ? ymd(nextDow(idx)) : today(), title: '' }); break;
       }
       case 'hang': { const g = grp(d.g), i = g.hangout.indexOf('me'); if (i > -1) { g.hangout.splice(i, 1); return toast('You left the hangout'); } g.hangout.push('me'); const f = others(g).find(p => statusOf(p)?.s === 'free' && !g.hangout.includes(p)); if (f) setTimeout(() => { g.hangout.push(f); toast(`${nameOf(f)} joined the hangout`); }, 2000); return toast('You joined the hangout. This demo has no real audio.'); }
       case 'status': UI.menu = false; UI.sheet = { kind: 'status' }; break;
@@ -1235,24 +1426,24 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'pickfile': { UI.menu = false; const inp = document.getElementById('upfile'); if (inp) { inp.accept = d.accept || ''; inp.value = ''; inp.click(); } return; }
       case 'viewimg': UI.viewer = d.m; break;
       case 'remindpay': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); S.messages[b.group].push({ id: uid(), sys: `Reminder sent to ${nameOf(d.p)}: ${money(sh.amt)} for ${b.title}`, ts: Date.now() }); return toast(`Reminder sent to ${nameOf(d.p)}`); }
-      case 'markpaid': { const sh = bill(d.b).shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; return toast(`${nameOf(d.p)} marked as paid`); }
+      case 'markpaid': { const b = bill(d.b), sh = b.shares.find(x => x.p === d.p); sh.paid = true; sh.method = 'Marked by you'; UI.pop = 'share:' + b.id + ':' + d.p; const left = b.shares.filter(x => !x.paid && x.p !== b.paidBy).length; launch(left ? { emoji: '✅', title: `${nameOf(d.p)} paid you ${money(sh.amt)}`, sub: `${left} still to pay back · ${b.title}`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' } : { emoji: '🎉', title: 'All settled up', sub: `${b.title} · everyone paid`, bg: 'background:linear-gradient(135deg,#1A5B45,#3FD99A)' }); return toast(left ? `${nameOf(d.p)} marked as paid` : `${b.title} is all settled`); }
       case 'remind': { const e = evt(d.ev); e.remind = d.v; setEventReminder(e, d.v); return toast(d.v ? `We'll remind you ${({ '1d': '1 day', '2h': '2 hours', '30m': '30 minutes' })[d.v]} before ${e.title}` : 'Reminder off'); }
       case 'addcal': return toast('Added to your calendar');
       case 'copylink': { const t = `Join me on Nexus: ${evt(d.ev).title}, ${whenText(evt(d.ev))}`; try { navigator.clipboard.writeText(t).then(() => toast('Invite copied. Paste it in any chat.'), () => toast('Invite links work once Nexus launches')); } catch (e) { toast('Invite links work once Nexus launches'); } return; }
       case 'close': if (UI.viewer) { UI.viewer = null; break; } UI.sheet = null; UI.modal = null; break;
       case 'pickday': UI.day = d.day; UI.cal = d.day.slice(0, 7); break;
       case 'mon': if (d.d === '0') { UI.cal = today().slice(0, 7); UI.day = today(); } else { const [y, m] = UI.cal.split('-').map(Number); UI.cal = ymd(new Date(y, m - 1 + +d.d, 1)).slice(0, 7); } break;
-      case 'restart': S = seed(); UI.view = 'home'; UI.group = null; UI.welcome = true; return toast('Fresh demo started');
+      case 'restart': S = seed(); UI.view = 'home'; UI.group = null; UI.dm = null; UI.seen = new Set(); UI.welcome = true; return toast('Fresh demo started');
       default: return;
     }
     render();
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && (UI.sheet || UI.modal || UI.menu || UI.viewer)) { if (UI.viewer) UI.viewer = null; else { UI.sheet = null; UI.modal = null; UI.menu = false; } render(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && (UI.sheet || UI.modal || UI.menu || UI.viewer || UI.fab)) { if (UI.viewer) UI.viewer = null; else { UI.sheet = null; UI.modal = null; UI.menu = false; UI.fab = false; } render(); } });
   let lastWide = wide(); addEventListener('resize', () => { if (wide() !== lastWide) { lastWide = wide(); render(); } });
   setInterval(() => { if (!UI.sheet && !UI.modal && document.activeElement?.tagName !== 'INPUT') render(); }, 60000);
   render();
 })();
 </script>
-<script>window.NEXUS_INTRO = 'short';</script><script src="../space.js?v=5"></script>
+<script>window.NEXUS_INTRO = 'short';</script><script src="../space.js?v=6"></script>
 </body>
 </html>
