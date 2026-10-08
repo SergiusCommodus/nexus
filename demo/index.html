@@ -609,7 +609,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 <script>
 (function () {
   // ---------- always load the newest version ----------
-  const BUILD = 'b12';
+  const BUILD = 'b13';
   try { fetch('../version.txt?' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(v => { v = v.trim(); if (v && v !== BUILD && sessionStorage.getItem('nx-reload') !== v) { sessionStorage.setItem('nx-reload', v); location.replace(location.pathname + '?v=' + v + location.hash); } }).catch(() => {}); } catch (e) {}
   // ---------- helpers ----------
   const pad2 = n => String(n).padStart(2, '0');
@@ -1192,8 +1192,8 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
     const me = statusOf('me');
     const rail = `<nav class="rail" aria-label="Groups">
       <button class="rbtn home" data-act="view" data-v="home" aria-label="Home" ${UI.view === 'home' ? 'aria-current="page"' : ''}><svg aria-hidden="true"><use href="#r"/></svg></button>
-      <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${ic('calendar', 'ico')}</button>
       <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${ic('chat', 'ico')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
+      <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${ic('calendar', 'ico')}</button>
       <button class="rbtn" data-act="view" data-v="money" aria-label="Wallet" title="Wallet" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${ic('wallet', 'ico')}</button>
       <hr>
       ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${badge(g.emoji, g.color)}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
