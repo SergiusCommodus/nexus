@@ -218,6 +218,11 @@ footer { border-top: 1px solid var(--gray-200); padding-block: 30px; color: var(
 footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
 /* reveal (only when JS is running; content is visible without it) */
+.vcard, .step, .tile { position: relative; }
+.vcard::before, .step::before, .tile::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(185,168,255,.4), transparent); pointer-events: none; }
+.tile:hover { box-shadow: 0 24px 60px -24px rgba(124,92,255,.55); border-color: rgba(185,168,255,.35); }
+.step { transition: transform .3s var(--ease), border-color .3s; }
+.step:hover { transform: translateY(-3px); border-color: rgba(185,168,255,.35); }
 .js .rv { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .js .rv.in { opacity: 1; transform: none; }
 .js .rv.d1 { transition-delay: .08s; } .js .rv.d2 { transition-delay: .16s; } .js .rv.d3 { transition-delay: .24s; }
@@ -462,6 +467,6 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
 })();
 </script>
-<script src="space.js?v=4"></script>
+<script src="space.js?v=5"></script>
 </body>
 </html>

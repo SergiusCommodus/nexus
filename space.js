@@ -53,12 +53,18 @@
   let W, H, DPR, stars = [], shoot = null, nextShoot = performance.now() + 3000;
   const TINTS = ['255,255,255', '255,255,255', '255,255,255', '200,190,255', '170,230,255', '255,236,210'];
   function size() {
-    DPR = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+    const small = innerWidth < 700;
+    DPR = Math.min(devicePixelRatio || 1, small ? 1.5 : 2); W = innerWidth; H = innerHeight;
     cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const n = Math.round(W * H / 2600);
+    const n = Math.round(W * H / (small ? 3400 : 2600));
     stars = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() < .08 ? 1.1 + Math.random() * .9 : .3 + Math.random() * .8, a: .35 + Math.random() * .65, tw: .5 + Math.random() * 2.2, ph: Math.random() * 6.3, z: .2 + Math.random() * .8, c: TINTS[Math.floor(Math.random() * TINTS.length)] }));
   }
+  let paused = false, last = 0;
+  document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!paused && !reduce) requestAnimationFrame(frame); });
   function frame(t) {
+    if (paused) return;
+    if (t - last < 24) { requestAnimationFrame(frame); return; } // ~40fps is plenty for a backdrop
+    last = t;
     ctx.clearRect(0, 0, W, H);
     const drift = reduce ? 0 : t * .004;
     for (const s of stars) {
@@ -82,7 +88,7 @@
     ctx.globalAlpha = 1;
     if (!reduce) requestAnimationFrame(frame);
   }
-  size(); addEventListener('resize', () => { size(); if (reduce) frame(0); });
+  size(); let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(innerWidth - W) < 2 && Math.abs(innerHeight - H) < 120) return; size(); if (reduce) frame(0); }, 150); });
   requestAnimationFrame(frame);
 
   // ---------- launch intro: tap to enter, then sound + warp ----------
