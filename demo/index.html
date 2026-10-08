@@ -424,7 +424,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 
 /* ---------- orbit (home) ---------- */
 .orbitwrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.orbit { position: relative; width: min(100%, 460px); aspect-ratio: 1; margin: 0 auto; }
+.orbit { position: relative; width: min(calc(100% - 56px), 440px); aspect-ratio: 1; margin: 30px auto 34px; }
 .orbit .sweep { position: absolute; inset: 5%; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(124,92,255,.0) 250deg, rgba(124,92,255,.14) 330deg, rgba(63,208,240,.28) 358deg, transparent 360deg); -webkit-mask: radial-gradient(circle, transparent 18%, #000 19%, #000 69%, transparent 70%); mask: radial-gradient(circle, transparent 18%, #000 19%, #000 69%, transparent 70%); animation: spin 9s linear infinite; pointer-events: none; }
 .orbit .core { position: absolute; left: 50%; top: 50%; width: 34%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(124,92,255,.5), rgba(63,208,240,.12) 45%, transparent 70%); animation: corona 4s ease-in-out infinite; pointer-events: none; }
 .orbit .dust { position: absolute; inset: 0; border-radius: 50%; background-image: radial-gradient(1px 1px at 20% 30%, #fff, transparent), radial-gradient(1px 1px at 70% 22%, #cfc4ff, transparent), radial-gradient(1.4px 1.4px at 82% 64%, #fff, transparent), radial-gradient(1px 1px at 34% 78%, #9be7f7, transparent), radial-gradient(1px 1px at 55% 50%, #fff, transparent), radial-gradient(1.2px 1.2px at 12% 58%, #fff, transparent), radial-gradient(1px 1px at 62% 86%, #cfc4ff, transparent); opacity: .7; animation: spin 220s linear infinite reverse; pointer-events: none; }
@@ -439,22 +439,14 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 .orbit .ring { position: absolute; left: 50%; top: 50%; width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2); border-radius: 50%; border: 1px solid rgba(185,168,255,.26); box-shadow: 0 0 24px -10px rgba(124,92,255,.6); background: none; padding: 0; display: block; }
 .orbit .ring.r1 { background: radial-gradient(circle, transparent 55%, rgba(124,92,255,.10) 100%); }
 .orbit .ring::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; border: 1px dashed rgba(185,168,255,.14); pointer-events: none; }
-.orbit .ring.r1 { --d: 54%; } .orbit .ring.r2 { --d: 90%; border-color: rgba(63,208,240,.18); }
-.orbit .rot { z-index: 1; }
-.orbit .rot { position: absolute; inset: 0; animation: spin var(--t) linear infinite; }
-.orbit .r2 .rot { animation-direction: reverse; }
-.orbit .ob { position: absolute; inset: 0; transform: rotate(var(--a)); pointer-events: none; }
-.orbit .pos { position: absolute; left: 100%; top: 50%; width: 0; height: 0; transform: rotate(calc(-1 * var(--a))); }
-.orbit .pos > button { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); animation: spin var(--t) linear infinite reverse; pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: filter .2s; }
-.orbit .r2 .pos > button { animation-direction: normal; }
-@keyframes spinc { to { transform: translate(-50%, -50%) rotate(360deg); } }
-.orbit .pos > button { animation-name: spinc; }
-.orbit .ob > button:hover { filter: brightness(1.15); }
-.orbit .ob > button:hover .oav { transform: scale(1.08); }
+.orbit .ring.r1 { --d: 58%; } .orbit .ring.r2 { --d: 100%; border-color: rgba(63,208,240,.18); }
 .oav { display: inline-grid; border-radius: 50%; padding: 3px; background: var(--c, var(--line-2)); box-shadow: 0 0 22px -6px var(--c, transparent); transition: transform .2s var(--spring); }
 .oav .av { border: 3px solid var(--solid); width: 50px; height: 50px; font-size: 18px; }
 .orbit .r2 .oav .av { width: 42px; height: 42px; font-size: 15px; }
-.orbit .ob small { font-size: 11px; font-weight: 700; color: var(--ink); background: rgba(8,10,26,.78); border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.orbit .sat { position: absolute; left: 50%; top: 50%; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 3px; transform: translate(-50%, -50%); will-change: transform; }
+.orbit .sat:hover .oav { transform: scale(1.08); }
+.orbit .sat:hover { filter: brightness(1.12); z-index: 4; }
+.orbit .sat small { font-size: 11px; font-weight: 700; color: var(--ink); background: rgba(8,10,26,.78); border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
 .orbit .you { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 3; }
 .orbit .you .av { width: 72px; height: 72px; font-size: 26px; border: 3px solid var(--solid); box-shadow: 0 0 0 3px var(--c, var(--line-2)), 0 0 44px -6px var(--c, transparent); transition: transform .2s var(--spring); }
 .orbit .you:hover .av { transform: scale(1.05); }
@@ -594,11 +586,12 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
   .bills { grid-template-columns: 1fr; }
   .money { grid-template-columns: 1fr 1fr; }
   .mtile .amt { font-size: 26px; }
-  .orbit { width: min(100%, 330px); }
-  .orbit .ring.r2 { --d: 86%; }
+  .orbit { width: min(calc(100% - 52px), 320px); margin: 28px auto 34px; }
+  .orbit .you small { display: none; }
+  .orbit .ring.r2 { --d: 100%; } .orbit .ring.r1 { --d: 56%; }
   .oav .av { width: 42px; height: 42px; font-size: 15px; } .orbit .r2 .oav .av { width: 36px; height: 36px; font-size: 13px; }
   .orbit .you .av { width: 60px; height: 60px; font-size: 22px; }
-  .orbit .ob small { font-size: 10px; }
+  .orbit .sat small { font-size: 10px; }
   .fab { right: 16px; bottom: 16px; width: 54px; height: 54px; } .fabmenu { right: 16px; bottom: 82px; }
   .mrow .acts .btn { padding: 6px 9px; }
   .lrow .acts .btn.line .tx { display: none; } .lrow .acts .btn.line { width: 36px; height: 36px; padding: 0; }
@@ -616,7 +609,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 <script>
 (function () {
   // ---------- always load the newest version ----------
-  const BUILD = 'b11';
+  const BUILD = 'b12';
   try { fetch('../version.txt?' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(v => { v = v.trim(); if (v && v !== BUILD && sessionStorage.getItem('nx-reload') !== v) { sessionStorage.setItem('nx-reload', v); location.replace(location.pathname + '?v=' + v + location.hash); } }).catch(() => {}); } catch (e) {}
   // ---------- helpers ----------
   const pad2 = n => String(n).padStart(2, '0');
@@ -872,23 +865,36 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
     </div>
     <div class="col desk">
       <div class="sec"><div class="sechead"><h2>Your groups</h2><button class="btn line sm" data-act="newgroup">+ New</button></div>${groupRows()}</div>
-      <div class="sec"><div class="sechead"><h2>Money</h2><button class="btn line sm" data-act="view" data-v="money">See all</button></div>${moneyTiles()}</div>
+      <div class="sec"><div class="sechead"><h2>Wallet</h2><button class="btn line sm" data-act="view" data-v="money">See all</button></div>${moneyTiles()}</div>
       ${(() => { const live = S.groups.filter(g => g.hangout.length); return live.length ? `<div class="sec"><div class="sechead"><h2>Live now</h2></div><div class="list">${live.map(g => `<button class="lrow" data-act="opengroup" data-g="${g.id}"><span class="tile bd">${badge(g.emoji, g.color)}</span><span class="t"><b>${esc(g.name)} hangout</b><span class="note">${g.hangout.map(nameOf).join(', ')} ${g.hangout.length === 1 ? 'is' : 'are'} in the voice room</span></span><span class="live"></span></button>`).join('')}</div></div>` : ''; })()}
     </div></div>`;
     const dt = new Date(), sub = `${DOW[dt.getDay()]}, ${MONTHS[dt.getMonth()]} ${dt.getDate()}`;
     return { head: `<svg class="hlogo" aria-hidden="true"><use href="#r"/></svg><div class="grow"><h1>Your orbit</h1><div class="sub">${sub}</div></div>`, body: `<div class="scroll">${body}</div>` };
   }
+  // Planets move along their rings without ever rotating, so names always stay level.
+  let orbitRaf = 0;
+  function tickOrbit(now) {
+    const o = document.querySelector('.orbit');
+    if (!o || document.hidden) { orbitRaf = 0; return; }
+    const R = o.clientWidth / 2, rr = { 1: parseFloat(getComputedStyle(o.querySelector('.ring.r1')).width) / 2, 2: parseFloat(getComputedStyle(o.querySelector('.ring.r2')).width) / 2 };
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches, t = still ? 0 : now / 1000;
+    o.querySelectorAll('.sat').forEach(el => { const a = (+el.dataset.a0 + t * +el.dataset.sp) * Math.PI / 180, d = rr[el.dataset.ring] || R; el.style.transform = `translate(calc(-50% + ${(Math.cos(a) * d).toFixed(1)}px), calc(-50% + ${(Math.sin(a) * d).toFixed(1)}px))`; });
+    orbitRaf = still ? 0 : requestAnimationFrame(tickOrbit);
+  }
+  function startOrbit() { if (!orbitRaf && document.querySelector('.orbit')) orbitRaf = requestAnimationFrame(tickOrbit); }
+  document.addEventListener('visibilitychange', startOrbit);
   function orbitHtml(friends, me) {
     const inner = friends.filter(x => x.st.s === 'free'), outer = friends.filter(x => x.st.s !== 'free');
-    const ring = (list, cls, t) => `<div class="ring ${cls}" style="--t:${t}s"><span class="comet"></span><div class="rot">${list.map((x, i) => `<div class="ob" style="--a:${Math.round(i / list.length * 360 - 90)}deg"><div class="pos"><button data-act="person" data-p="${x.p}" aria-label="${esc(nameOf(x.p))}, ${STATUS[x.st.s].long}"><span class="oav" style="--c:${STATUS[x.st.s].color}">${av(x.p, { dot: false })}</span><small>${esc(nameOf(x.p))}</small></button></div></div>`).join('')}</div></div>`;
-    return `<div class="orbit"><span class="dust"></span><span class="core"></span>${ring(outer, 'r2', 160)}${ring(inner, 'r1', 95)}<button class="you ${me ? '' : 'add'}" data-act="status" style="${me ? `--c:${STATUS[me.s].color}` : ''}" aria-label="Set your status">${av('me', { dot: false })}<small>${me ? STATUS[me.s].long : 'Set status'}</small></button></div>`;
+    const ring = cls => `<div class="ring ${cls}"><span class="comet"></span></div>`;
+    const sats = (list, ring, sp) => list.map((x, i) => `<button class="sat" data-ring="${ring}" data-a0="${Math.round(i / list.length * 360 - 90)}" data-sp="${sp}" data-act="person" data-p="${x.p}" aria-label="${esc(nameOf(x.p))}, ${STATUS[x.st.s].long}"><span class="oav" style="--c:${STATUS[x.st.s].color}">${av(x.p, { dot: false })}</span><small>${esc(nameOf(x.p))}</small></button>`).join('');
+    return `<div class="orbit"><span class="dust"></span><span class="core"></span>${ring('r2')}${ring('r1')}${sats(outer, 2, -2.25)}${sats(inner, 1, 3.8)}<button class="you ${me ? '' : 'add'}" data-act="status" style="${me ? `--c:${STATUS[me.s].color}` : ''}" aria-label="Set your status">${av('me', { dot: false })}<small>${me ? STATUS[me.s].long : 'Set status'}</small></button></div>`;
   }
   function viewMoney() {
     const bs = [...S.bills].sort((a, b) => b.ts - a.ts);
     const body = `<div class="pad">${moneyTiles()}
       <div class="sec"><div class="sechead"><h2>Bills · ${bs.length}</h2><button class="btn line sm" data-act="newsplit">+ Split a bill</button></div>${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div>
       <div class="sec"><div class="sechead"><h2>Bank</h2></div>${bankCard()}</div></div>`;
-    return { head: `<div class="grow"><h1>Money</h1></div><button class="btn primary" data-act="newsplit">+ Split a bill</button>`, body: `<div class="scroll">${body}</div>` };
+    return { head: `<div class="grow"><h1>Wallet</h1></div><button class="btn primary" data-act="newsplit">+ Split a bill</button>`, body: `<div class="scroll">${body}</div>` };
   }
   function groupRows() {
     return `<div class="grows">${S.groups.map(g => {
@@ -1188,7 +1194,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
       <button class="rbtn home" data-act="view" data-v="home" aria-label="Home" ${UI.view === 'home' ? 'aria-current="page"' : ''}><svg aria-hidden="true"><use href="#r"/></svg></button>
       <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${ic('calendar', 'ico')}</button>
       <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${ic('chat', 'ico')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
-      <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${ic('wallet', 'ico')}</button>
+      <button class="rbtn" data-act="view" data-v="money" aria-label="Wallet" title="Wallet" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${ic('wallet', 'ico')}</button>
       <hr>
       ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${badge(g.emoji, g.color)}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
       <button class="rbtn add" data-act="newgroup" aria-label="New group" title="New group">+</button>
@@ -1198,7 +1204,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
     </nav>`;
     const tabOf = { home: 'home', groups: 'groups', group: 'groups', dm: 'groups', calendar: 'calendar', money: 'money', you: 'you' }[UI.view];
     const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0) + Object.values(S.unreadDm).reduce((a, b) => a + b, 0);
-    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Orbit'],['groups','Chats'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${ic({ home: 'orbit', groups: 'chat', calendar: 'calendar', money: 'wallet', you: 'user' }[k])}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
+    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Orbit'],['groups','Chats'],['calendar','Calendar'],['money','Wallet'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${ic({ home: 'orbit', groups: 'chat', calendar: 'calendar', money: 'wallet', you: 'user' }[k])}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
     const key = UI.view + ':' + (UI.group || '') + ':' + (UI.dm || '') + ':' + (UI.view === 'group' ? UI.gtab : '');
     const enter = key !== UI.lastKey; UI.lastKey = key;
     const showFab = UI.view !== 'group' && UI.view !== 'dm';
@@ -1211,7 +1217,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
     if (stick) { nb.scrollTop = nb.scrollHeight; nb.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { nb.scrollTop = nb.scrollHeight; }, { once: true }); }); }
     UI.toBottom = false;
     const ns = document.querySelector('main .scroll'); if (ns) ns.scrollTop = keep;
-    bind();
+    bind(); if (document.querySelector('.orbit')) { tickOrbit(performance.now()); startOrbit(); }
     if (fid === 'msg') { const m2 = document.getElementById('msg'); if (m2) { m2.focus(); if (caret != null) m2.setSelectionRange(caret, caret); } }
   }
   function launch(o) {
