@@ -10,9 +10,9 @@
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<meta property="og:image" content="https://sergiuscommodus.github.io/astro/og-image.png">
+<meta property="og:image" content="https://astrosocial.io/og-image.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://sergiuscommodus.github.io/astro/og-image.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://astrosocial.io/og-image.png">
 <meta property="og:title" content="Astro Demo">
 <meta property="og:description" content="Try Astro: the group chat that actually makes plans.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -609,7 +609,7 @@ main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 <script>
 (function () {
   // ---------- always load the newest version ----------
-  const BUILD = 'b16';
+  const BUILD = 'b17';
   try { fetch('../version.txt?' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(v => { v = v.trim(); if (v && v !== BUILD && sessionStorage.getItem('nx-reload') !== v) { sessionStorage.setItem('nx-reload', v); location.replace(location.pathname + '?v=' + v + location.hash); } }).catch(() => {}); } catch (e) {}
   // ---------- helpers ----------
   const pad2 = n => String(n).padStart(2, '0');
