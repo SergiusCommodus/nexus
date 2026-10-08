@@ -1,10 +1,10 @@
-/* Orbit: shared starfield background + launch intro.
-   Set window.ORBIT_INTRO = 'short' before loading for a quicker intro, or 'off' to skip it. */
+/* Astro: shared starfield background + launch intro.
+   Set window.ASTRO_INTRO = 'short' before loading for a quicker intro, or 'off' to skip it. */
 (function () {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mode = window.ORBIT_INTRO || 'full';
+  const mode = window.ASTRO_INTRO || 'full';
   const SOUND = new URL('intro.mp3', (document.currentScript && document.currentScript.src) || location.href).href;
-  const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true" class="nx-mark"><defs><linearGradient id="nxig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A8FF"/><stop offset=".55" stop-color="#7C5CFF"/><stop offset="1" stop-color="#3FD0F0"/></linearGradient><linearGradient id="nxio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCD4FF"/></linearGradient><mask id="nxim" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><path transform="rotate(-25 32 32)" d="M3 32A29 11 0 0 0 61 32" fill="none" stroke="#000" stroke-width="8.6" stroke-linecap="round"/></mask></defs><path class="nx-orbit" transform="rotate(-25 32 32)" d="M3 32A29 11 0 0 1 61 32" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><circle class="nx-n" cx="32" cy="32" r="14.5" fill="none" stroke="url(#nxio)" stroke-width="7" mask="url(#nxim)"/><path class="nx-orbit" transform="rotate(-25 32 32)" d="M3 32A29 11 0 0 0 61 32" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><circle class="nx-moon" cx="58.3" cy="19.7" r="4.6" fill="#3FD0F0"/></svg>';
+  const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true" class="nx-mark"><defs><linearGradient id="nxig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A8FF"/><stop offset=".55" stop-color="#7C5CFF"/><stop offset="1" stop-color="#3FD0F0"/></linearGradient><linearGradient id="nxio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCD4FF"/></linearGradient><mask id="nxim" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><path transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="#000" stroke-width="8.6" stroke-linecap="round"/></mask></defs><path class="nx-orbit" transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 1 60 34" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><path class="nx-n" d="M17.5 51L32 12L46.5 51" fill="none" stroke="url(#nxio)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" mask="url(#nxim)"/><path class="nx-orbit" transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><circle class="nx-moon" cx="58.6" cy="25.3" r="4.4" fill="#3FD0F0"/><path class="nx-star" d="M49 9l1.3 3.2L53.5 13.5l-3.2 1.3L49 18l-1.3-3.2L44.5 13.5l3.2-1.3z" fill="#fff"/></svg>';
 
   const css = `
   html { background-color: #04050C; -webkit-tap-highlight-color: transparent; }
@@ -94,11 +94,11 @@
   const short = mode === 'short';
   const total = short ? 2200 : 4300;
   const audio = new Audio(SOUND); audio.preload = 'auto'; audio.volume = .9;
-  const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Welcome to Orbit');
+  const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Welcome to Astro');
   ov.style.setProperty('--d', short ? '.25s' : '.9s');
   ov.innerHTML = `<canvas></canvas>
-    <div class="nx-c">${MARK}<div class="nx-word">ORBIT</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div>
-    <div class="nx-gate"><button type="button" class="nx-enter" aria-label="Enter Orbit with sound">${MARK.replace('class="nx-mark"', 'class="nx-mini"').replace(/nxi/g, 'nxj').replace(/ class="nx-(orbit|gap|n|moon)"/g, '')}<span>Tap to enter</span></button><div class="nx-sound"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>Sound on</div></div>
+    <div class="nx-c">${MARK}<div class="nx-word">ASTRO</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div>
+    <div class="nx-gate"><button type="button" class="nx-enter" aria-label="Enter Astro with sound">${MARK.replace('class="nx-mark"', 'class="nx-mini"').replace(/nxi/g, 'nxj').replace(/ class="nx-(orbit|gap|n|moon|star)"/g, '')}<span>Tap to enter</span></button><div class="nx-sound"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>Sound on</div></div>
     <div class="nx-skip">Tap to skip</div>`;
   document.body.appendChild(ov);
   document.documentElement.classList.add('nx-wait');
@@ -148,7 +148,7 @@
     document.documentElement.style.overflow = prevOverflow; document.documentElement.classList.remove('nx-wait');
     setTimeout(() => { ov.remove(); removeEventListener('resize', isz); }, 900);
     setTimeout(fadeOut, 1200);
-    document.dispatchEvent(new Event('orbit:ready'));
+    document.dispatchEvent(new Event('astro:ready'));
   }
   ov.addEventListener('click', () => { if (!started) start(); else end(); });
   function onKey(e) { if (done) return removeEventListener('keydown', onKey); if (!started) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } } else end(); }
