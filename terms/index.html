@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terms of Service · Astro</title>
+<meta name="description" content="The rules for using Astro, written to be read.">
+<meta name="theme-color" content="#04050C">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one readable column on the starfield, a sticky contents list on wide screens. */
+:root {
+  --ink: #EEF0FF; --muted: #A3ABD1; --line: #262D5E; --panel: rgba(16,21,48,.72); --accent: #B9A8FF; --violet: #7C5CFF; --bg: #04050C;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); }
+.top { position: sticky; top: 0; z-index: 5; background: rgba(4,5,12,.82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-family: var(--display); font-weight: 800; letter-spacing: .12em; font-size: 19px; }
+.brand svg { width: 30px; height: 30px; overflow: visible; }
+.open { text-decoration: none; color: #fff; background: var(--violet); padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 15px; }
+.grid { max-width: 1080px; margin: 0 auto; padding: 40px 20px 80px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; }
+nav.toc { position: sticky; top: 90px; align-self: start; font-size: 14.5px; }
+nav.toc ol { margin: 12px 0 0; padding-left: 18px; color: var(--muted); display: grid; gap: 6px; }
+nav.toc a { color: var(--muted); text-decoration: none; } nav.toc a:hover { color: var(--ink); }
+.label { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--display); font-size: clamp(36px, 6vw, 56px); line-height: 1.05; margin: 8px 0 12px; letter-spacing: -.02em; }
+.lede { color: var(--muted); font-size: 18px; max-width: 62ch; }
+.meta { color: var(--muted); font-size: 14px; margin-top: 10px; }
+.summary { margin: 28px 0 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 18px 22px; }
+.summary ul { margin: 8px 0 0; padding-left: 20px; }
+section { padding-top: 34px; scroll-margin-top: 80px; max-width: 70ch; }
+h2 { font-family: var(--display); font-size: 24px; margin: 0 0 10px; letter-spacing: -.01em; }
+p, li { color: #D6DAF2; } p { margin: 0 0 12px; } ul { padding-left: 22px; margin: 0 0 12px; } li { margin-bottom: 6px; }
+b { color: var(--ink); }
+footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+footer .in { max-width: 1080px; margin: 0 auto; padding: 22px 20px; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+footer a { color: var(--muted); }
+@media (max-width: 820px) { .grid { grid-template-columns: 1fr; gap: 0; padding-top: 28px; } nav.toc { display: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="r" viewBox="0 0 64 64"><defs><linearGradient id="nxrg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A8FF"/><stop offset=".55" stop-color="#7C5CFF"/><stop offset="1" stop-color="#3FD0F0"/></linearGradient><linearGradient id="nxro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCD4FF"/></linearGradient><mask id="nxrm" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><path transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="#000" stroke-width="8.6" stroke-linecap="round"/></mask></defs><path transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 1 60 34" fill="none" stroke="url(#nxrg)" stroke-width="3.4" stroke-linecap="round"/><path d="M17.5 51L32 12L46.5 51" fill="none" stroke="url(#nxro)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" mask="url(#nxrm)"/><path transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="url(#nxrg)" stroke-width="3.4" stroke-linecap="round"/><circle cx="58.6" cy="25.3" r="4.4" fill="#3FD0F0"/><path d="M49 9l1.3 3.2L53.5 13.5l-3.2 1.3L49 18l-1.3-3.2L44.5 13.5l3.2-1.3z" fill="#fff"/></symbol></svg>
+<header class="top"><div class="in"><a class="brand" href="../"><svg aria-hidden="true"><use href="#r"/></svg>ASTRO</a><a class="open" href="../app/">Open Astro</a></div></header>
+<main class="grid">
+  <nav class="toc" aria-label="Contents"><span class="label">Contents</span><ol><li><a href="#agree">Agreeing to these terms</a></li><li><a href="#who">Who can use Astro</a></li><li><a href="#content">Your content</a></li><li><a href="#rules">Community rules</a></li><li><a href="#money">Bills and payments</a></li><li><a href="#service">Changes to Astro</a></li><li><a href="#ending">Closing your account</a></li><li><a href="#disclaimer">Disclaimers</a></li><li><a href="#liability">Limits on liability</a></li><li><a href="#law">Governing law</a></li><li><a href="#changes">Changes to these terms</a></li><li><a href="#contact">Contact</a></li></ol></nav>
+  <article>
+    <span class="label">Astro Social</span>
+    <h1>Terms of Service</h1>
+    <p class="lede">The rules for using Astro, written to be read.</p>
+    <p class="meta">Effective October 8, 2026</p>
+    <section id="agree"><h2>Agreeing to these terms</h2><p>These terms are an agreement between you and Carlisle Capital LLC, which runs Astro Social ("Astro", "we", "us"). By creating an account or using Astro, you agree to them and to our <a href="../privacy/">Privacy Policy</a>. If you don't agree, please don't use Astro.</p></section><section id="who"><h2>Who can use Astro</h2><p>You must be at least 13 years old, and old enough to agree to these terms where you live. You are responsible for your account, for keeping your password private, and for what happens under your account.</p></section><section id="content"><h2>Your content</h2><p>You own what you post in Astro: messages, plans, photos and anything else. You give us permission to store, copy and show your content only so we can run Astro for you and the people you share it with. This permission ends when you delete the content or your account, except for copies that remain briefly in backups.</p></section><section id="rules"><h2>Community rules</h2><p>Astro is for friends. Don't use it to:</p>
+<ul>
+<li>Harass, bully, threaten or impersonate anyone.</li>
+<li>Share content that is illegal, sexually exploits anyone, promotes violence, or that you don't have the right to share.</li>
+<li>Send spam, scams or malware, or try to break, overload or get around Astro's security.</li>
+<li>Collect other people's information without their permission.</li>
+</ul><p>You can report people and messages in the app. We review reports and may remove content or suspend or close accounts that break these rules.</p></section><section id="money"><h2>Bills and payments</h2><p>Astro helps friends keep track of who owes what. Astro does not hold, send or receive money. When you pay someone back with Zelle, cash or another service, that payment happens outside Astro, under that service's own terms. We are not responsible for payments, debts or disputes between members.</p></section><section id="service"><h2>Changes to Astro</h2><p>Astro is new and in active development. Features may change, and we may pause or end parts of the service. If we ever shut Astro down, we will give reasonable notice when we can.</p></section><section id="ending"><h2>Closing your account</h2><p>You can delete your account at any time in the You tab. We may suspend or close accounts that break these terms or put others at risk.</p></section><section id="disclaimer"><h2>Disclaimers</h2><p>Astro is provided "as is" and "as available". To the extent the law allows, we make no promises that it will always be available, error free or fit for a particular purpose.</p></section><section id="liability"><h2>Limits on liability</h2><p>To the extent the law allows, Carlisle Capital LLC is not liable for indirect, incidental or consequential damages, or for anything that happens between members, including plans and payments arranged through Astro. Our total liability for any claim is limited to the greater of the amount you paid us in the past 12 months or $50.</p></section><section id="law"><h2>Governing law</h2><p>These terms are governed by the laws of the State of Florida, United States, without regard to its conflict of law rules. Disputes will be handled in the state or federal courts located in Florida, unless the law where you live gives you the right to bring a claim locally.</p></section><section id="changes"><h2>Changes to these terms</h2><p>We may update these terms. If we make important changes, we will tell you in the app or by email before they take effect. Using Astro after that means you accept the updated terms.</p></section><section id="contact"><h2>Contact</h2><p>Questions? Email <a href="mailto:hello@astrosocial.io">hello@astrosocial.io</a>.</p></section>
+  </article>
+</main>
+<footer><div class="in"><span>© 2026 Astro Social. A Carlisle Capital company.</span><span><a href="../privacy/">Privacy</a> · <a href="../terms/">Terms</a> · <a href="mailto:hello@astrosocial.io">hello@astrosocial.io</a></span></div></footer>
+<script>window.ASTRO_INTRO = 'off';</script><script src="../space.js?v=9"></script>
+</body>
+</html>
