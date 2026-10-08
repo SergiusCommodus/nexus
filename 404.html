@@ -1,5 +1,37 @@
-<!doctype html><meta charset="utf-8"><title>Astro</title><script>
-// A link into the app (for example /nexus/app/chat/123) opens the app itself.
-var p = location.pathname, i = p.indexOf('/app/');
-location.replace(i >= 0 ? p.slice(0, i + 5) : '/' + p.split('/')[1] + '/');
-</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head><script>/* Missing pages: links into the app open the app at that page; anything else goes home. */if(location.pathname.indexOf("/app/")!==0&&location.pathname!=="/app")location.replace("/");</script>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Astro</title>
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  <link rel="icon" href="/app/favicon.ico"/></head>
+
+  <body>
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  <script src="/app/_expo/static/js/web/entry-6f31c8896e5de4a962f89667cbabe42b.js" defer></script>
+</body>
+</html>
