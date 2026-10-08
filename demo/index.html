@@ -367,7 +367,10 @@ button.person:hover .ring.add { border-color: var(--accent); }
 #launch .star { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; animation: burst .9s .15s var(--ease) forwards; opacity: 0; }
 
 /* ---------- icons ---------- */
-.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.14em; flex: none; display: inline-block; }
+.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.14em; flex: none; display: inline-block; overflow: visible; }
+.i .f { fill: currentColor; stroke: none; opacity: .18; }
+.i:not(.ico) path:not(.f) { stroke: currentColor; }
+.rbtn[aria-current="page"] .i .f, .tabbar button[aria-current="page"] .i .f { opacity: .32; }
 .cover .emo { color: #fff; line-height: 0; }
 .cover .emo .i { stroke-width: 1.6; filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)); }
 .lrow .tile { color: #fff; }
@@ -388,6 +391,21 @@ button.person:hover .ring.add { border-color: var(--accent); }
 .payopt .logo { font-size: 20px; }
 #launch .lcard .emo { line-height: 0; } #launch .lcard .emo .i { stroke-width: 1.5; }
 .note .i, .meta .i, .chip .i { opacity: .85; }
+
+/* ---------- people ---------- */
+.iconbtn.ppl { color: var(--ink); font-size: 18px; }
+.lrow .acts { display: flex; gap: 6px; flex: none; }
+.btn.rm { color: #FF9B85; border: 1px solid rgba(240,115,90,.35); background: rgba(240,115,90,.08); }
+.btn.rm:hover { background: rgba(240,115,90,.16); }
+.btn .i { font-size: 15px; }
+.addgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.addp { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); text-align: left; transition: background .2s, border-color .2s, transform .2s var(--spring); }
+.addp:hover { background: var(--surface-2); border-color: var(--accent); }
+.addp:active { transform: scale(.97); }
+.addp b { flex: 1; min-width: 0; font-size: 14.5px; }
+.addp .plus { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--maroon-soft); color: var(--accent); font-size: 15px; }
+.card.danger { border-color: rgba(240,115,90,.3); }
+main:has(.fab) .scroll > .pad { padding-bottom: 96px; }
 
 /* ---------- orbit (home) ---------- */
 .orbitwrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -555,6 +573,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
   .orbit .ob small { font-size: 10px; }
   .fab { right: 16px; bottom: 16px; width: 54px; height: 54px; } .fabmenu { right: 16px; bottom: 82px; }
   .mrow .acts .btn { padding: 6px 9px; }
+  .lrow .acts .btn.line .tx { display: none; } .lrow .acts .btn.line { width: 36px; height: 36px; padding: 0; }
+  .hpill .tx, .hpill .tx2 { display: none; } .hpill { padding: 9px 11px; }
+  .addgrid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 380px) { .money { grid-template-columns: 1fr; } }
 @media (max-width: 860px) { .desk { display: none; } }
@@ -566,6 +587,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
 <div id="layer"></div>
 <script>
 (function () {
+  // ---------- always load the newest version ----------
+  const BUILD = 'b9';
+  try { fetch('../version.txt?' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(v => { v = v.trim(); if (v && v !== BUILD && sessionStorage.getItem('nx-reload') !== v) { sessionStorage.setItem('nx-reload', v); location.replace(location.pathname + '?v=' + v + location.hash); } }).catch(() => {}); } catch (e) {}
   // ---------- helpers ----------
   const pad2 = n => String(n).padStart(2, '0');
   const ymd = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
@@ -598,8 +622,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
   };
   const GCOLORS = ['#7C5CFF', '#F09350', '#3FD0F0', '#3FD99A', '#E06BA8', '#E2C06A'];
   const COVERS = [['#2A1A78', '#7C5CFF'], ['#0B2A4A', '#2BA8D0'], ['#3B1260', '#B04FCF'], ['#101A40', '#4B6BE0'], ['#1A1440', '#5B3BD1'], ['#3A1A5E', '#E06BA8']];
-  const IP = {"dinner": "M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 1.5-3 4-3 7h3M17 3v18", "game": "M6.5 8.5h11A3.5 3.5 0 0 1 21 12v2.5a2.5 2.5 0 0 1-4.6 1.4L15 14H9l-1.4 1.9A2.5 2.5 0 0 1 3 14.5V12a3.5 3.5 0 0 1 3.5-3.5zM8 10.5v3M6.5 12h3M15.5 11.5h.01M17.5 13h.01", "glass": "M8 3h8l-.8 6.5a3.2 3.2 0 0 1-6.4 0zM12 13v7M8.5 21h7", "film": "M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21", "coffee": "M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c0 1 1 1.5 1 2.5M12 3.5c0 1 1 1.5 1 2.5", "flag": "M5 21V4M5 4h11l-2 3.5L16 11H5", "book": "M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6", "spark": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 3v3M17.5 4.5h3M5 17v3M3.5 18.5h3", "ball": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M3 12h18M12 3v18M5.8 5.6c3.2 3.2 3.2 9.6 0 12.8M18.2 5.6c-3.2 3.2-3.2 9.6 0 12.8", "pizza": "M12 3 3.5 19.5Q12 22.5 20.5 19.5zM5.2 16.3Q12 18.6 18.8 16.3M10.5 10.5h.01M13.5 13.5h.01M11 15h.01", "users": "M5.7 8a3.3 3.3 0 1 0 6.6 0a3.3 3.3 0 1 0 -6.6 0M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M16 4.6a3.3 3.3 0 0 1 0 6.6M21 20v-1a4 4 0 0 0-3-3.9", "home": "M4 11 12 4l8 7v8.5a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19.5z", "briefcase": "M5 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18", "music": "M9 18V5l11-2v13M3 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M14 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "plane": "M21 4 3 11l7 2.5L12.5 21z M10 13.5 21 4", "paw": "M6.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M14.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M3.1999999999999997 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M17.599999999999998 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M12 12.5c-3 0-5 3-5 5 0 1.8 1.6 2.6 3 2.1.8-.3 1.3-.6 2-.6s1.2.3 2 .6c1.4.5 3-.3 3-2.1 0-2-2-5-5-5z", "dumbbell": "M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11", "run": "M12.8 4.5a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0 -3.4 0M8 21l3-5.5 3 2.5v3M6 11.5l3.5-3.5 4 1.5 2.5 3H19M10 8.5 8 15", "pill": "M10.5 20.5a4.95 4.95 0 0 1-7-7l6-6a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7", "drop": "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z", "cart": "M7.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M16.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M3 4h2.5l2.2 11h11.6L21 8H7", "receipt": "M6 3h12v18l-2.5-1.5L13 21l-2-1.5L9 21l-1.5-1.5L6 21zM9 8h6M9 12h6M9 16h3", "cake": "M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2 1.5 3.5 1.5 5 0s3.5-1.5 5 0 3 1.5 4 0M12 12V8M12 5.8c.8-.7.8-1.8 0-2.6-.8.8-.8 1.9 0 2.6z", "alarm": "M4.5 13a7.5 7.5 0 1 0 15.0 0a7.5 7.5 0 1 0 -15.0 0M12 9.5V13l2.5 1.8M5 3 2.5 5.5M19 3l2.5 2.5", "car": "M4 15.5V12l2.2-5.5h11.6L20 12v3.5M3 15.5h18v3H3zM7.5 12h9M6.5 18.5V21M17.5 18.5V21", "back": "M9 10 4 15l5 5M4 15h11a5 5 0 0 0 0-10h-2", "check": "M5 12.5l4.5 4.5L19 7.5", "paid": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M8 12.5l2.8 2.8L16.5 9.5", "arrow": "M7 17 17 7M8.5 7H17v8.5", "phone": "M5 4h3.5l1.5 4.5-2 1.5a11 11 0 0 0 6 6l1.5-2 4.5 1.5V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z", "camera": "M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM8.5 13a3.5 3.5 0 1 0 7.0 0a3.5 3.5 0 1 0 -7.0 0", "clip": "M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4L14.5 7.5", "status": "M3.5 12a8.5 8.5 0 1 0 17.0 0a8.5 8.5 0 1 0 -17.0 0M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "poll": "M5 20V11M12 20V4M19 20v-6", "chat": "M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z", "alert": "M12 3.5 2.5 20h19zM12 10v4.5M12 17.5h.01", "calendar": "M6.5 5h11a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3zM3.5 10h17M8 3v4M16 3v4", "pin": "M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21zM9.5 9.5a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0", "bank": "M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18", "shield": "M12 3 4.5 6v6c0 4.4 3.3 7.5 7.5 9 4.2-1.5 7.5-4.6 7.5-9V6zM9 12l2.2 2.2L15.5 10", "plus": "M12 5v14M5 12h14", "trophy": "M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20.5h6M10 17h4v3.5h-4z", "flame": "M12 21a6 6 0 0 1-6-6c0-4 3-6 3.5-10 2 1.5 3.5 3 4 5 .8-.8 1.3-2 1.3-3 2 1.8 3.2 4.8 3.2 8a6 6 0 0 1-6 6z", "bolt": "M13 3 4.5 13.5H12L11 21l8.5-10.5H12z"};
-  const ic = (k, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${IP[k] || IP.spark}"/></svg>`;
+  const IP = {"dinner": "M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 1.5-3 4-3 7h3M17 3v18", "game": "M6.5 8.5h11A3.5 3.5 0 0 1 21 12v2.5a2.5 2.5 0 0 1-4.6 1.4L15 14H9l-1.4 1.9A2.5 2.5 0 0 1 3 14.5V12a3.5 3.5 0 0 1 3.5-3.5zM8 10.5v3M6.5 12h3M15.5 11.5h.01M17.5 13h.01", "glass": "M8 3h8l-.8 6.5a3.2 3.2 0 0 1-6.4 0zM12 13v7M8.5 21h7", "film": "M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21", "coffee": "M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c0 1 1 1.5 1 2.5M12 3.5c0 1 1 1.5 1 2.5", "flag": "M5 21V4M5 4h11l-2 3.5L16 11H5", "book": "M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6", "spark": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 3v3M17.5 4.5h3M5 17v3M3.5 18.5h3", "ball": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M3 12h18M12 3v18M5.8 5.6c3.2 3.2 3.2 9.6 0 12.8M18.2 5.6c-3.2 3.2-3.2 9.6 0 12.8", "pizza": "M12 3 3.5 19.5Q12 22.5 20.5 19.5zM5.2 16.3Q12 18.6 18.8 16.3M10.5 10.5h.01M13.5 13.5h.01M11 15h.01", "users": "M5.7 8a3.3 3.3 0 1 0 6.6 0a3.3 3.3 0 1 0 -6.6 0M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M16 4.6a3.3 3.3 0 0 1 0 6.6M21 20v-1a4 4 0 0 0-3-3.9", "home": "M4 11 12 4l8 7v8.5a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19.5z", "briefcase": "M5 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18", "music": "M9 18V5l11-2v13M3 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M14 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "plane": "M21 4 3 11l7 2.5L12.5 21z M10 13.5 21 4", "paw": "M6.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M14.2 7a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0M3.1999999999999997 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M17.599999999999998 11.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0M12 12.5c-3 0-5 3-5 5 0 1.8 1.6 2.6 3 2.1.8-.3 1.3-.6 2-.6s1.2.3 2 .6c1.4.5 3-.3 3-2.1 0-2-2-5-5-5z", "dumbbell": "M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11", "run": "M12.8 4.5a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0 -3.4 0M8 21l3-5.5 3 2.5v3M6 11.5l3.5-3.5 4 1.5 2.5 3H19M10 8.5 8 15", "pill": "M10.5 20.5a4.95 4.95 0 0 1-7-7l6-6a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7", "drop": "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z", "cart": "M7.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M16.7 20a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0M3 4h2.5l2.2 11h11.6L21 8H7", "receipt": "M6 3h12v18l-2.5-1.5L13 21l-2-1.5L9 21l-1.5-1.5L6 21zM9 8h6M9 12h6M9 16h3", "cake": "M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2 1.5 3.5 1.5 5 0s3.5-1.5 5 0 3 1.5 4 0M12 12V8M12 5.8c.8-.7.8-1.8 0-2.6-.8.8-.8 1.9 0 2.6z", "alarm": "M4.5 13a7.5 7.5 0 1 0 15.0 0a7.5 7.5 0 1 0 -15.0 0M12 9.5V13l2.5 1.8M5 3 2.5 5.5M19 3l2.5 2.5", "car": "M4 15.5V12l2.2-5.5h11.6L20 12v3.5M3 15.5h18v3H3zM7.5 12h9M6.5 18.5V21M17.5 18.5V21", "back": "M9 10 4 15l5 5M4 15h11a5 5 0 0 0 0-10h-2", "check": "M5 12.5l4.5 4.5L19 7.5", "paid": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M8 12.5l2.8 2.8L16.5 9.5", "arrow": "M7 17 17 7M8.5 7H17v8.5", "phone": "M5 4h3.5l1.5 4.5-2 1.5a11 11 0 0 0 6 6l1.5-2 4.5 1.5V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z", "camera": "M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM8.5 13a3.5 3.5 0 1 0 7.0 0a3.5 3.5 0 1 0 -7.0 0", "clip": "M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4L14.5 7.5", "status": "M3.5 12a8.5 8.5 0 1 0 17.0 0a8.5 8.5 0 1 0 -17.0 0M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "poll": "M5 20V11M12 20V4M19 20v-6", "chat": "M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z", "alert": "M12 3.5 2.5 20h19zM12 10v4.5M12 17.5h.01", "calendar": "M6.5 5h11a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3zM3.5 10h17M8 3v4M16 3v4", "pin": "M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21zM9.5 9.5a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0", "bank": "M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18", "shield": "M12 3 4.5 6v6c0 4.4 3.3 7.5 7.5 9 4.2-1.5 7.5-4.6 7.5-9V6zM9 12l2.2 2.2L15.5 10", "plus": "M12 5v14M5 12h14", "x": "M6 6l12 12M18 6 6 18", "trophy": "M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20.5h6M10 17h4v3.5h-4z", "flame": "M12 21a6 6 0 0 1-6-6c0-4 3-6 3.5-10 2 1.5 3.5 3 4 5 .8-.8 1.3-2 1.3-3 2 1.8 3.2 4.8 3.2 8a6 6 0 0 1-6 6z", "bolt": "M13 3 4.5 13.5H12L11 21l8.5-10.5H12z", "orbit": "M8.8 12a3.2 3.2 0 1 0 6.4 0a3.2 3.2 0 1 0 -6.4 0M3.2 14.6c-1-2.4 2.6-6.2 8-8.4s10-2 11 .4-2.6 6.2-8 8.4-10 2-11-.4z", "wallet": "M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3H6.5A2.5 2.5 0 0 1 4 5.5zM4 7.5V17a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H6.5M16 13.5h.01", "user": "M8.2 8.5a3.8 3.8 0 1 0 7.6 0a3.8 3.8 0 1 0 -7.6 0M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"};
+  const LINE = new Set(['plus', 'x', 'check', 'arrow', 'poll', 'dumbbell', 'back', 'clip', 'music', 'run', 'alarm', 'cart', 'status']);
+  const ic = (k, cls = "") => { const d = IP[k] || IP.spark; return `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${LINE.has(k) ? '' : `<path class="f" d="${d}"/>`}<path d="${d}"/></svg>`; };
   const EMOJI = ['dinner', 'game', 'glass', 'film', 'coffee', 'flag', 'book', 'spark', 'ball', 'pizza'];
   const endOfDay = () => { const d = new Date(); d.setHours(23, 59, 0, 0); return d.getTime(); };
   const now = Date.now();
@@ -892,8 +917,8 @@ button.person:hover .ring.add { border-color: var(--accent); }
   function viewGroup() {
     const g = grp(UI.group);
     const free = others(g).filter(p => statusOf(p)?.s === 'free');
-    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="color:${g.color}">${ic(g.emoji)}</span><div class="grow"><h1 style="font-size:21px">${esc(g.name)}</h1><button class="note" data-act="members" style="text-decoration:underline;text-underline-offset:3px;display:block">${g.members.length} members${free.length ? ` · ${free.length} free` : ''}</button></div><button class="hpill" data-act="hang" data-g="${g.id}" aria-pressed="${g.hangout.includes('me')}" title="Open voice room"><span class="live"></span>${g.hangout.includes('me') ? 'Leave' : 'Hangout'}${g.hangout.length ? ' · ' + g.hangout.length : ''}</button>`;
-    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Photos & files']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
+    const head = `${wide() ? '' : '<button class="iconbtn" data-act="back" aria-label="Back">‹</button>'}<span class="gicon" style="color:${g.color}">${ic(g.emoji)}</span><div class="grow"><h1 style="font-size:21px">${esc(g.name)}</h1><div class="sub">${g.members.length} people${free.length ? ` · ${free.length} free` : ''}</div></div><button class="hpill" data-act="hang" data-g="${g.id}" aria-pressed="${g.hangout.includes('me')}" title="Voice room"><span class="live"></span><span class="tx">${g.hangout.includes('me') ? 'Leave' : 'Hangout'}</span>${g.hangout.length ? '<span class="tx2"> · </span>' + g.hangout.length : ''}</button><button class="iconbtn ppl" data-act="members" aria-label="People in ${esc(g.name)}" title="People">${ic('users')}</button>`;
+    const tabs = `<div class="tabs">${[['chat','Chat'],['events','Events'],['bills','Bills'],['files','Files'],['people','People']].map(([k, l]) => `<button data-act="gtab" data-t="${k}" aria-current="${UI.gtab === k}">${l}</button>`).join('')}</div>`;
     let body;
     if (UI.gtab === 'chat') {
       let lastDay = '';
@@ -923,6 +948,14 @@ button.person:hover .ring.add { border-color: var(--accent); }
       const bs = S.bills.filter(b => b.group === g.id).sort((a, b2) => b2.ts - a.ts);
       body = `<div class="scroll"><div class="pad">${moneyTiles(g.id)}<div class="sec"><div class="sechead"><h2>Bills · ${bs.length}</h2><button class="btn primary sm" data-act="newsplit" data-g="${g.id}">+ Split a bill</button></div>
         ${bs.length ? `<div class="bills">${bs.map(billCard).join('')}</div>` : '<div class="empty">No bills yet. After your next event, snap the receipt and split it here.</div>'}</div></div></div>`;
+    } else if (UI.gtab === 'people') {
+      const outside = Object.keys(PEOPLE).filter(p => p !== 'me' && !g.members.includes(p));
+      body = `<div class="scroll"><div class="pad">
+        <div class="sec"><div class="sechead"><h2>In this group · ${g.members.length}</h2></div>
+          <div class="list">${g.members.map(p => { const st = statusOf(p); return `<div class="lrow">${av(p)}<span class="t"><b>${p === 'me' ? 'You' : esc(nameOf(p))}</b><span class="note">${st ? STATUS[st.s].long : 'No status'}</span></span>${p === 'me' ? '<span class="chip">Admin</span>' : `<span class="acts"><button class="btn line sm" data-act="dm" data-p="${p}">${ic('chat')}<span class="tx">Message</span></button><button class="btn sm rm" data-act="removep" data-p="${p}" aria-label="Remove ${esc(nameOf(p))}">${ic('x')}<span class="tx">Remove</span></button></span>`}</div>`; }).join('')}</div></div>
+        <div class="sec"><div class="sechead"><h2>Add people</h2></div>${outside.length ? `<div class="addgrid">${outside.map(p => `<button class="addp" data-act="addmember" data-p="${p}">${av(p, { size: 40 })}<b>${esc(nameOf(p))}</b><span class="plus">${ic('plus')}</span></button>`).join('')}</div>` : '<div class="empty">Everyone you know is already here.</div>'}</div>
+        <div class="sec"><div class="sechead"><h2>Group settings</h2></div><div class="card danger"><b>Delete ${esc(g.name)}</b><span class="note">Removes the chat, events, photos and bills for everyone.</span><div><button class="btn sm rm" data-act="leavegroup">${ic('x')} Delete group</button></div></div></div>
+      </div></div>`;
     } else {
       UI.gtab = 'chat'; return viewGroup();
       body = `<div class="scroll"><div class="members">${g.members.map(p => { const st = statusOf(p); return `<div class="prow">${av(p)}<span class="n">${esc(nameOf(p))}</span><span class="s">${st ? STATUS[st.s].long : 'No status'}</span></div>`; }).join('')}</div></div>`;
@@ -1108,9 +1141,9 @@ button.person:hover .ring.add { border-color: var(--accent); }
     const me = statusOf('me');
     const rail = `<nav class="rail" aria-label="Groups">
       <button class="rbtn home" data-act="view" data-v="home" aria-label="Home" ${UI.view === 'home' ? 'aria-current="page"' : ''}><svg aria-hidden="true"><use href="#r"/></svg></button>
-      <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${I.calendar.replace('<svg', '<svg class="ico"')}</button>
-      <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${I.groups.replace('<svg', '<svg class="ico"')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
-      <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${I.money.replace('<svg', '<svg class="ico"')}</button>
+      <button class="rbtn" data-act="view" data-v="calendar" aria-label="Calendar" ${UI.view === 'calendar' ? 'aria-current="page"' : ''}>${ic('calendar', 'ico')}</button>
+      <button class="rbtn" data-act="view" data-v="groups" aria-label="Chats" title="Chats" ${UI.view === 'groups' ? 'aria-current="page"' : ''}>${ic('chat', 'ico')}${(() => { const u = Object.values(S.unreadDm).reduce((a, b) => a + b, 0); return u ? `<span class="badge">${u}</span>` : ''; })()}</button>
+      <button class="rbtn" data-act="view" data-v="money" aria-label="Money" title="Money" ${UI.view === 'money' ? 'aria-current="page"' : ''}>${ic('wallet', 'ico')}</button>
       <hr>
       ${S.groups.map(g => `<button class="rbtn g ${UI.popGroup === g.id ? 'new' : ''}" style="--gc:${g.color || '#7C5CFF'}" data-act="opengroup" data-g="${g.id}" aria-label="${esc(g.name)}" title="${esc(g.name)}" ${UI.view === 'group' && UI.group === g.id ? 'aria-current="page"' : ''}>${ic(g.emoji)}${S.unread[g.id] ? `<span class="badge">${S.unread[g.id]}</span>` : ''}</button>`).join('')}
       <button class="rbtn add" data-act="newgroup" aria-label="New group" title="New group">+</button>
@@ -1120,10 +1153,10 @@ button.person:hover .ring.add { border-color: var(--accent); }
     </nav>`;
     const tabOf = { home: 'home', groups: 'groups', group: 'groups', dm: 'groups', calendar: 'calendar', money: 'money', you: 'you' }[UI.view];
     const unreadAll = Object.values(S.unread).reduce((a, b) => a + b, 0) + Object.values(S.unreadDm).reduce((a, b) => a + b, 0);
-    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Orbit'],['groups','Chats'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${I[k]}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
+    const tabbar = `<nav class="tabbar" aria-label="Main">${[['home','Orbit'],['groups','Chats'],['calendar','Calendar'],['money','Money'],['you','You']].map(([k, l]) => `<button data-act="view" data-v="${k}" ${tabOf === k ? 'aria-current="page"' : ''}>${ic({ home: 'orbit', groups: 'chat', calendar: 'calendar', money: 'wallet', you: 'user' }[k])}${l}${k === 'groups' && unreadAll ? `<span class="badge">${unreadAll}</span>` : ''}</button>`).join('')}</nav>`;
     const key = UI.view + ':' + (UI.group || '') + ':' + (UI.dm || '') + ':' + (UI.view === 'group' ? UI.gtab : '');
     const enter = key !== UI.lastKey; UI.lastKey = key;
-    const showFab = !(UI.view === 'group' && UI.gtab === 'chat') && UI.view !== 'dm';
+    const showFab = UI.view !== 'group' && UI.view !== 'dm';
     const fab = showFab ? `<button class="fab" data-act="fab" aria-expanded="${!!UI.fab}" aria-label="Quick actions">${ic('plus')}</button>${UI.fab ? `<div class="fabmenu">${[['newevent','calendar','New event'],['newsplit','receipt','Split a bill'],['newreminder','alarm','Reminder'],['newgroup','users','New group'],['newdm','chat','New message']].map(([a, i, l], k) => `<button data-act="${a}" style="animation-delay:${k * .04}s"><span>${l}</span><i>${ic(i)}</i></button>`).join('')}</div>` : ''}` : '';
     document.getElementById('shell').innerHTML = `${rail}<main class="${enter ? 'enter' : ''}"><header class="top ${v.topClass || ''}" style="${v.topStyle || ''}">${v.head}</header>${v.tabs || ''}${v.body}${fab}</main>${tabbar}`;
     UI.pop = null; UI.sent = false; UI.popGroup = null;
@@ -1386,7 +1419,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'back': UI.view = 'groups'; UI.group = null; UI.dm = null; break;
       case 'gtab': UI.gtab = d.t; UI.toBottom = true; UI.resetScroll = true; break;
       case 'hidewelcome': UI.welcome = false; break;
-      case 'members': UI.sheet = { kind: 'members' }; break;
+      case 'members': UI.sheet = null; UI.modal = null; if (UI.view === 'group') { UI.gtab = 'people'; UI.resetScroll = true; } break;
       case 'fab': UI.fab = !UI.fab; break;
       case 'dm': openDm(d.p); break;
       case 'newdm': UI.menu = false; UI.sheet = { kind: 'newdm' }; break;
@@ -1396,7 +1429,7 @@ button.person:hover .ring.add { border-color: var(--accent); }
       case 'doremove': { const g = grp(d.g), p = d.p; g.members = g.members.filter(x => x !== p); g.hangout = g.hangout.filter(x => x !== p);
         S.events.filter(e => e.group === g.id).forEach(e => ['going','maybe','cant'].forEach(k => e[k] = e[k].filter(x => x !== p)));
         S.messages[g.id].push({ id: uid(), sys: `You removed ${nameOf(p)} from ${g.name}`, ts: Date.now() });
-        UI.sheet = { kind: 'members' }; orbitFx(p, 'out'); return toast(`${nameOf(p)} removed from your orbit`); }
+        UI.sheet = null; orbitFx(p, 'out'); return toast(`${nameOf(p)} removed from your orbit`); }
       case 'addmember': { const g = grp(UI.group), p = d.p; if (!g.members.includes(p)) g.members.push(p);
         S.messages[g.id].push({ id: uid(), sys: `You added ${nameOf(p)} to ${g.name}`, ts: Date.now() });
         orbitFx(p, 'in'); return toast(`${nameOf(p)} added to your orbit`); }
