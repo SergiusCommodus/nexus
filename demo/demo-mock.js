@@ -284,7 +284,7 @@
       elseBusy = false;
       var who = F[pick[1]];
       var isComms = pick[3] === 'comms';
-      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: isComms ? 'system' : 'text', body: isComms ? who.display_name + ' opened comms' : pick[2], meta: isComms ? { comms: 'open' } : {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
+      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: isComms ? 'system' : 'text', body: isComms ? who.display_name + ' opened the Comms link' : pick[2], meta: isComms ? { comms: 'open' } : {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
       msgs.push(m); if (!isComms) unread[pick[0]] = (unread[pick[0]] || 0) + 1;
       if (isComms) { var tpc = 'realtime:voice:' + pick[0]; presence[tpc] = presence[tpc] || {}; presence[tpc][who.id] = { user_id: who.id, muted: false, speaking: false, phx_ref: ref() }; }
       dbEvent('messages', 'INSERT', plainRow(m));
@@ -339,8 +339,9 @@
       g.members.push({ user_id: p.id, role: 'member', profile: p });
       var sm = { id: ++nextId, group_id: g.id, user_id: null, kind: 'system', body: 'Jamie added ' + p.display_name, meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm);
       dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
-    comms_open: function (a) { var sm = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'system', body: 'Jamie opened comms', meta: { comms: 'open' }, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm); dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
+    comms_open: function (a) { var sm = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'system', body: 'Jamie opened the Comms link', meta: { comms: 'open' }, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm); dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
     set_group_photo: function (a) { var g = gById[a.g]; if (g) g.photo_url = a.url || null; return null; },
+    set_bill_receipt: function () { return null; },
     set_event_photo: function (a) { events.forEach(function (e) { if (e.id === a.e) e.photo_url = a.url || null; }); return null; },
     delete_my_account: function () { return null; }
   };
