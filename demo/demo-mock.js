@@ -26,7 +26,7 @@
   var person = function (n, name, color, status, planet) {
     return { id: uid(n), display_name: name, username: name.toLowerCase(), color: color, status: status, status_until: status ? until : null, planet: planet || 'auto', avatar_url: null, zelle: name.toLowerCase() + '@example.com' };
   };
-  var me = person(1, 'Jamie', '#7C5CFF', null, 'ring');
+  var me = person(1, 'Jamie', '#7C5CFF', null, 'ring'); me.bio = 'Plans the poker nights. Will bring snacks.';
   var F = {
     maya: person(11, 'Maya', '#D2558E', 'free', 'swirl'),
     theo: person(12, 'Theo', '#17905A', 'free', 'bands'),
@@ -42,7 +42,10 @@
     omar: person(21, 'Omar', '#B34A6A', null, 'bands'),
     ruby: person(22, 'Ruby', '#E0864A', null, 'swirl')
   };
+  F.maya.bio = 'Brunch enthusiast. Usually free on Sundays.'; F.theo.bio = 'Host of poker night. Ask me about the chips.'; F.lena.bio = 'Runs before sunrise. Come to the 5K!';
   var friends = [F.maya, F.theo, F.priya, F.marcus, F.lena, F.diego, F.sofia, F.ben, F.nora, F.kai];
+  // Jamie's own notes: Maya is a favorite, Theo has a nickname.
+  var personNotes = {}; personNotes[F.maya.id] = { favorite: true, nickname: null }; personNotes[F.theo.id] = { favorite: false, nickname: 'T' };
   var everyone = [me].concat(friends, [F.omar, F.ruby]);
   var byId = {}; everyone.forEach(function (p) { byId[p.id] = p; });
   var friendships = friends.map(function (p) { return { user_a: ME, user_b: p.id, requested_by: ME, status: 'accepted' }; });
@@ -155,6 +158,19 @@
   // ---------- realtime (fake socket) ----------
   var sockets = [];
   var channels = {};   // topic -> { join_ref, pcs: [{id, event, table, filter}] }
+  var presence = {};   // topic -> { key: meta }
+  var ref = function () { return Math.random().toString(36).slice(2, 10); };
+  function presenceJoin(topic, key, meta) {
+    presence[topic] = presence[topic] || {}; var m = Object.assign({}, meta, { phx_ref: ref() }); presence[topic][key] = m;
+    var joins = {}; joins[key] = { metas: [m] };
+    push(topic, 'presence_diff', { joins: joins, leaves: {} });
+  }
+  function presenceLeave(topic, key) {
+    var m = presence[topic] && presence[topic][key]; if (!m) return; delete presence[topic][key];
+    var leaves = {}; leaves[key] = { metas: [m] };
+    push(topic, 'presence_diff', { joins: {}, leaves: leaves });
+  }
+  var mayaTimer = null;
   function push(topic, event, payload) {
     var ch = channels[topic];
     var frame = JSON.stringify([ch ? ch.join_ref : null, null, topic, event, payload]);
@@ -195,7 +211,25 @@
       var pcs = ((msg.payload && msg.payload.config && msg.payload.config.postgres_changes) || []).map(function (x, i) { return Object.assign({}, x, { id: 1000 + Object.keys(channels).length * 10 + i }); });
       channels[msg.topic] = { join_ref: msg.join_ref, pcs: pcs };
       reply({ postgres_changes: pcs });
+      if (msg.topic.indexOf('realtime:voice:') === 0) {
+        var state = {}; Object.keys(presence[msg.topic] || {}).forEach(function (k) { state[k] = { metas: [presence[msg.topic][k]] }; });
+        var tp = msg.topic; setTimeout(function () { push(tp, 'presence_state', state); }, 10);
+      }
     } else if (msg.event === 'phx_leave') { delete channels[msg.topic]; reply(); }
+    else if (msg.event === 'presence') {
+      reply();
+      var pl = msg.payload || {};
+      var myKey = (msg.topic.indexOf('realtime:voice:') === 0) ? ME : null;
+      if (myKey && pl.event === 'track') {
+        var tp2 = msg.topic; var fresh = !(presence[tp2] && presence[tp2][ME]);
+        if (!fresh) presenceLeave(tp2, ME);
+        presenceJoin(tp2, ME, pl.payload || {});
+        // Maya hops in shortly after you start the room.
+        if (fresh) { if (mayaTimer) clearTimeout(mayaTimer); mayaTimer = setTimeout(function () { if (presence[tp2] && presence[tp2][ME]) presenceJoin(tp2, F.maya.id, { user_id: F.maya.id, muted: false, speaking: false }); }, 2500); }
+      } else if (myKey && pl.event === 'untrack') {
+        presenceLeave(msg.topic, ME); presenceLeave(msg.topic, F.maya.id); if (mayaTimer) clearTimeout(mayaTimer);
+      }
+    }
     else reply();
   };
   FakeWS.prototype.CONNECTING = 0; FakeWS.prototype.OPEN = 1; FakeWS.prototype.CLOSING = 2; FakeWS.prototype.CLOSED = 3;
@@ -293,6 +327,12 @@
     set_member_role: function () { return null; },
     remove_member: function () { return null; },
     unfriend: function () { return null; },
+    add_to_group: function (a) { var g = gById[a.g], p = byId[a.person]; if (!g || !p) return null; if (g.members.some(function (m) { return m.user_id === p.id; })) throw new Error('They are already in this group');
+      g.members.push({ user_id: p.id, role: 'member', profile: p });
+      var sm = { id: ++nextId, group_id: g.id, user_id: null, kind: 'system', body: 'Jamie added ' + p.display_name, meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm);
+      dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
+    set_group_photo: function (a) { var g = gById[a.g]; if (g) g.photo_url = a.url || null; return null; },
+    set_event_photo: function (a) { events.forEach(function (e) { if (e.id === a.e) e.photo_url = a.url || null; }); return null; },
     delete_my_account: function () { return null; }
   };
 
@@ -303,6 +343,10 @@
       if (id) return everyone.filter(function (p) { return p.id === id; });
       if (ids) return everyone.filter(function (p) { return ids.indexOf(p.id) >= 0; });
       return everyone;
+    }
+    if (t === 'person_notes') {
+      if (method === 'POST') { var pn = Array.isArray(body) ? body[0] : body; personNotes[pn.person] = { favorite: !!pn.favorite, nickname: pn.nickname || null }; return [pn]; }
+      return Object.keys(personNotes).map(function (k) { return { person: k, favorite: personNotes[k].favorite, nickname: personNotes[k].nickname }; });
     }
     if (t === 'friendships') return friendships;
     if (t === 'groups') { var gid = eqv(u, 'id'); var list = groups.filter(function (g) { return !gid || g.id === gid; }); return list.map(function (g) { return Object.assign({}, g, { group_members: g.members.map(function (m) { return { user_id: m.user_id, role: m.role, profiles: m.profile }; }) }); }); }
@@ -377,7 +421,7 @@
         if (path.indexOf('/functions/v1/') === 0) return resolve(json({}));
         if (path.indexOf('/rest/v1/rpc/') === 0) {
           var fn = path.split('/').pop(), f = RPC[fn];
-          return resolve(json(f ? f(body || {}) : null));
+          try { return resolve(json(f ? f(body || {}) : null)); } catch (err) { return resolve(json({ message: String(err.message || err), code: 'P0001' }, 400)); }
         }
         var t = path.split('/').pop();
         var out = table(t, method, u, body, single);
