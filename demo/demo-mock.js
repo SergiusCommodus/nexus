@@ -47,7 +47,9 @@
   // Jamie's own notes: Maya is a favorite, Theo has a nickname.
   var personNotes = {}; personNotes[F.maya.id] = { favorite: true, nickname: null }; personNotes[F.theo.id] = { favorite: false, nickname: 'T' };
   var everyone = [me].concat(friends, [F.omar, F.ruby]);
-  var byId = {}; everyone.forEach(function (p) { byId[p.id] = p; });
+  // People on Astro you don't know yet, so the search has something to find.
+  var strangers = [person(31, 'Mason', '#4F7BE8', null, 'craters'), person(32, 'Maddie', '#D86A9A', null, 'glow'), person(33, 'Tess', '#2FA87A', null, 'ring'), person(34, 'Leo', '#C4651F', null, 'bands'), person(35, 'Priyanka', '#8A5BD6', null, 'swirl')];
+  var byId = {}; everyone.concat(strangers).forEach(function (p) { byId[p.id] = p; });
   var friendships = friends.map(function (p) { return { user_a: ME, user_b: p.id, requested_by: ME, status: 'accepted' }; });
   friendships.push({ user_a: ME, user_b: F.omar.id, requested_by: F.omar.id, status: 'pending' });
 
@@ -316,6 +318,8 @@
     friend_respond: function (a) { friendships.forEach(function (f) { if (f.user_b === a.other || f.user_a === a.other) f.status = a.accept ? 'accepted' : 'declined'; }); if (a.accept && friends.indexOf(byId[a.other]) < 0) friends.push(byId[a.other]); return null; },
     friend_request: function () { return null; },
     find_user: function () { return []; },
+    // Typeahead: everyone on Astro whose @username starts with what you typed (strangers included).
+    search_users: function (a) { var q = String(a.q || '').toLowerCase(); if (q.length < 2) return []; return everyone.concat(strangers).filter(function (p) { return p.id !== ME && p.username.indexOf(q) === 0; }).sort(function (x, y) { return (y.username === q) - (x.username === q) || x.username.length - y.username.length; }).slice(0, 8); },
     create_event: function (a) { var e = { id: 'e0000000-0000-4000-8000-' + String(Date.now()).slice(-12), group_id: a.g, title: a.new_title || 'Plan', icon: a.new_icon || 'calendar', starts_at: a.new_starts || inH(24), location: a.new_location || null, notes: a.new_notes || null, repeat: a.new_repeat || null, created_by: ME };
       var ec = { id: ++nextId, group_id: e.group_id, user_id: ME, kind: 'event', body: e.title, meta: { event_id: e.id, title: e.title, icon: e.icon, starts_at: e.starts_at, location: e.location }, created_at: new Date().toISOString(), likes: [] }; msgs.push(ec); events.push(e); rsvps.push({ event_id: e.id, user_id: ME, response: 'going' }); return e.id; },
     update_event: function () { return null; },
