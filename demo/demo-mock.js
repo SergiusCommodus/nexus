@@ -98,19 +98,23 @@
 
   var nextId = 1000;
   var msgs = [];
-  var M = function (g, who, kind, body, meta, min, likes) {
-    msgs.push({ id: ++nextId, group_id: g, user_id: who ? who.id : null, kind: kind, body: body, meta: meta || {}, created_at: ago(min), likes: (likes || []).map(function (p) { return p.id; }) });
+  // likes: people who hearted it, or [person, 'thumbs'|'emphasis'] pairs. reply: id of the message it answers.
+  var M = function (g, who, kind, body, meta, min, likes, reply) {
+    var reacts = {};
+    (likes || []).forEach(function (x) { if (Array.isArray(x)) reacts[x[0].id] = x[1]; else reacts[x.id] = 'heart'; });
+    msgs.push({ id: ++nextId, group_id: g, user_id: who ? who.id : null, kind: kind, body: body, meta: meta || {}, created_at: ago(min), reacts: reacts, reply_to: reply || null });
+    return nextId;
   };
   M(CREW, null, 'system', 'Jamie made The Crew', {}, 60 * 24 * 9);
-  M(CREW, F.theo, 'text', 'Poker at my place tonight?', null, 190);
+  var POKER = M(CREW, F.theo, 'text', 'Poker at my place tonight?', null, 190, [[F.diego, 'emphasis'], [F.kai, 'thumbs']]);
   M(CREW, F.theo, 'event', 'Poker night', { event_id: events[0].id, title: 'Poker night', icon: 'game', starts_at: events[0].starts_at, location: "Theo's place" }, 189);
-  M(CREW, F.maya, 'text', "I'm in 🙌", null, 150, [F.theo, me]);
-  M(CREW, F.marcus, 'text', 'Might be late, finishing a match', null, 120);
+  M(CREW, F.maya, 'text', "I'm in 🙌", null, 150, [F.theo, me], POKER);
+  M(CREW, F.marcus, 'text', 'Might be late, finishing a match', null, 120, [[F.theo, 'thumbs']], POKER);
   M(CREW, F.diego, 'gif', null, GIF_GO, 95, [F.maya]);
   M(CREW, F.maya, 'bill', 'Tacos at Sofia', { bill_id: bills[0].id, title: 'Tacos at Sofia', total_cents: 11520, people: 4, paid_by: F.maya.id, paid_by_name: 'Maya' }, 60);
   M(CREW, F.kai, 'text', 'Who has the chips?', null, 12);
   M(BRUNCH, F.priya, 'text', 'Same time Sunday?', null, 600);
-  M(BRUNCH, F.sofia, 'text', 'Yes please. Juniper again?', null, 590, [F.priya]);
+  M(BRUNCH, F.sofia, 'text', 'Yes please. Juniper again?', null, 590, [[F.priya, 'thumbs']]);
   M(BRUNCH, F.priya, 'event', 'Sunday brunch', { event_id: events[1].id, title: 'Sunday brunch', icon: 'coffee', starts_at: events[1].starts_at, location: 'Juniper Cafe' }, 585);
   M(BRUNCH, F.lena, 'gif', null, GIF_CAT, 200);
   M(DMMAYA, F.maya, 'text', 'Are you coming tonight?', null, 40);
@@ -129,7 +133,8 @@
   var eqv = function (u, k) { var v = u.searchParams.get(k); return v && v.indexOf('eq.') === 0 ? decodeURIComponent(v.slice(3)) : null; };
   var inv = function (u, k) { var v = u.searchParams.get(k); if (!v || v.indexOf('in.(') !== 0) return null; return v.slice(4, -1).split(',').map(function (x) { return x.replace(/"/g, ''); }); };
   var lastOf = function (g) { var l = null; msgs.forEach(function (m) { if (m.group_id === g) l = m; }); return l; };
-  var rowMsg = function (m) { return { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at, message_likes: m.likes.map(function (u) { return { user_id: u }; }) }; };
+  var rowMsg = function (m) { return { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at, reply_to: m.reply_to || null, message_likes: Object.keys(m.reacts).map(function (u) { return { user_id: u, reaction: m.reacts[u] }; }) }; };
+  var plainRow = function (m) { return { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at, reply_to: m.reply_to || null }; };
   var eventRow = function (e) {
     return Object.assign({}, e, { groups: gref(e.group_id), rsvps: rsvps.filter(function (r) { return r.event_id === e.id; }).map(function (r) { return { user_id: r.user_id, response: r.response, profiles: byId[r.user_id] }; }) });
   };
@@ -202,7 +207,7 @@
     q: ['Good question 🤔', 'Yes!', 'Probably, let me check', "I think so, let's do it"]
   };
   var replyN = 0;
-  function friendReplies(groupId, mine) {
+  function friendReplies(groupId, mine, mineId) {
     var g = gById[groupId]; if (!g) return;
     var others = g.members.filter(function (x) { return x.user_id !== ME && byId[x.user_id] && friends.indexOf(byId[x.user_id]) >= 0; });
     if (!others.length) return;
@@ -213,10 +218,18 @@
     setTimeout(function () { typingSignal(groupId, who, true); }, 3300);
     setTimeout(function () {
       typingSignal(groupId, who, false);
-      var m = { id: ++nextId, group_id: groupId, user_id: who.id, kind: 'text', body: text, meta: {}, created_at: new Date().toISOString(), likes: [] };
+      // Every other time, the friend answers your message as a reply.
+      var m = { id: ++nextId, group_id: groupId, user_id: who.id, kind: 'text', body: text, meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: replyN % 2 === 0 && mineId ? mineId : null };
       msgs.push(m);
-      dbEvent('messages', 'INSERT', { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at });
+      dbEvent('messages', 'INSERT', plainRow(m));
     }, 4200 + text.length * 40);
+    // ...and someone else reacts to what you said.
+    var reactor = others.length > 1 ? byId[others[(replyN + 1) % others.length].user_id] : null;
+    if (reactor && mineId) setTimeout(function () {
+      var r = ['thumbs', 'heart', 'emphasis'][replyN % 3];
+      msgs.forEach(function (x) { if (x.id === mineId) x.reacts[reactor.id] = r; });
+      dbEvent('message_likes', 'INSERT', { message_id: mineId, user_id: reactor.id, reaction: r });
+    }, 2200);
   }
   // While you're chatting, someone else texts you from another chat (shows the new message banner).
   var ELSEWHERE = [
@@ -232,9 +245,9 @@
     setTimeout(function () {
       elseBusy = false;
       var who = F[pick[1]];
-      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: 'text', body: pick[2], meta: {}, created_at: new Date().toISOString(), likes: [] };
+      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: 'text', body: pick[2], meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
       msgs.push(m); unread[pick[0]] = (unread[pick[0]] || 0) + 1;
-      dbEvent('messages', 'INSERT', { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at });
+      dbEvent('messages', 'INSERT', plainRow(m));
     }, 9000);
   }
 
@@ -296,10 +309,12 @@
     if (t === 'group_members') { var g2 = gById[eqv(u, 'group_id')]; return g2 ? g2.members.map(function (m) { return { user_id: m.user_id, role: m.role, profiles: m.profile }; }) : []; }
     if (t === 'messages') {
       if (method === 'POST') {
-        var m = { id: ++nextId, group_id: body.group_id, user_id: ME, kind: body.kind || 'text', body: body.body == null ? null : body.body, meta: body.meta || {}, created_at: new Date().toISOString(), likes: [] };
-        msgs.push(m); setTimeout(function () { friendReplies(m.group_id, m.body); textFromElsewhere(m.group_id); }, 50);
-        return [{ id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at }];
+        var m = { id: ++nextId, group_id: body.group_id, user_id: ME, kind: body.kind || 'text', body: body.body == null ? null : body.body, meta: body.meta || {}, created_at: new Date().toISOString(), reacts: {}, reply_to: body.reply_to || null };
+        msgs.push(m); setTimeout(function () { friendReplies(m.group_id, m.body, m.id); textFromElsewhere(m.group_id); }, 50);
+        return [plainRow(m)];
       }
+      var one = eqv(u, 'id');
+      if (one) return msgs.filter(function (x) { return String(x.id) === one; }).map(plainRow);
       var g3 = eqv(u, 'group_id'), lt = u.searchParams.get('created_at');
       var gg = gById[g3];
       var rows = msgs.filter(function (x) { return x.group_id === g3 && (!gg || !gg.cleared || x.created_at > gg.cleared); });
@@ -307,8 +322,9 @@
       return rows.slice().reverse().slice(0, Number(u.searchParams.get('limit') || 60)).map(rowMsg);
     }
     if (t === 'message_likes') {
-      var mid = Number((body && body.message_id) || eqv(u, 'message_id'));
-      msgs.forEach(function (x) { if (x.id === mid) { if (method === 'POST') { if (x.likes.indexOf(ME) < 0) x.likes.push(ME); } else x.likes = x.likes.filter(function (k) { return k !== ME; }); } });
+      var lb = Array.isArray(body) ? body[0] : body;
+      var mid = Number((lb && lb.message_id) || eqv(u, 'message_id'));
+      msgs.forEach(function (x) { if (x.id === mid) { if (method === 'DELETE') delete x.reacts[ME]; else x.reacts[ME] = (lb && lb.reaction) || 'heart'; } });
       return [];
     }
     if (t === 'events') {
