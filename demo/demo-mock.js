@@ -218,6 +218,26 @@
       dbEvent('messages', 'INSERT', { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at });
     }, 4200 + text.length * 40);
   }
+  // While you're chatting, someone else texts you from another chat (shows the new message banner).
+  var ELSEWHERE = [
+    [DMTHEO, 'theo', 'Still on for tonight? I got the good chips'],
+    [BRUNCH, 'sofia', 'Booked a table for 6 on Sunday ☕'],
+    [DMMAYA, 'maya', 'Wait, who is bringing the cards??'],
+    [RUN, 'lena', 'Rain tomorrow, moving the 5K to Sunday']
+  ];
+  var elseN = 0, elseBusy = false;
+  function textFromElsewhere(fromGroup) {
+    if (elseBusy) return; elseBusy = true;
+    var pick = ELSEWHERE.filter(function (x) { return x[0] !== fromGroup; })[elseN++ % 3];
+    setTimeout(function () {
+      elseBusy = false;
+      var who = F[pick[1]];
+      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: 'text', body: pick[2], meta: {}, created_at: new Date().toISOString(), likes: [] };
+      msgs.push(m); unread[pick[0]] = (unread[pick[0]] || 0) + 1;
+      dbEvent('messages', 'INSERT', { id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at });
+    }, 9000);
+  }
+
   // A little life while you look around: Maya starts typing to you a few seconds in.
   setTimeout(function () { typingSignal(DMMAYA, F.maya, true); }, 6000);
   setTimeout(function () { typingSignal(DMMAYA, F.maya, false); }, 11000);
@@ -277,7 +297,7 @@
     if (t === 'messages') {
       if (method === 'POST') {
         var m = { id: ++nextId, group_id: body.group_id, user_id: ME, kind: body.kind || 'text', body: body.body == null ? null : body.body, meta: body.meta || {}, created_at: new Date().toISOString(), likes: [] };
-        msgs.push(m); setTimeout(function () { friendReplies(m.group_id, m.body); }, 50);
+        msgs.push(m); setTimeout(function () { friendReplies(m.group_id, m.body); textFromElsewhere(m.group_id); }, 50);
         return [{ id: m.id, group_id: m.group_id, user_id: m.user_id, kind: m.kind, body: m.body, meta: m.meta, created_at: m.created_at }];
       }
       var g3 = eqv(u, 'group_id'), lt = u.searchParams.get('created_at');
