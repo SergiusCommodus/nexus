@@ -270,17 +270,19 @@
     [DMTHEO, 'theo', 'Still on for tonight? I got the good chips'],
     [BRUNCH, 'sofia', 'Booked a table for 6 on Sunday ☕'],
     [DMMAYA, 'maya', 'Wait, who is bringing the cards??'],
-    [RUN, 'lena', 'Rain tomorrow, moving the 5K to Sunday']
+    [RUN, 'lena', 'Rain tomorrow, moving the 5K to Sunday', 'comms']
   ];
   var elseN = 0, elseBusy = false;
   function textFromElsewhere(fromGroup) {
     if (elseBusy) return; elseBusy = true;
-    var pick = ELSEWHERE.filter(function (x) { return x[0] !== fromGroup; })[elseN++ % 3];
+    var pick = ELSEWHERE.filter(function (x) { return x[0] !== fromGroup; })[elseN++ % 4];
     setTimeout(function () {
       elseBusy = false;
       var who = F[pick[1]];
-      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: 'text', body: pick[2], meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
-      msgs.push(m); unread[pick[0]] = (unread[pick[0]] || 0) + 1;
+      var isComms = pick[3] === 'comms';
+      var m = { id: ++nextId, group_id: pick[0], user_id: who.id, kind: isComms ? 'system' : 'text', body: isComms ? who.display_name + ' opened comms' : pick[2], meta: isComms ? { comms: 'open' } : {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
+      msgs.push(m); if (!isComms) unread[pick[0]] = (unread[pick[0]] || 0) + 1;
+      if (isComms) { var tpc = 'realtime:voice:' + pick[0]; presence[tpc] = presence[tpc] || {}; presence[tpc][who.id] = { user_id: who.id, muted: false, speaking: false, phx_ref: ref() }; }
       dbEvent('messages', 'INSERT', plainRow(m));
     }, 9000);
   }
@@ -331,6 +333,7 @@
       g.members.push({ user_id: p.id, role: 'member', profile: p });
       var sm = { id: ++nextId, group_id: g.id, user_id: null, kind: 'system', body: 'Jamie added ' + p.display_name, meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm);
       dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
+    comms_open: function (a) { var sm = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'system', body: 'Jamie opened comms', meta: { comms: 'open' }, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm); dbEvent('messages', 'INSERT', plainRow(sm)); return null; },
     set_group_photo: function (a) { var g = gById[a.g]; if (g) g.photo_url = a.url || null; return null; },
     set_event_photo: function (a) { events.forEach(function (e) { if (e.id === a.e) e.photo_url = a.url || null; }); return null; },
     delete_my_account: function () { return null; }
