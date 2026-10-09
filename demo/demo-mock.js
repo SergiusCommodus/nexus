@@ -451,7 +451,8 @@
     var app = m[1] === 'venmo.com' ? 'Venmo' : m[1] === 'paypal.me' ? 'PayPal' : 'Cash App';
     var amt = (/amount=([0-9.]+)/.exec(url) || /\/([0-9.]+)(USD)?$/.exec(url) || [])[1] || '';
     var box = document.createElement('div');
-    box.textContent = 'Demo: in the real app this opens ' + app + (amt ? ' to pay $' + amt : '') + ' with the note filled in.';
+    var ask = /txn=charge/.test(url);
+    box.textContent = 'Demo: in the real app this opens ' + app + (amt ? (ask ? ' with a $' + amt + ' request' : ' to pay $' + amt) : '') + ' and the note filled in.';
     box.setAttribute('style', 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:99999;max-width:320px;padding:12px 16px;border-radius:14px;background:#1B2252;color:#EEF0FF;font:600 14px system-ui;border:1px solid #343C78;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center');
     document.body.appendChild(box); setTimeout(function () { box.remove(); }, 3500);
     return null;
