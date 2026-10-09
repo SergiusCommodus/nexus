@@ -42,6 +42,8 @@
     omar: person(21, 'Omar', '#B34A6A', null, 'bands'),
     ruby: person(22, 'Ruby', '#E0864A', null, 'swirl')
   };
+  // Payment apps for the Wallet demo. Links never open for real in the demo (see openPayDemo below).
+  F.maya.venmo = 'maya-demo'; F.maya.paypal = 'mayademo'; F.theo.cashapp = 'theodemo'; F.theo.venmo = 'theo-demo'; F.priya.paypal = 'priyademo'; F.lena.venmo = 'lena-demo'; F.lena.cashapp = 'lenademo';
   F.maya.bio = 'Brunch enthusiast. Usually free on Sundays.'; F.theo.bio = 'Host of poker night. Ask me about the chips.'; F.lena.bio = 'Runs before sunrise. Come to the 5K!';
   var friends = [F.maya, F.theo, F.priya, F.marcus, F.lena, F.diego, F.sofia, F.ben, F.nora, F.kai];
   // Jamie's own notes: Maya is a favorite, Theo has a nickname.
@@ -438,6 +440,21 @@
         resolve(json(out, method === 'POST' ? 201 : 200, { 'Content-Range': '0-' + Math.max(0, (Array.isArray(out) ? out.length : 1) - 1) + '/*' }));
       }, 60);
     });
+  };
+
+  // ---------- payment links ----------
+  // In the demo, Pay with Venmo / PayPal / Cash App shows what would open instead of sending anyone to a real account.
+  var realOpen = window.open;
+  window.open = function (url) {
+    var m = /^https:\/\/(venmo\.com|paypal\.me|cash\.app)\//.exec(String(url || ''));
+    if (!m) return realOpen.apply(window, arguments);
+    var app = m[1] === 'venmo.com' ? 'Venmo' : m[1] === 'paypal.me' ? 'PayPal' : 'Cash App';
+    var amt = (/amount=([0-9.]+)/.exec(url) || /\/([0-9.]+)(USD)?$/.exec(url) || [])[1] || '';
+    var box = document.createElement('div');
+    box.textContent = 'Demo: in the real app this opens ' + app + (amt ? ' to pay $' + amt : '') + ' with the note filled in.';
+    box.setAttribute('style', 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:99999;max-width:320px;padding:12px 16px;border-radius:14px;background:#1B2252;color:#EEF0FF;font:600 14px system-ui;border:1px solid #343C78;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center');
+    document.body.appendChild(box); setTimeout(function () { box.remove(); }, 3500);
+    return null;
   };
 
   // ---------- demo tag ----------
