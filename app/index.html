@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
     <title>Astro</title>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
@@ -23,7 +23,37 @@
         flex: 1;
       }
     </style>
-  <link rel="icon" href="/app/favicon.ico"/></head>
+  <link rel="icon" href="/app/favicon.ico"/>
+    <meta name="theme-color" content="#04050C" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Astro" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="apple-touch-icon" href="/app/apple-touch-icon.png" />
+    <link rel="manifest" href="/app/manifest.json" />
+    <style id="astro-fit">
+      html, body { background: #04050C; height: 100%; height: 100dvh; margin: 0; overscroll-behavior: none; }
+      body { position: fixed; inset: 0; width: 100%; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+      #root { height: 100%; height: 100dvh; width: 100%; touch-action: manipulation; }
+      input, textarea, select { font-size: 16px; }
+      input:focus, textarea:focus { outline: none; }
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      @media (min-width: 700px) {
+        body { background: radial-gradient(1200px 700px at 50% -10%, #1a1446 0%, #04050C 60%); }
+        #root { max-width: 560px; margin: 0 auto; border-left: 1px solid rgba(255,255,255,.07); border-right: 1px solid rgba(255,255,255,.07); box-shadow: 0 0 80px rgba(124,92,255,.10); background: #04050C; }
+      }
+    </style>
+    <script id="astro-vv">
+      /* iPhone Safari: keep the app sized to the visible area so the keyboard never covers the message box */
+      (function(){var vv=window.visualViewport;if(!vv)return;var ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!ios)return;
+      function fit(){var r=document.getElementById('root');if(!r)return;var kb=window.innerHeight-vv.height>120;r.style.height=kb?vv.height+'px':'';if(kb)window.scrollTo(0,0);}
+      vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);})();
+    </script>
+</head>
 
   <body>
     <!-- Use static rendering with Expo Router to support running without JavaScript. -->
@@ -32,6 +62,6 @@
     </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/app/_expo/static/js/web/entry-fb6f3dc3ab6f908cd537b6930a7258ab.js" defer></script>
+  <script src="/app/_expo/static/js/web/entry-0864316b3db8a51d56b4e4b44f13e4e9.js" defer></script>
 </body>
 </html>
