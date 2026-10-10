@@ -295,6 +295,16 @@
   setTimeout(function () { typingSignal(DMMAYA, F.maya, true); }, 6000);
   setTimeout(function () { typingSignal(DMMAYA, F.maya, false); }, 11000);
 
+  // ---------- Signal ----------
+  // Jamie's friends answer a few seconds after a signal goes out; Theo sends one to Jamie a little after the orbit loads.
+  var signals = [];
+  function sigRow(sg) { return { id: sg.id, owner: sg.owner, text: sg.text, when_text: sg.when_text, status: sg.status, event_id: sg.event_id, group_id: sg.group_id, created_at: sg.created_at, expires_at: sg.expires_at, signal_targets: sg.targets.map(function (x) { return { user_id: x.user_id, answer: x.answer, answered_at: x.answered_at, seen_at: x.seen_at }; }) }; }
+  function answerLater(sg, uid, ans, ms) { setTimeout(function () { if (sg.status !== 'open') return; sg.targets.forEach(function (x) { if (x.user_id === uid) { x.answer = ans; x.answered_at = new Date().toISOString(); } }); dbEvent('signal_targets', 'UPDATE', { signal_id: sg.id, user_id: uid, answer: ans }); }, ms); }
+  setTimeout(function () {
+    var sg = { id: 's0000000-0000-4000-8000-000000000001', owner: F.theo.id, text: 'Poker warm up at 7?', when_text: 'Tonight', status: 'open', event_id: null, group_id: null, created_at: new Date().toISOString(), expires_at: new Date(now + 8 * 3600000).toISOString(), targets: [{ user_id: ME, answer: null, answered_at: null, seen_at: null }, { user_id: F.marcus.id, answer: 'in', answered_at: new Date().toISOString(), seen_at: null }] };
+    signals.push(sg); dbEvent('signal_targets', 'INSERT', { signal_id: sg.id, user_id: ME, answer: null });
+  }, 14000);
+
   // ---------- database answers ----------
   var b64 = function (o) { return btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
   var exp = Math.floor(now / 1000) + 7 * 86400;
@@ -320,6 +330,30 @@
     friend_respond: function (a) { friendships.forEach(function (f) { if (f.user_b === a.other || f.user_a === a.other) f.status = a.accept ? 'accepted' : 'declined'; }); if (a.accept && friends.indexOf(byId[a.other]) < 0) friends.push(byId[a.other]); return null; },
     friend_request: function () { return null; },
     find_user: function () { return []; },
+    send_signal: function (a) {
+      signals.forEach(function (x) { if (x.owner === ME && x.status === 'open') x.status = 'closed'; });
+      var sg = { id: 's0000000-0000-4000-8000-' + String(Date.now()).slice(-12), owner: ME, text: a.msg, when_text: a.when_txt || null, status: 'open', event_id: null, group_id: null, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 8 * 3600000).toISOString(),
+        targets: (a.targets || []).filter(function (u) { return byId[u] && u !== ME; }).map(function (u) { return { user_id: u, answer: null, answered_at: null, seen_at: null }; }) };
+      if (!sg.targets.length) throw new Error('Pick at least one friend');
+      signals.push(sg);
+      var order = sg.targets.map(function (x) { return x.user_id; });
+      order.forEach(function (u, i) { answerLater(sg, u, i % 3 === 2 ? 'out' : 'in', 2500 + i * 1800); });
+      return sg.id;
+    },
+    answer_signal: function (a) { signals.forEach(function (sg) { if (sg.id === a.s) sg.targets.forEach(function (x) { if (x.user_id === ME) { x.answer = a.ans; x.answered_at = a.ans ? new Date().toISOString() : null; } }); }); return null; },
+    seen_signal: function () { return null; },
+    close_signal: function (a) { signals.forEach(function (sg) { if (sg.id === a.s && sg.owner === ME) sg.status = 'closed'; }); return null; },
+    signal_to_plan: function (a) {
+      var sg = signals.filter(function (x) { return x.id === a.s; })[0]; if (!sg) throw new Error('Signal not found');
+      var ins = sg.targets.filter(function (x) { return x.answer === 'in'; }).map(function (x) { return byId[x.user_id]; });
+      var g = G('aaaaaaaa-0000-4000-8000-0000000003' + String(10 + groups.length), 'group', a.group_name || sg.text, a.new_icon || 'spark', '#7C5CFF', [me].concat(ins), 'SIG' + groups.length + 'AB'); groups.push(g); gById[g.id] = g;
+      var e = { id: 'e0000000-0000-4000-8000-' + String(Date.now()).slice(-12), group_id: g.id, title: a.new_title || sg.text, icon: a.new_icon || 'spark', starts_at: a.new_starts || inH(2), location: a.new_location || null, notes: null, repeat: null, created_by: ME };
+      events.push(e); [me].concat(ins).forEach(function (p) { rsvps.push({ event_id: e.id, user_id: p.id, response: 'going' }); });
+      msgs.push({ id: ++nextId, group_id: g.id, user_id: ME, kind: 'system', body: 'Jamie sent a signal: "' + sg.text + '". ' + ins.length + ' said In.', meta: { signal: sg.id }, created_at: new Date().toISOString(), reacts: {}, reply_to: null });
+      msgs.push({ id: ++nextId, group_id: g.id, user_id: ME, kind: 'event', body: e.title, meta: { event_id: e.id, title: e.title, icon: e.icon, starts_at: e.starts_at, when: a.when_text || '' }, created_at: new Date().toISOString(), reacts: {}, reply_to: null });
+      sg.status = 'planned'; sg.event_id = e.id; sg.group_id = g.id;
+      return e.id;
+    },
     // Typeahead: everyone on Astro whose @username starts with what you typed (strangers included).
     search_users: function (a) { var q = String(a.q || '').toLowerCase(); if (q.length < 2) return []; return everyone.concat(strangers).filter(function (p) { return p.id !== ME && p.username.indexOf(q) === 0; }).sort(function (x, y) { return (y.username === q) - (x.username === q) || x.username.length - y.username.length; }).slice(0, 8); },
     create_event: function (a) { var e = { id: 'e0000000-0000-4000-8000-' + String(Date.now()).slice(-12), group_id: a.g, title: a.new_title || 'Plan', icon: a.new_icon || 'calendar', starts_at: a.new_starts || inH(24), location: a.new_location || null, notes: a.new_notes || null, repeat: a.new_repeat || null, created_by: ME };
@@ -354,6 +388,7 @@
       if (ids) return everyone.filter(function (p) { return ids.indexOf(p.id) >= 0; });
       return everyone;
     }
+    if (t === 'signals') return signals.filter(function (sg) { return sg.owner === ME || sg.targets.some(function (x) { return x.user_id === ME; }); }).map(sigRow);
     if (t === 'person_notes') {
       if (method === 'POST') { var pn = Array.isArray(body) ? body[0] : body; personNotes[pn.person] = { favorite: !!pn.favorite, nickname: pn.nickname || null }; return [pn]; }
       return Object.keys(personNotes).map(function (k) { return { person: k, favorite: personNotes[k].favorite, nickname: personNotes[k].nickname }; });
