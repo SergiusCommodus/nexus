@@ -1,19 +1,422 @@
 {
+ "base": "https://astrosocial.io/radio/",
+ "built": "2026-10-10",
  "stations": [
+  {
+   "id": "astro-fm",
+   "name": "Astro FM",
+   "tagline": "Every track, shuffled. Free for everyone.",
+   "color": "#7C5CFF",
+   "plus": false,
+   "tracks": [
+    {
+     "id": "astro-ambient-ambient-orbit",
+     "title": "Ambient Orbit",
+     "artist": "Astro",
+     "seconds": 352.0,
+     "m4a": "astro-ambient/ambient-orbit.m4a",
+     "mp3": "astro-ambient/ambient-orbit.mp3"
+    },
+    {
+     "id": "deep-space-radar-pings",
+     "title": "Radar Pings",
+     "artist": "Astro",
+     "seconds": 249.2,
+     "m4a": "deep-space/radar-pings.m4a",
+     "mp3": "deep-space/radar-pings.mp3"
+    },
+    {
+     "id": "deep-space-sending-pings",
+     "title": "Sending Pings",
+     "artist": "Astro",
+     "seconds": 232.6,
+     "m4a": "deep-space/sending-pings.m4a",
+     "mp3": "deep-space/sending-pings.mp3"
+    },
+    {
+     "id": "deep-space-vast-spacious-reverb",
+     "title": "Vast Spacious Reverb",
+     "artist": "Astro",
+     "seconds": 209.1,
+     "m4a": "deep-space/vast-spacious-reverb.m4a",
+     "mp3": "deep-space/vast-spacious-reverb.mp3"
+    },
+    {
+     "id": "space-age-chrome-soda-shop",
+     "title": "Chrome Soda Shop",
+     "artist": "Astro",
+     "seconds": 183.6,
+     "m4a": "space-age/chrome-soda-shop.m4a",
+     "mp3": "space-age/chrome-soda-shop.mp3"
+    },
+    {
+     "id": "space-age-cocktail-galaxy",
+     "title": "Cocktail Galaxy",
+     "artist": "Astro",
+     "seconds": 177.6,
+     "m4a": "space-age/cocktail-galaxy.m4a",
+     "mp3": "space-age/cocktail-galaxy.mp3"
+    },
+    {
+     "id": "space-age-cocktail-in-orbit",
+     "title": "Cocktail in Orbit",
+     "artist": "Astro",
+     "seconds": 154.0,
+     "m4a": "space-age/cocktail-in-orbit.m4a",
+     "mp3": "space-age/cocktail-in-orbit.mp3"
+    },
+    {
+     "id": "space-age-orbiting-cocktail-lounge",
+     "title": "Orbiting Cocktail Lounge",
+     "artist": "Astro",
+     "seconds": 182.4,
+     "m4a": "space-age/orbiting-cocktail-lounge.m4a",
+     "mp3": "space-age/orbiting-cocktail-lounge.mp3"
+    },
+    {
+     "id": "space-age-retro-space-age",
+     "title": "Retro Space Age",
+     "artist": "Astro",
+     "seconds": 194.8,
+     "m4a": "space-age/retro-space-age.m4a",
+     "mp3": "space-age/retro-space-age.mp3"
+    },
+    {
+     "id": "space-age-rocket-whoosh",
+     "title": "Rocket Whoosh",
+     "artist": "Astro",
+     "seconds": 183.6,
+     "m4a": "space-age/rocket-whoosh.m4a",
+     "mp3": "space-age/rocket-whoosh.mp3"
+    },
+    {
+     "id": "space-age-space-age-dance",
+     "title": "Space Age Dance",
+     "artist": "Astro",
+     "seconds": 188.8,
+     "m4a": "space-age/space-age-dance.m4a",
+     "mp3": "space-age/space-age-dance.mp3"
+    },
+    {
+     "id": "space-age-space-age-juke",
+     "title": "Space Age Juke",
+     "artist": "Astro",
+     "seconds": 172.4,
+     "m4a": "space-age/space-age-juke.m4a",
+     "mp3": "space-age/space-age-juke.mp3"
+    },
+    {
+     "id": "space-age-space-age-lounge",
+     "title": "Space Age Lounge",
+     "artist": "Astro",
+     "seconds": 178.0,
+     "m4a": "space-age/space-age-lounge.m4a",
+     "mp3": "space-age/space-age-lounge.mp3"
+    },
+    {
+     "id": "space-age-space-age-sway",
+     "title": "Space Age Sway",
+     "artist": "Astro",
+     "seconds": 197.2,
+     "m4a": "space-age/space-age-sway.m4a",
+     "mp3": "space-age/space-age-sway.mp3"
+    },
+    {
+     "id": "space-age-space-age-waltz",
+     "title": "Space Age Waltz",
+     "artist": "Astro",
+     "seconds": 176.2,
+     "m4a": "space-age/space-age-waltz.m4a",
+     "mp3": "space-age/space-age-waltz.mp3"
+    },
+    {
+     "id": "space-disco-orbital-groove",
+     "title": "Orbital Groove",
+     "artist": "Astro",
+     "seconds": 199.9,
+     "m4a": "space-disco/orbital-groove.m4a",
+     "mp3": "space-disco/orbital-groove.mp3"
+    },
+    {
+     "id": "space-disco-soulful-disco-groove",
+     "title": "Soulful Disco Groove",
+     "artist": "Astro",
+     "seconds": 221.1,
+     "m4a": "space-disco/soulful-disco-groove.m4a",
+     "mp3": "space-disco/soulful-disco-groove.mp3"
+    },
+    {
+     "id": "space-love-space-love",
+     "title": "Space Love",
+     "artist": "Astro",
+     "seconds": 191.2,
+     "m4a": "space-love/space-love.m4a",
+     "mp3": "space-love/space-love.mp3"
+    },
+    {
+     "id": "space-romance-last-star-dance",
+     "title": "Last Star Dance",
+     "artist": "Astro",
+     "seconds": 209.2,
+     "m4a": "space-romance/last-star-dance.m4a",
+     "mp3": "space-romance/last-star-dance.mp3"
+    },
+    {
+     "id": "space-wave-satellite-blips",
+     "title": "Satellite Blips",
+     "artist": "Astro",
+     "seconds": 226.9,
+     "m4a": "space-wave/satellite-blips.m4a",
+     "mp3": "space-wave/satellite-blips.mp3"
+    },
+    {
+     "id": "space-wave-voyage-of-the-future",
+     "title": "Voyage of the Future",
+     "artist": "Astro",
+     "seconds": 180.0,
+     "m4a": "space-wave/voyage-of-the-future.m4a",
+     "mp3": "space-wave/voyage-of-the-future.mp3"
+    }
+   ],
+   "ids": []
+  },
   {
    "id": "astro-ambient",
    "name": "Astro Ambient",
-   "tagline": "Quiet space music",
+   "tagline": "Quiet space music, the old background loop",
    "color": "#6B5BD6",
+   "plus": true,
    "tracks": [
     {
+     "id": "astro-ambient-ambient-orbit",
      "title": "Ambient Orbit",
      "artist": "Astro",
-     "file": "astro-ambient/astro-ambient-orbit.mp3",
-     "seconds": 352.0
+     "seconds": 352.0,
+     "m4a": "astro-ambient/ambient-orbit.m4a",
+     "mp3": "astro-ambient/ambient-orbit.mp3"
     }
-   ]
+   ],
+   "ids": []
+  },
+  {
+   "id": "deep-space",
+   "name": "Deep Space",
+   "tagline": null,
+   "color": "#2B62F0",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "deep-space-radar-pings",
+     "title": "Radar Pings",
+     "artist": "Astro",
+     "seconds": 249.2,
+     "m4a": "deep-space/radar-pings.m4a",
+     "mp3": "deep-space/radar-pings.mp3"
+    },
+    {
+     "id": "deep-space-sending-pings",
+     "title": "Sending Pings",
+     "artist": "Astro",
+     "seconds": 232.6,
+     "m4a": "deep-space/sending-pings.m4a",
+     "mp3": "deep-space/sending-pings.mp3"
+    },
+    {
+     "id": "deep-space-vast-spacious-reverb",
+     "title": "Vast Spacious Reverb",
+     "artist": "Astro",
+     "seconds": 209.1,
+     "m4a": "deep-space/vast-spacious-reverb.m4a",
+     "mp3": "deep-space/vast-spacious-reverb.mp3"
+    }
+   ],
+   "ids": []
+  },
+  {
+   "id": "space-age",
+   "name": "Space Age",
+   "tagline": null,
+   "color": "#C4651F",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "space-age-chrome-soda-shop",
+     "title": "Chrome Soda Shop",
+     "artist": "Astro",
+     "seconds": 183.6,
+     "m4a": "space-age/chrome-soda-shop.m4a",
+     "mp3": "space-age/chrome-soda-shop.mp3"
+    },
+    {
+     "id": "space-age-cocktail-galaxy",
+     "title": "Cocktail Galaxy",
+     "artist": "Astro",
+     "seconds": 177.6,
+     "m4a": "space-age/cocktail-galaxy.m4a",
+     "mp3": "space-age/cocktail-galaxy.mp3"
+    },
+    {
+     "id": "space-age-cocktail-in-orbit",
+     "title": "Cocktail in Orbit",
+     "artist": "Astro",
+     "seconds": 154.0,
+     "m4a": "space-age/cocktail-in-orbit.m4a",
+     "mp3": "space-age/cocktail-in-orbit.mp3"
+    },
+    {
+     "id": "space-age-orbiting-cocktail-lounge",
+     "title": "Orbiting Cocktail Lounge",
+     "artist": "Astro",
+     "seconds": 182.4,
+     "m4a": "space-age/orbiting-cocktail-lounge.m4a",
+     "mp3": "space-age/orbiting-cocktail-lounge.mp3"
+    },
+    {
+     "id": "space-age-retro-space-age",
+     "title": "Retro Space Age",
+     "artist": "Astro",
+     "seconds": 194.8,
+     "m4a": "space-age/retro-space-age.m4a",
+     "mp3": "space-age/retro-space-age.mp3"
+    },
+    {
+     "id": "space-age-rocket-whoosh",
+     "title": "Rocket Whoosh",
+     "artist": "Astro",
+     "seconds": 183.6,
+     "m4a": "space-age/rocket-whoosh.m4a",
+     "mp3": "space-age/rocket-whoosh.mp3"
+    },
+    {
+     "id": "space-age-space-age-dance",
+     "title": "Space Age Dance",
+     "artist": "Astro",
+     "seconds": 188.8,
+     "m4a": "space-age/space-age-dance.m4a",
+     "mp3": "space-age/space-age-dance.mp3"
+    },
+    {
+     "id": "space-age-space-age-juke",
+     "title": "Space Age Juke",
+     "artist": "Astro",
+     "seconds": 172.4,
+     "m4a": "space-age/space-age-juke.m4a",
+     "mp3": "space-age/space-age-juke.mp3"
+    },
+    {
+     "id": "space-age-space-age-lounge",
+     "title": "Space Age Lounge",
+     "artist": "Astro",
+     "seconds": 178.0,
+     "m4a": "space-age/space-age-lounge.m4a",
+     "mp3": "space-age/space-age-lounge.mp3"
+    },
+    {
+     "id": "space-age-space-age-sway",
+     "title": "Space Age Sway",
+     "artist": "Astro",
+     "seconds": 197.2,
+     "m4a": "space-age/space-age-sway.m4a",
+     "mp3": "space-age/space-age-sway.mp3"
+    },
+    {
+     "id": "space-age-space-age-waltz",
+     "title": "Space Age Waltz",
+     "artist": "Astro",
+     "seconds": 176.2,
+     "m4a": "space-age/space-age-waltz.m4a",
+     "mp3": "space-age/space-age-waltz.mp3"
+    }
+   ],
+   "ids": []
+  },
+  {
+   "id": "space-disco",
+   "name": "Space Disco",
+   "tagline": null,
+   "color": "#B34A6A",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "space-disco-orbital-groove",
+     "title": "Orbital Groove",
+     "artist": "Astro",
+     "seconds": 199.9,
+     "m4a": "space-disco/orbital-groove.m4a",
+     "mp3": "space-disco/orbital-groove.mp3"
+    },
+    {
+     "id": "space-disco-soulful-disco-groove",
+     "title": "Soulful Disco Groove",
+     "artist": "Astro",
+     "seconds": 221.1,
+     "m4a": "space-disco/soulful-disco-groove.m4a",
+     "mp3": "space-disco/soulful-disco-groove.mp3"
+    }
+   ],
+   "ids": []
+  },
+  {
+   "id": "space-love",
+   "name": "Space Love",
+   "tagline": null,
+   "color": "#E0567A",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "space-love-space-love",
+     "title": "Space Love",
+     "artist": "Astro",
+     "seconds": 191.2,
+     "m4a": "space-love/space-love.m4a",
+     "mp3": "space-love/space-love.mp3"
+    }
+   ],
+   "ids": []
+  },
+  {
+   "id": "space-romance",
+   "name": "Space Romance",
+   "tagline": null,
+   "color": "#9C4DD6",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "space-romance-last-star-dance",
+     "title": "Last Star Dance",
+     "artist": "Astro",
+     "seconds": 209.2,
+     "m4a": "space-romance/last-star-dance.m4a",
+     "mp3": "space-romance/last-star-dance.mp3"
+    }
+   ],
+   "ids": []
+  },
+  {
+   "id": "space-wave",
+   "name": "Space Wave",
+   "tagline": null,
+   "color": "#0E7F8E",
+   "plus": true,
+   "tracks": [
+    {
+     "id": "space-wave-satellite-blips",
+     "title": "Satellite Blips",
+     "artist": "Astro",
+     "seconds": 226.9,
+     "m4a": "space-wave/satellite-blips.m4a",
+     "mp3": "space-wave/satellite-blips.mp3"
+    },
+    {
+     "id": "space-wave-voyage-of-the-future",
+     "title": "Voyage of the Future",
+     "artist": "Astro",
+     "seconds": 180.0,
+     "m4a": "space-wave/voyage-of-the-future.m4a",
+     "mp3": "space-wave/voyage-of-the-future.mp3"
+    }
+   ],
+   "ids": []
   }
- ],
- "built": "2026-10-10"
+ ]
 }
