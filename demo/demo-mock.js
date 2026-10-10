@@ -354,9 +354,13 @@
 
   // ---------- Astro Plus (demo) ----------
   // Jamie starts without Plus so "Try Plus free" can be tried. A few friends already wear planet styles.
-  var plusRow = null;
+  // Plus and your planet style survive a page refresh in the demo (kept in this browser only).
+  var plusRow = null; var myStyle = null;
+  try { var keep = JSON.parse(localStorage.getItem('astro.demo.plus') || 'null'); if (keep) { plusRow = keep.plus || null; myStyle = keep.style || null; } } catch (e) {}
+  function keepPlus() { try { localStorage.setItem('astro.demo.plus', JSON.stringify({ plus: plusRow, style: cosmetics[ME] || null })); } catch (e) {} }
   var cosmetics = {}; cosmetics[F.maya.id] = { ring: 'saturn', ring_color: '#FFC46B', aura: 'glow' }; cosmetics[F.theo.id] = { moons: 2, moon_color: '#B9A8FF' };
   cosmetics[F.priya.id] = { ring: 'neon', ring_color: '#6FD8FF', aura: 'sparkle' }; cosmetics[F.lena.id] = { ring: 'dust', ring_color: '#7FE7C4', moons: 1 };
+  if (myStyle) cosmetics[ME] = myStyle;
   var perks = {};
   function perkRow(g) { return perks[g] || (perks[g] = { group_id: g, crew_on: false, crew_until: null, club: false, theme: {}, crew_by: null, club_by: null, club_since: null }); }
   perkRow(CREW).crew_on = true; perkRow(CREW).crew_by = F.theo.id; perkRow(CREW).theme = { scene: 'aurora', accent: '#3FD99A' };
@@ -444,9 +448,9 @@
     set_group_photo: function (a) { var g = gById[a.g]; if (g) g.photo_url = a.url || null; return null; },
     set_bill_receipt: function () { return null; },
     set_event_photo: function (a) { events.forEach(function (e) { if (e.id === a.e) e.photo_url = a.url || null; }); return null; },
-    start_plus_beta: function () { plusRow = plusRow || { user_id: ME, source: 'beta', started_at: new Date().toISOString(), expires_at: null }; cosmetics[ME] = cosmetics[ME] || null; return null; },
-    end_plus_beta: function () { plusRow = null; return null; },
-    set_cosmetics: function (a) { if (!plusRow && a.c && Object.keys(a.c).length) throw new Error('Planet styles come with Astro Plus'); cosmetics[ME] = a.c && Object.keys(a.c).length ? a.c : null; return null; },
+    start_plus_beta: function () { plusRow = plusRow || { user_id: ME, source: 'beta', started_at: new Date().toISOString(), expires_at: null }; keepPlus(); return null; },
+    end_plus_beta: function () { plusRow = null; keepPlus(); return null; },
+    set_cosmetics: function (a) { if (!plusRow && a.c && Object.keys(a.c).length) throw new Error('Planet styles come with Astro Plus'); cosmetics[ME] = a.c && Object.keys(a.c).length ? a.c : null; keepPlus(); return null; },
     get_cosmetics: function (a) { return (a.ids || []).filter(function (id) { return cosmetics[id] && (id !== ME || plusRow); }).map(function (id) { return { id: id, cosmetics: cosmetics[id] }; }); },
     set_crew_pass: function (a) { var r = perkRow(a.g); r.crew_on = !!a.onoff; if (a.onoff) { r.crew_by = ME; sysMsg(a.g, 'Jamie turned on Crew Pass for everyone', { crew: 'on' }); } dbEvent('group_perks', 'UPDATE', r); return null; },
     set_group_theme: function (a) { var r = perkRow(a.g); if (!r.crew_on && !r.club) throw new Error('Group themes come with Crew Pass'); r.theme = a.th || {}; dbEvent('group_perks', 'UPDATE', r); return null; },
