@@ -1,0 +1,19 @@
+{
+ "stations": [
+  {
+   "id": "astro-ambient",
+   "name": "Astro Ambient",
+   "tagline": "Quiet space music",
+   "color": "#6B5BD6",
+   "tracks": [
+    {
+     "title": "Ambient Orbit",
+     "artist": "Astro",
+     "file": "astro-ambient/astro-ambient-orbit.mp3",
+     "seconds": 352.0
+    }
+   ]
+  }
+ ],
+ "built": "2026-10-10"
+}
