@@ -3,7 +3,7 @@
 (function () {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mode = window.ASTRO_INTRO || 'full';
-  const SOUND = new URL('intro.mp3?v=2', (document.currentScript && document.currentScript.src) || location.href).href;
+  const SOUND = new URL('intro.mp3?v=3', (document.currentScript && document.currentScript.src) || location.href).href;
   const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true" class="nx-mark"><defs><linearGradient id="nxig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A8FF"/><stop offset=".55" stop-color="#7C5CFF"/><stop offset="1" stop-color="#3FD0F0"/></linearGradient><linearGradient id="nxio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCD4FF"/></linearGradient><mask id="nxim" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><path transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="#000" stroke-width="8.6" stroke-linecap="round"/></mask></defs><path class="nx-orbit" transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 1 60 34" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><path class="nx-n" d="M17.5 51L32 12L46.5 51" fill="none" stroke="url(#nxio)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" mask="url(#nxim)"/><path class="nx-orbit" transform="rotate(-18 32 34)" d="M4 34A28 9.5 0 0 0 60 34" fill="none" stroke="url(#nxig)" stroke-width="3.4" stroke-linecap="round"/><circle class="nx-moon" cx="58.6" cy="25.3" r="4.4" fill="#3FD0F0"/><path class="nx-star" d="M49 9l1.3 3.2L53.5 13.5l-3.2 1.3L49 18l-1.3-3.2L44.5 13.5l3.2-1.3z" fill="#fff"/></svg>';
 
   const css = `
@@ -133,7 +133,7 @@
     requestAnimationFrame(wf);
   }
   requestAnimationFrame(wf);
-  // The intro track plays through to the end exactly as recorded (George's clip, about 65 seconds), even after the
+  // The intro track plays through to the end exactly as recorded (George's clip, about 3 minutes 15 seconds), even after the
   // intro visuals have cleared. Skipping the visuals never cuts the sound.
   function start() {
     if (started) return; started = true; t0 = performance.now();
