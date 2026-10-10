@@ -81,7 +81,13 @@
     { id: 'e0000000-0000-4000-8000-000000000001', group_id: CREW, title: 'Poker night', icon: 'game', starts_at: tonight.toISOString(), location: "Theo's place", notes: 'Bring $20 and snacks', repeat: null, created_by: F.theo.id },
     { id: 'e0000000-0000-4000-8000-000000000002', group_id: BRUNCH, title: 'Sunday brunch', icon: 'coffee', starts_at: sunday.toISOString(), location: 'Juniper Cafe', notes: null, repeat: 'weekly', created_by: F.priya.id },
     { id: 'e0000000-0000-4000-8000-000000000003', group_id: RUN, title: 'Saturday 5K', icon: 'bolt', starts_at: sat.toISOString(), location: 'Riverside trail', notes: 'Meet at the bridge', repeat: 'weekly', created_by: F.lena.id },
-    { id: 'e0000000-0000-4000-8000-000000000004', group_id: CREW, title: 'Game night', icon: 'game', starts_at: nextFri.toISOString(), location: null, notes: null, repeat: null, created_by: ME }
+    { id: 'e0000000-0000-4000-8000-000000000004', group_id: CREW, title: 'Game night', icon: 'game', starts_at: nextFri.toISOString(), location: null, notes: null, repeat: null, created_by: ME, share_code: 'DEMO0004', guests_ok: true }
+  ];
+  // People who answered a plan's guest link (astrosocial.io/e/CODE) without an account. Names and answers only.
+  var linkGuests = [
+    { id: 'g0000000-0000-4000-8000-000000000001', event_id: events[0].id, name: 'Sam', answer: 'going', user_id: null, created_at: ago(300) },
+    { id: 'g0000000-0000-4000-8000-000000000002', event_id: events[3].id, name: 'Riley', answer: 'going', user_id: null, created_at: ago(120) },
+    { id: 'g0000000-0000-4000-8000-000000000003', event_id: events[3].id, name: 'Dev', answer: 'maybe', user_id: null, created_at: ago(60) }
   ];
   var rsvps = [
     { event_id: events[0].id, user_id: ME, response: 'going' }, { event_id: events[0].id, user_id: F.theo.id, response: 'going' },
@@ -433,6 +439,11 @@
     create_event: function (a) { var e = { id: 'e0000000-0000-4000-8000-' + String(Date.now()).slice(-12), group_id: a.g, title: a.new_title || 'Plan', icon: a.new_icon || 'calendar', starts_at: a.new_starts || inH(24), location: a.new_location || null, notes: a.new_notes || null, repeat: a.new_repeat || null, created_by: ME };
       var ec = { id: ++nextId, group_id: e.group_id, user_id: ME, kind: 'event', body: e.title, meta: { event_id: e.id, title: e.title, icon: e.icon, starts_at: e.starts_at, location: e.location }, created_at: new Date().toISOString(), likes: [] }; msgs.push(ec); events.push(e); rsvps.push({ event_id: e.id, user_id: ME, response: 'going' }); return e.id; },
     update_event: function () { return null; },
+    event_share_link: function (a) { var e = events.filter(function (x) { return x.id === a.e; })[0]; if (!e) throw new Error('Event not found'); if (!e.share_code) e.share_code = 'DEMO' + String(events.indexOf(e) + 1).padStart(4, '0'); return e.share_code; },
+    reset_share_link: function (a) { var e = events.filter(function (x) { return x.id === a.e; })[0]; if (!e) throw new Error('Event not found'); e.share_code = 'DEMO' + String(Date.now()).slice(-4); return e.share_code; },
+    set_guests_ok: function (a) { events.forEach(function (e) { if (e.id === a.e) e.guests_ok = !!a.onoff; }); return null; },
+    remove_guest: function (a) { linkGuests = linkGuests.filter(function (g) { return g.id !== a.gid; }); return null; },
+    guest_plans: function () { return []; },
     create_group: function (a) { var g = G('aaaaaaaa-0000-4000-8000-0000000002' + String(10 + groups.length), 'group', a.new_name || 'New group', a.new_icon || 'users', a.new_color || '#7C5CFF', [me], 'NEW' + groups.length + 'AB'); groups.push(g); gById[g.id] = g; return g.id; },
     create_bill: function () { return bills[0].id; },
     set_share_paid: function (a) { bills.forEach(function (b) { b.bill_shares.forEach(function (s) { if (b.id === a.b && s.user_id === (a.member || ME)) { s.paid_at = a.paid ? new Date().toISOString() : null; s.method = a.paid ? (a.how || 'Zelle') : null; } }); }); return null; },
@@ -535,6 +546,7 @@
       var eid = eqv(u, 'id'), eids = inv(u, 'id');
       return events.filter(function (e) { return (!eid || e.id === eid) && (!eids || eids.indexOf(e.id) >= 0); }).sort(function (a, b) { return a.starts_at < b.starts_at ? -1 : 1; }).map(eventRow);
     }
+    if (t === 'event_guests') { var ge = eqv(u, 'event_id'); return linkGuests.filter(function (g) { return !ge || g.event_id === ge; }).map(function (g) { return { id: g.id, name: g.name, answer: g.answer, user_id: g.user_id }; }); }
     if (t === 'rsvps') {
       if (method === 'POST' || method === 'PATCH') {
         var b = Array.isArray(body) ? body[0] : body;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><script>/* Missing pages: invite links (/join/CODE) open the app; links into the app open that page; anything else goes home. */(function(){var p=location.pathname,m=p.match(/^\/join\/([A-Za-z0-9]{6})\/?$/);if(m)location.replace("/app/invite/"+m[1].toUpperCase());else if(p.indexOf("/demo/")===0)location.replace("/demo/?to="+encodeURIComponent(p+location.search));else if(p.indexOf("/app/")!==0&&p!=="/app")location.replace("/");})();</script><script>if(location.protocol==="http:"&&/astrosocial\.io$/.test(location.hostname))location.replace("https://astrosocial.io"+location.pathname+location.search+location.hash);</script>
+  <head><script>/* Missing pages: invite links (/join/CODE) open the app; guest links (/e/CODE) open the guest page; links into the app open that page; anything else goes home. */(function(){var p=location.pathname,m=p.match(/^\/join\/([A-Za-z0-9]{6})\/?$/),g=p.match(/^\/e\/([A-Za-z0-9]{6,12})\/?$/);if(m)location.replace("/app/invite/"+m[1].toUpperCase());else if(g)location.replace("/e/?c="+g[1].toUpperCase()+(location.search?"&"+location.search.slice(1):""));else if(p.indexOf("/demo/")===0)location.replace("/demo/?to="+encodeURIComponent(p+location.search));else if(p.indexOf("/app/")!==0&&p!=="/app")location.replace("/");})();</script><script>if(location.protocol==="http:"&&/astrosocial\.io$/.test(location.hostname))location.replace("https://astrosocial.io"+location.pathname+location.search+location.hash);</script>
     <meta charset="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
@@ -62,6 +62,6 @@
     </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/app/_expo/static/js/web/entry-6ac40b2dffe6fb8cfa2088672139f9c8.js" defer></script>
+  <script src="/app/_expo/static/js/web/entry-8ba74973c47151c4328e8f06dfa72f2d.js" defer></script>
 </body>
 </html>
