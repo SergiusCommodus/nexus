@@ -98,6 +98,28 @@
     { id: 'b0000000-0000-4000-8000-000000000002', group_id: BRUNCH, event_id: null, title: 'Brunch', subtotal: '72.00', tip: '0', paid_by: ME, note: 'Birthday brunch', created_by: ME, created_at: ago(4000),
       bill_shares: [share(me, '24.00', 4000, 'paid the bill'), share(F.priya, '24.00', 3000, 'Zelle'), share(F.sofia, '24.00', null)] }
   ];
+  // An itemized bill: everyone taps what they had (Astro Plus "Snap and split").
+  bills.push({ id: 'b0000000-0000-4000-8000-000000000003', group_id: CREW, event_id: null, title: 'Pizza night', subtotal: '58.60', tip: '9.00', tax: '4.60', itemized: true, paid_by: F.theo.id, note: null, created_by: F.theo.id, created_at: ago(30),
+    bill_shares: [share(F.theo, '0', 30, 'paid the bill'), share(me, '0', null), share(F.maya, '0', null), share(F.diego, '0', null)] });
+  var billItems = [
+    { id: 'i0000000-0000-4000-8000-000000000001', bill_id: 'b0000000-0000-4000-8000-000000000003', name: 'Large pepperoni', price: 22, position: 0 },
+    { id: 'i0000000-0000-4000-8000-000000000002', bill_id: 'b0000000-0000-4000-8000-000000000003', name: 'Margherita', price: 18, position: 1 },
+    { id: 'i0000000-0000-4000-8000-000000000003', bill_id: 'b0000000-0000-4000-8000-000000000003', name: 'Garlic knots', price: 7, position: 2 },
+    { id: 'i0000000-0000-4000-8000-000000000004', bill_id: 'b0000000-0000-4000-8000-000000000003', name: 'Caesar salad', price: 7, position: 3 }
+  ];
+  var itemClaims = [{ item_id: billItems[0].id, user_id: F.theo.id }, { item_id: billItems[0].id, user_id: F.diego.id }, { item_id: billItems[1].id, user_id: F.maya.id }];
+  function recomputeItems(bid) {
+    var b = bills.filter(function (x) { return x.id === bid; })[0]; if (!b) return;
+    var total = Math.round((Number(b.subtotal) + Number(b.tip)) * 100), its = billItems.filter(function (i) { return i.bill_id === bid; });
+    var itemsC = its.reduce(function (a, i) { return a + i.price * 100; }, 0), extra = total - itemsC, n = b.bill_shares.length;
+    var raw = b.bill_shares.map(function (sh) { var f = 0; its.forEach(function (i) { var c = itemClaims.filter(function (x) { return x.item_id === i.id; }); if (!c.length) f += i.price * 100 / n; else if (c.some(function (x) { return x.user_id === sh.user_id; })) f += i.price * 100 / c.length; }); return f; });
+    var food = raw.reduce(function (a, x) { return a + x; }, 0);
+    raw = raw.map(function (x) { return x + (food > 0 ? extra * x / food : extra / n); });
+    var base = raw.map(Math.floor), rem = total - base.reduce(function (a, x) { return a + x; }, 0);
+    raw.map(function (x, k) { return [x - base[k], k]; }).sort(function (a, c) { return c[0] - a[0]; }).slice(0, Math.max(0, rem)).forEach(function (p) { base[p[1]]++; });
+    b.bill_shares.forEach(function (sh, k) { sh.amount = (base[k] / 100).toFixed(2); });
+  }
+  recomputeItems('b0000000-0000-4000-8000-000000000003');
   bills.forEach(function (b) { b.groups = gref(b.group_id); });
 
   var GIF_GO = { url: 'https://media4.giphy.com/media/v1.Y2lkPWNkNzRjOTNlcDFsNjJrZ2lqNDJiOHhjc2dtdTllb2Nrb3Z3bDA4YzJkZHlhMWVpdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5UAofAl6g5t1GL5nO8/200w.gif', webp: 'https://media4.giphy.com/media/v1.Y2lkPWNkNzRjOTNlcDFsNjJrZ2lqNDJiOHhjc2dtdTllb2Nrb3Z3bDA4YzJkZHlhMWVpdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5UAofAl6g5t1GL5nO8/200w.webp', w: 200, h: 113, title: 'Lets Go', gif_id: '5UAofAl6g5t1GL5nO8' };
@@ -119,6 +141,9 @@
   M(CREW, F.marcus, 'text', 'Might be late, finishing a match', null, 120, [[F.theo, 'thumbs']], POKER);
   M(CREW, F.diego, 'gif', null, GIF_GO, 95, [F.maya]);
   M(CREW, F.maya, 'bill', 'Tacos at Sofia', { bill_id: bills[0].id, title: 'Tacos at Sofia', total_cents: 11520, people: 4, paid_by: F.maya.id, paid_by_name: 'Maya' }, 60);
+  M(CREW, F.theo, 'bill', 'Pizza night', { bill_id: 'b0000000-0000-4000-8000-000000000003', title: 'Pizza night', total_cents: 6760, people: 4, paid_by: F.theo.id, paid_by_name: 'Theo', itemized: true }, 30);
+  M(CREW, null, 'system', 'Theo turned on Crew Pass for everyone', { crew: 'on' }, 26);
+  var POLL = M(CREW, F.theo, 'poll', 'Snacks for poker night?', { options: ['Chips and salsa', 'Pizza again', 'Both obviously'] }, 25);
   M(CREW, F.kai, 'text', 'Who has the chips?', null, 12);
   M(BRUNCH, F.priya, 'text', 'Same time Sunday?', null, 600);
   M(BRUNCH, F.sofia, 'text', 'Yes please. Juniper again?', null, 590, [[F.priya, 'thumbs']]);
@@ -130,6 +155,8 @@
   M(DMTHEO, F.theo, 'text', 'Thanks for the tacos last week', null, 3000);
   M(RUN, F.lena, 'event', 'Saturday 5K', { event_id: events[2].id, title: 'Saturday 5K', icon: 'bolt', starts_at: events[2].starts_at, location: 'Riverside trail' }, 1500);
   M(RUN, F.ben, 'text', 'New personal best last week 🏃', null, 1400, [F.lena, F.kai]);
+  M(RUN, me, 'system', 'Jamie made this group a Club', { club: 'on' }, 1300);
+  M(RUN, me, 'announce', 'Saturday 5K starts at 8:30 this week. Meet at the north lot, bring water. Check in on the event when you get there.', {}, 900);
 
   var unread = {}; unread[CREW] = 2; unread[DMMAYA] = 1;
 
@@ -325,6 +352,19 @@
   var session = { access_token: jwt, refresh_token: 'demo', expires_at: exp, expires_in: 7 * 86400, token_type: 'bearer', user: user };
   try { localStorage.setItem('sb-vxalwjzvlxtdcjcjvlqp-auth-token', JSON.stringify(session)); } catch (e) {}
 
+  // ---------- Astro Plus (demo) ----------
+  // Jamie starts without Plus so "Try Plus free" can be tried. A few friends already wear planet styles.
+  var plusRow = null;
+  var cosmetics = {}; cosmetics[F.maya.id] = { ring: 'saturn', ring_color: '#FFC46B', aura: 'glow' }; cosmetics[F.theo.id] = { moons: 2, moon_color: '#B9A8FF' };
+  cosmetics[F.priya.id] = { ring: 'neon', ring_color: '#6FD8FF', aura: 'sparkle' }; cosmetics[F.lena.id] = { ring: 'dust', ring_color: '#7FE7C4', moons: 1 };
+  var perks = {};
+  function perkRow(g) { return perks[g] || (perks[g] = { group_id: g, crew_on: false, crew_until: null, club: false, theme: {}, crew_by: null, club_by: null, club_since: null }); }
+  perkRow(CREW).crew_on = true; perkRow(CREW).crew_by = F.theo.id; perkRow(CREW).theme = { scene: 'aurora', accent: '#3FD99A' };
+  perkRow(RUN).club = true; perkRow(RUN).club_by = ME; perkRow(RUN).club_since = ago(1300); perkRow(RUN).admins_only = false;
+  var pollVotes = {}; pollVotes[POLL] = {}; pollVotes[POLL][F.maya.id] = 2; pollVotes[POLL][F.theo.id] = 2; pollVotes[POLL][F.diego.id] = 0; pollVotes[POLL][F.kai.id] = 1;
+  var checkins = {};
+  function sysMsg(g, body, meta) { var sm = { id: ++nextId, group_id: g, user_id: ME, kind: 'system', body: body, meta: meta || {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(sm); dbEvent('messages', 'INSERT', plainRow(sm)); }
+
   var RPC = {
     chat_list: function () { return chatList(); },
     unread_counts: function () { return Object.keys(unread).filter(function (k) { return unread[k] > 0; }).map(function (k) { return { group_id: k, unread: unread[k] }; }); },
@@ -404,6 +444,37 @@
     set_group_photo: function (a) { var g = gById[a.g]; if (g) g.photo_url = a.url || null; return null; },
     set_bill_receipt: function () { return null; },
     set_event_photo: function (a) { events.forEach(function (e) { if (e.id === a.e) e.photo_url = a.url || null; }); return null; },
+    start_plus_beta: function () { plusRow = plusRow || { user_id: ME, source: 'beta', started_at: new Date().toISOString(), expires_at: null }; cosmetics[ME] = cosmetics[ME] || null; return null; },
+    end_plus_beta: function () { plusRow = null; return null; },
+    set_cosmetics: function (a) { if (!plusRow && a.c && Object.keys(a.c).length) throw new Error('Planet styles come with Astro Plus'); cosmetics[ME] = a.c && Object.keys(a.c).length ? a.c : null; return null; },
+    get_cosmetics: function (a) { return (a.ids || []).filter(function (id) { return cosmetics[id] && (id !== ME || plusRow); }).map(function (id) { return { id: id, cosmetics: cosmetics[id] }; }); },
+    set_crew_pass: function (a) { var r = perkRow(a.g); r.crew_on = !!a.onoff; if (a.onoff) { r.crew_by = ME; sysMsg(a.g, 'Jamie turned on Crew Pass for everyone', { crew: 'on' }); } dbEvent('group_perks', 'UPDATE', r); return null; },
+    set_group_theme: function (a) { var r = perkRow(a.g); if (!r.crew_on && !r.club) throw new Error('Group themes come with Crew Pass'); r.theme = a.th || {}; dbEvent('group_perks', 'UPDATE', r); return null; },
+    make_club: function (a) { var r = perkRow(a.g); r.club = !!a.onoff; if (a.onoff) { r.club_by = ME; r.club_since = r.club_since || new Date().toISOString(); sysMsg(a.g, 'Jamie made this group a Club', { club: 'on' }); } dbEvent('group_perks', 'UPDATE', r); return null; },
+    vote_poll: function (a) { pollVotes[a.m] = pollVotes[a.m] || {}; if (a.pick == null) delete pollVotes[a.m][ME]; else pollVotes[a.m][ME] = a.pick; dbEvent('poll_votes', 'UPDATE', { message_id: a.m, user_id: ME, choice: a.pick }); return null; },
+    create_poll: function (a) { var r = perkRow(a.g); if (!r.crew_on && !r.club) throw new Error('Polls come with Crew Pass and Clubs'); var opts = (a.opts || []).map(function (o) { return String(o).trim(); }).filter(Boolean); if (opts.length < 2) throw new Error('Give 2 to 6 options');
+      var pm = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'poll', body: a.q, meta: { options: opts }, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(pm); pollVotes[pm.id] = {}; dbEvent('messages', 'INSERT', plainRow(pm));
+      var g = gById[a.g]; g.members.filter(function (m) { return m.user_id !== ME; }).slice(0, 3).forEach(function (m, i) { setTimeout(function () { pollVotes[pm.id][m.user_id] = i % opts.length; dbEvent('poll_votes', 'INSERT', { message_id: pm.id, user_id: m.user_id }); }, 1500 + i * 1300); });
+      return pm.id; },
+    post_announcement: function (a) { var am = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'announce', body: a.txt, meta: {}, created_at: new Date().toISOString(), reacts: {}, reply_to: null }; msgs.push(am); dbEvent('messages', 'INSERT', plainRow(am)); return am.id; },
+    set_admins_only: function (a) { perkRow(a.g).admins_only = !!a.onoff; sysMsg(a.g, a.onoff ? 'Jamie made the chat admins only' : 'Jamie opened the chat to everyone'); return null; },
+    check_in: function (a) { checkins[a.e] = checkins[a.e] || []; if (a.onoff === false) checkins[a.e] = checkins[a.e].filter(function (x) { return x !== ME; }); else if (checkins[a.e].indexOf(ME) < 0) checkins[a.e].push(ME); return null; },
+    club_roster: function (a) { var g = gById[a.g]; return g.members.map(function (m) { return { display_name: m.profile.display_name, username: m.profile.username, role: m.role, joined_at: ago(60 * 24 * 20), checkins: m.user_id === ME ? 3 : 1 }; }); },
+    claim_item: function (a) { var who = a.who || ME; itemClaims = itemClaims.filter(function (c) { return !(c.item_id === a.i && c.user_id === who); }); if (a.onoff) itemClaims.push({ item_id: a.i, user_id: who });
+      var it = billItems.filter(function (i) { return i.id === a.i; })[0]; if (it) { recomputeItems(it.bill_id); dbEvent('item_claims', 'INSERT', { item_id: a.i, user_id: who }); dbEvent('bill_shares', 'UPDATE', { bill_id: it.bill_id }); } return null; },
+    create_item_bill: function (a) { var id = 'b0000000-0000-4000-8000-' + String(Date.now()).slice(-12); var items = a.items || [], itemsC = items.reduce(function (x, i) { return x + (i.cents || 0); }, 0);
+      var people = (a.people || []).concat([a.payer]).filter(function (v, i, arr) { return arr.indexOf(v) === i; });
+      var b = { id: id, group_id: a.g, event_id: null, title: a.bill_title, subtotal: ((itemsC + (a.tax_cents || 0)) / 100).toFixed(2), tip: ((a.tip_cents || 0) / 100).toFixed(2), tax: ((a.tax_cents || 0) / 100).toFixed(2), itemized: true, paid_by: a.payer, note: a.bill_note || null, created_by: ME, created_at: new Date().toISOString(),
+        bill_shares: people.map(function (p) { return share(byId[p], '0', p === a.payer ? 0 : null, p === a.payer ? 'paid the bill' : null); }) };
+      b.groups = gref(a.g); bills.unshift(b);
+      items.forEach(function (i, k) { billItems.push({ id: 'i' + String(Date.now()).slice(-7) + k + '-0000-4000-8000-000000000000', bill_id: id, name: i.name, price: (i.cents || 0) / 100, position: k }); });
+      recomputeItems(id);
+      var bm = { id: ++nextId, group_id: a.g, user_id: ME, kind: 'bill', body: a.bill_title, meta: { bill_id: id, title: a.bill_title, total_cents: itemsC + (a.tax_cents || 0) + (a.tip_cents || 0), people: people.length, paid_by: a.payer, paid_by_name: byId[a.payer].display_name, itemized: true }, created_at: new Date().toISOString(), reacts: {}, reply_to: null };
+      msgs.push(bm); return id; },
+    orbit_recap: function (a) { var grp = a.g ? gById[a.g] : null;
+      return { messages: grp ? 86 : 214, my_messages: 214, photos: grp ? 11 : 23, voice: 6, plans: grp ? 4 : 7, comms: grp ? 3 : 9, signals: 5, signal_ins: 14, bills: grp ? 3 : 6, bills_total: grp ? 241.8 : 488.4, settled: 9, new_friends: 3, busiest_day: 'Friday', busiest_hour: 21,
+        top_people: (grp ? grp.members.filter(function (m) { return m.user_id !== ME; }).map(function (m) { return m.profile; }) : [F.maya, F.theo, F.priya]).slice(0, 3).map(function (p, i) { return { id: p.id, name: p.display_name, color: p.color, n: [64, 41, 27][i] }; }),
+        top_group: grp ? null : { id: CREW, name: 'The Crew', icon: 'game', color: '#7C5CFF', n: 132 }, top_words: ['poker', 'tonight', 'tacos', 'brunch', 'chips'] }; },
     delete_my_account: function () { return null; }
   };
 
@@ -415,6 +486,12 @@
       if (ids) return everyone.filter(function (p) { return ids.indexOf(p.id) >= 0; });
       return everyone;
     }
+    if (t === 'plus_members') return plusRow ? [plusRow] : [];
+    if (t === 'poll_votes') { var pm = Number(eqv(u, 'message_id')); var pv = pollVotes[pm] || {}; return Object.keys(pv).map(function (k) { return { user_id: k, choice: pv[k] }; }); }
+    if (t === 'event_checkins') { var ce = eqv(u, 'event_id'); return (checkins[ce] || []).map(function (k) { return { user_id: k }; }); }
+    if (t === 'bill_items') { var bi = eqv(u, 'bill_id'); return billItems.filter(function (i) { return i.bill_id === bi; }); }
+    if (t === 'item_claims') { var bc = eqv(u, 'bill_items.bill_id'); var ids = billItems.filter(function (i) { return i.bill_id === bc; }).map(function (i) { return i.id; }); return itemClaims.filter(function (c) { return ids.indexOf(c.item_id) >= 0; }); }
+    if (t === 'group_perks') { var pg = eqv(u, 'group_id'); return pg && perks[pg] ? [perks[pg]] : []; }
     if (t === 'comms_rings') return rings.filter(function (r) { return r.caller === ME || r.target === ME; }).map(ringRow);
     if (t === 'signals') return signals.filter(function (sg) { return sg.owner === ME || sg.targets.some(function (x) { return x.user_id === ME; }); }).map(sigRow);
     if (t === 'person_notes') {
@@ -434,7 +511,8 @@
       if (one) return msgs.filter(function (x) { return String(x.id) === one; }).map(plainRow);
       var g3 = eqv(u, 'group_id'), lt = u.searchParams.get('created_at');
       var gg = gById[g3];
-      var rows = msgs.filter(function (x) { return x.group_id === g3 && (!gg || !gg.cleared || x.created_at > gg.cleared); });
+      var k1 = eqv(u, 'kind'), ks = inv(u, 'kind');
+      var rows = msgs.filter(function (x) { return x.group_id === g3 && (!gg || !gg.cleared || x.created_at > gg.cleared) && (!k1 || x.kind === k1) && (!ks || ks.indexOf(x.kind) >= 0); });
       if (lt && lt.indexOf('lt.') === 0) { var c = decodeURIComponent(lt.slice(3)); rows = rows.filter(function (x) { return x.created_at < c; }); }
       return rows.slice().reverse().slice(0, Number(u.searchParams.get('limit') || 60)).map(rowMsg);
     }
@@ -491,6 +569,15 @@
           return resolve(json(user));
         }
         if (path.indexOf('/storage/v1/') === 0) return resolve(json({ error: 'Photos are turned off in the demo' }, 400));
+        if (path.indexOf('/functions/v1/astro-ai') === 0) {
+          if (!plusRow && !(body && body.action === 'catchup' && (perkRow(body.g).crew_on || perkRow(body.g).club))) return resolve(json({ error: 'Turn on Astro Plus to try this in the demo' }, 403));
+          if (body && body.action === 'receipt') return setTimeout(function () { resolve(json({ merchant: 'Luigi\'s Pizzeria', items: [{ name: 'Large pepperoni', cents: 2200 }, { name: 'Margherita', cents: 1800 }, { name: 'Garlic knots', cents: 700 }, { name: 'Caesar salad', cents: 900 }, { name: 'Sodas (3)', cents: 750 }], tax_cents: 520, tip_cents: 0, total_cents: 6870 })); }, 1800);
+          var gname = (gById[body && body.g] || {}).name;
+          var sum = body && body.g === CREW ? '• Poker night is on at Theo\'s tonight. Maya is in, Marcus might be late.\n• Theo posted Pizza night ($67.60). Tap what you had so your share is right.\n• Snack poll: "Both obviously" is winning. You haven\'t voted.\n• Kai is asking who has the chips.'
+            : body && body.g === DMMAYA ? '• Maya asked if you\'re coming tonight and you said yes.\n• She wants you to bring the good cards.'
+            : '• ' + (gname || 'The chat') + ' has been quiet. Nothing needs your answer.';
+          return setTimeout(function () { resolve(json({ summary: sum, count: 18 })); }, 1600);
+        }
         if (path.indexOf('/functions/v1/') === 0) return resolve(json({}));
         if (path.indexOf('/rest/v1/rpc/') === 0) {
           var fn = path.split('/').pop(), f = RPC[fn];
