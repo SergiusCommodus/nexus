@@ -27,6 +27,8 @@
     return { id: uid(n), display_name: name, username: name.toLowerCase(), color: color, status: status, status_until: status ? until : null, planet: planet || 'auto', avatar_url: null, zelle: name.toLowerCase() + '@example.com' };
   };
   var me = person(1, 'Jamie', '#7C5CFF', null, 'ring'); me.bio = 'Plans the poker nights. Will bring snacks.';
+  // Astro is 18+. Jamie confirms once on first open (kept in this browser), so the demo shows the real gate.
+  try { me.age_confirmed_at = localStorage.getItem('astro.demo.age') || null; } catch (e) { me.age_confirmed_at = null; }
   var F = {
     maya: person(11, 'Maya', '#D2558E', 'free', 'swirl'),
     theo: person(12, 'Theo', '#17905A', 'free', 'bands'),
@@ -49,6 +51,7 @@
   // Jamie's own notes: Maya is a favorite, Theo has a nickname.
   var personNotes = {}; personNotes[F.maya.id] = { favorite: true, nickname: null }; personNotes[F.theo.id] = { favorite: false, nickname: 'T' };
   var everyone = [me].concat(friends, [F.omar, F.ruby]);
+  everyone.concat([]).forEach(function (p) { if (p !== me) p.age_confirmed_at = ago(60 * 24 * 40); });
   // People on Astro you don't know yet, so the search has something to find.
   var strangers = [person(31, 'Mason', '#4F7BE8', null, 'craters'), person(32, 'Maddie', '#D86A9A', null, 'glow'), person(33, 'Tess', '#2FA87A', null, 'ring'), person(34, 'Leo', '#C4651F', null, 'bands'), person(35, 'Priyanka', '#8A5BD6', null, 'swirl')];
   var byId = {}; everyone.concat(strangers).forEach(function (p) { byId[p.id] = p; });
@@ -479,6 +482,7 @@
       return { messages: grp ? 86 : 214, my_messages: 214, photos: grp ? 11 : 23, voice: 6, plans: grp ? 4 : 7, comms: grp ? 3 : 9, signals: 5, signal_ins: 14, bills: grp ? 3 : 6, bills_total: grp ? 241.8 : 488.4, settled: 9, new_friends: 3, busiest_day: 'Friday', busiest_hour: 21,
         top_people: (grp ? grp.members.filter(function (m) { return m.user_id !== ME; }).map(function (m) { return m.profile; }) : [F.maya, F.theo, F.priya]).slice(0, 3).map(function (p, i) { return { id: p.id, name: p.display_name, color: p.color, n: [64, 41, 27][i] }; }),
         top_group: grp ? null : { id: CREW, name: 'The Crew', icon: 'game', color: '#7C5CFF', n: 132 }, top_words: ['poker', 'tonight', 'tacos', 'brunch', 'chips'] }; },
+    confirm_age: function () { var ts = me.age_confirmed_at || new Date().toISOString(); me.age_confirmed_at = ts; try { localStorage.setItem('astro.demo.age', ts); } catch (e) {} return ts; },
     delete_my_account: function () { return null; }
   };
 
