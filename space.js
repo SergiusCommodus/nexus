@@ -56,11 +56,11 @@
     const n = Math.round(W * H / (small ? 3400 : 2600));
     stars = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() < .08 ? 1.1 + Math.random() * .9 : .3 + Math.random() * .8, a: .35 + Math.random() * .65, tw: .5 + Math.random() * 2.2, ph: Math.random() * 6.3, z: .2 + Math.random() * .8, c: TINTS[Math.floor(Math.random() * TINTS.length)] }));
   }
-  let paused = false, last = 0;
+  let paused = false, last = 0, introUp = false; // the starfield rests while the intro overlay covers it
   document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!paused && !reduce) requestAnimationFrame(frame); });
   function frame(t) {
     if (paused) return;
-    if (t - last < 24) { requestAnimationFrame(frame); return; } // ~40fps is plenty for a backdrop
+    if (introUp || t - last < 24) { requestAnimationFrame(frame); return; } // ~40fps is plenty for a backdrop
     last = t;
     ctx.clearRect(0, 0, W, H);
     const drift = reduce ? 0 : t * .004;
@@ -100,7 +100,7 @@
     <div class="nx-c">${MARK}<div class="nx-word">ASTRO</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div>
     <div class="nx-gate"><button type="button" class="nx-enter" aria-label="Enter Astro with sound">${MARK.replace('class="nx-mark"', 'class="nx-mini"').replace(/nxi/g, 'nxj').replace(/ class="nx-(orbit|gap|n|moon|star)"/g, '')}<span>Tap to enter</span></button><div class="nx-sound"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>Sound on</div></div>
     <div class="nx-skip">Tap to skip</div>`;
-  document.body.appendChild(ov);
+  document.body.appendChild(ov); introUp = true;
   document.documentElement.classList.add('nx-wait');
   const prevOverflow = document.documentElement.style.overflow; document.documentElement.style.overflow = 'hidden';
   const ic = ov.querySelector('canvas'), ix = ic.getContext('2d');
@@ -108,10 +108,12 @@
   const isz = () => { const d = Math.min(devicePixelRatio || 1, 2); IW = innerWidth; IH = innerHeight; ic.width = IW * d; ic.height = IH * d; ix.setTransform(d, 0, 0, d, 0, 0); };
   isz(); addEventListener('resize', isz);
   const warp = Array.from({ length: 420 }, () => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() }));
-  let t0 = 0, started = false, done = false;
+  let t0 = 0, started = false, done = false, wl = 0;
   setTimeout(() => ov.querySelector('.nx-enter').focus({ preventScroll: true }), 50);
   function wf(t) {
     if (done) return;
+    if (!started && t - wl < 40) { requestAnimationFrame(wf); return; } // slow drift at the gate needs no more than 25 fps
+    wl = t;
     let sp;
     if (!started) sp = .0025; // slow drift while waiting at the gate
     else {
@@ -141,7 +143,7 @@
     setTimeout(end, total);
   }
   function end() {
-    if (done) return; done = true; ov.classList.add('out');
+    if (done) return; done = true; ov.classList.add('out'); introUp = false; requestAnimationFrame(frame);
     document.documentElement.style.overflow = prevOverflow; document.documentElement.classList.remove('nx-wait');
     setTimeout(() => { ov.remove(); removeEventListener('resize', isz); }, 900);
     document.dispatchEvent(new Event('astro:ready'));
