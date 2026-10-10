@@ -229,7 +229,7 @@
         if (!fresh) presenceLeave(tp2, ME);
         presenceJoin(tp2, ME, pl.payload || {});
         // Maya hops in shortly after you start the room.
-        if (fresh) { if (mayaTimer) clearTimeout(mayaTimer); mayaTimer = setTimeout(function () { if (presence[tp2] && presence[tp2][ME]) presenceJoin(tp2, F.maya.id, { user_id: F.maya.id, muted: false, speaking: false }); }, 2500); }
+        if (fresh && tp2 === 'realtime:voice:' + DMMAYA) { if (mayaTimer) clearTimeout(mayaTimer); mayaTimer = setTimeout(function () { if (presence[tp2] && presence[tp2][ME]) presenceJoin(tp2, F.maya.id, { user_id: F.maya.id, muted: false, speaking: false }); }, 2500); }
       } else if (myKey && pl.event === 'untrack') {
         presenceLeave(msg.topic, ME); presenceLeave(msg.topic, F.maya.id); if (mayaTimer) clearTimeout(mayaTimer);
       }
@@ -305,6 +305,18 @@
     signals.push(sg); dbEvent('signal_targets', 'INSERT', { signal_id: sg.id, user_id: ME, answer: null });
   }, 14000);
 
+  // ---------- Comms rings ----------
+  // You ring people: the first answers and hops on, the next declines, the rest don't pick up.
+  // A minute into the demo, Lena rings you from Run Club (she's already on that line).
+  var rings = [];
+  function ringRow(r) { return { id: r.id, group_id: r.group_id, caller: r.caller, target: r.target, status: r.status, created_at: r.created_at, expires_at: r.expires_at }; }
+  function setRing(r, st) { if (r.status !== 'ringing') return; r.status = st; dbEvent('comms_rings', 'UPDATE', ringRow(r), ringRow(r)); }
+  setTimeout(function () {
+    var tpc = 'realtime:voice:' + RUN; presence[tpc] = presence[tpc] || {}; presence[tpc][F.lena.id] = { user_id: F.lena.id, muted: false, speaking: false, phx_ref: ref() };
+    var r = { id: 'r0000000-0000-4000-8000-000000000001', group_id: RUN, caller: F.lena.id, target: ME, status: 'ringing', created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 30000).toISOString() };
+    rings.push(r); dbEvent('comms_rings', 'INSERT', ringRow(r));
+  }, 60000);
+
   // ---------- database answers ----------
   var b64 = function (o) { return btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
   var exp = Math.floor(now / 1000) + 7 * 86400;
@@ -330,6 +342,21 @@
     friend_respond: function (a) { friendships.forEach(function (f) { if (f.user_b === a.other || f.user_a === a.other) f.status = a.accept ? 'accepted' : 'declined'; }); if (a.accept && friends.indexOf(byId[a.other]) < 0) friends.push(byId[a.other]); return null; },
     friend_request: function () { return null; },
     find_user: function () { return []; },
+    ring_comms: function (a) {
+      var g = gById[a.g]; if (!g) throw new Error('Chat not found');
+      var who = g.members.map(function (m) { return m.user_id; }).filter(function (u) { return u !== ME && (!a.targets || a.targets.indexOf(u) >= 0); });
+      who.forEach(function (u, i) {
+        if (rings.some(function (x) { return x.target === u && x.group_id === a.g && x.status === 'ringing'; })) return;
+        var r = { id: 'r' + String(Date.now()).slice(-7) + i + '-0000-4000-8000-000000000000', group_id: a.g, caller: ME, target: u, status: 'ringing', created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 30000).toISOString() };
+        rings.push(r); dbEvent('comms_rings', 'INSERT', ringRow(r));
+        var k = rings.filter(function (x) { return x.caller === ME; }).length;
+        if (k % 3 === 1) setTimeout(function () { setRing(r, 'answered'); presenceJoin('realtime:voice:' + a.g, u, { user_id: u, muted: false, speaking: false }); }, 3500 + i * 900);
+        else if (k % 3 === 2) setTimeout(function () { setRing(r, 'declined'); }, 5000 + i * 900);
+      });
+      return who.length;
+    },
+    respond_ring: function (a) { rings.forEach(function (r) { if (r.id === a.r && r.target === ME) setRing(r, a.ans); }); return null; },
+    cancel_rings: function (a) { rings.forEach(function (r) { if (r.caller === ME && r.group_id === a.g && (!a.who || r.target === a.who)) setRing(r, 'cancelled'); }); return null; },
     send_signal: function (a) {
       signals.forEach(function (x) { if (x.owner === ME && x.status === 'open') x.status = 'closed'; });
       var sg = { id: 's0000000-0000-4000-8000-' + String(Date.now()).slice(-12), owner: ME, text: a.msg, when_text: a.when_txt || null, status: 'open', event_id: null, group_id: null, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 8 * 3600000).toISOString(),
@@ -388,6 +415,7 @@
       if (ids) return everyone.filter(function (p) { return ids.indexOf(p.id) >= 0; });
       return everyone;
     }
+    if (t === 'comms_rings') return rings.filter(function (r) { return r.caller === ME || r.target === ME; }).map(ringRow);
     if (t === 'signals') return signals.filter(function (sg) { return sg.owner === ME || sg.targets.some(function (x) { return x.user_id === ME; }); }).map(sigRow);
     if (t === 'person_notes') {
       if (method === 'POST') { var pn = Array.isArray(body) ? body[0] : body; personNotes[pn.person] = { favorite: !!pn.favorite, nickname: pn.nickname || null }; return [pn]; }
