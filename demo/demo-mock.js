@@ -506,6 +506,22 @@
     });
   };
 
+  // ---------- video uploads ----------
+  // The app uploads videos with XMLHttpRequest (for the progress ring). In the demo the upload is pretended:
+  // the ring fills over a couple of seconds and the video plays from your own device. Nothing leaves the browser.
+  var RealXHR = window.XMLHttpRequest;
+  function FakeXHR() { var x = new RealXHR(); var self = this; this._x = x; this.upload = {}; this.status = 0; this._fake = false;
+    this.open = function (m, url) { self._fake = String(url).indexOf(HOST) >= 0 && String(url).indexOf('/storage/v1/object/') >= 0; if (!self._fake) x.open.apply(x, arguments); };
+    this.setRequestHeader = function () { if (!self._fake) x.setRequestHeader.apply(x, arguments); };
+    this.send = function (body) {
+      if (!self._fake) { x.upload.onprogress = self.upload.onprogress; x.onload = function () { self.status = x.status; self.responseText = x.responseText; self.onload && self.onload(); }; x.onerror = function () { self.onerror && self.onerror(); }; return x.send(body); }
+      var total = (body && (body.size || body.byteLength)) || 1, step = 0;
+      var tick = setInterval(function () { step++; if (self.upload.onprogress) self.upload.onprogress({ lengthComputable: true, loaded: Math.min(total, total * step / 12), total: total }); if (step >= 12) { clearInterval(tick); self.status = 200; self.responseText = '{}'; self.onload && self.onload(); } }, 140);
+    };
+    this.abort = function () {};
+  }
+  window.XMLHttpRequest = FakeXHR;
+
   // ---------- payment links ----------
   // In the demo, Pay with Venmo / PayPal / Cash App shows what would open instead of sending anyone to a real account.
   var realOpen = window.open;
