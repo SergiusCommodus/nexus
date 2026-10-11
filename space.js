@@ -97,7 +97,7 @@
   const ov = document.createElement('div'); ov.id = 'nx-intro'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Welcome to Astro');
   ov.style.setProperty('--d', short ? '.25s' : '.9s');
   ov.innerHTML = `<canvas></canvas>
-    <div class="nx-c">${MARK}<div class="nx-word">ASTRO</div>${short ? '' : '<div class="nx-tag">Your crew, in one orbit</div>'}</div>
+    <div class="nx-c">${MARK}<div class="nx-word">ASTRO</div>${short ? '' : '<div class="nx-tag">Your crew, in one star system</div>'}</div>
     <div class="nx-gate"><button type="button" class="nx-enter" aria-label="Enter Astro with sound">${MARK.replace('class="nx-mark"', 'class="nx-mini"').replace(/nxi/g, 'nxj').replace(/ class="nx-(orbit|gap|n|moon|star)"/g, '')}<span>Tap to enter</span></button><div class="nx-sound"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>Sound on</div></div>
     <div class="nx-skip">Tap to skip</div>`;
   document.body.appendChild(ov); introUp = true;

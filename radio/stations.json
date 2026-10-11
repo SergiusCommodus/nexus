@@ -4,7 +4,7 @@
  "stations": [
   {
    "id": "astro-fm",
-   "name": "Astro FM",
+   "name": "Main Station",
    "tagline": "Every track, shuffled. Free for everyone.",
    "color": "#7C5CFF",
    "plus": false,
